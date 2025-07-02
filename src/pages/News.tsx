@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Search, Filter, Calendar, Tag, Trophy } from 'lucide-react';
 import { SEOHead } from '../components/seo/SEOHead';
+import { FixturesList } from '../components/fixtures/FixturesList';
 import { supabase } from '../lib/supabase';
 import { format } from 'date-fns';
 
@@ -15,76 +16,6 @@ interface Post {
   thumbnail_url: string | null;
   created_at: string;
 }
-
-interface Fixture {
-  id: string;
-  match_id: string;
-  team1: string;
-  team2: string;
-  venue: string;
-  match_date: string;
-  status: 'upcoming' | 'live' | 'completed';
-  tournament: string;
-  score?: string;
-}
-
-const demoFixtures: Fixture[] = [
-  {
-    id: '1',
-    match_id: 'match1',
-    team1: 'India',
-    team2: 'Australia',
-    venue: 'Wankhede Stadium, Mumbai',
-    match_date: new Date(Date.now() + 86400000).toISOString(),
-    status: 'upcoming',
-    tournament: 'ICC World Cup',
-    score: 'IND 250/7 (50) vs AUS 245/9 (50)',
-  },
-  {
-    id: '2',
-    match_id: 'match2',
-    team1: 'England',
-    team2: 'Pakistan',
-    venue: 'Lords, London',
-    match_date: new Date(Date.now() + 2 * 86400000).toISOString(),
-    status: 'upcoming',
-    tournament: 'ICC World Cup',
-    score: 'ENG 180/3 (35) vs PAK 178/10 (40)',
-  },
-  {
-    id: '3',
-    match_id: 'match3',
-    team1: 'South Africa',
-    team2: 'New Zealand',
-    venue: 'Eden Park, Auckland',
-    match_date: new Date(Date.now() + 3 * 86400000).toISOString(),
-    status: 'live',
-    tournament: 'Champions Trophy',
-    score: 'SA 120/2 (20) vs NZ 119/8 (20)',
-  },
-  {
-    id: '4',
-    match_id: 'match4',
-    team1: 'Sri Lanka',
-    team2: 'Bangladesh',
-    venue: 'R. Premadasa Stadium, Colombo',
-    match_date: new Date(Date.now() + 4 * 86400000).toISOString(),
-    status: 'upcoming',
-    tournament: 'Asia Cup',
-    score: 'SL 300/6 (50) vs BAN 299/9 (50)',
-  },
-  {
-    id: '5',
-    match_id: 'match5',
-    team1: 'West Indies',
-    team2: 'Afghanistan',
-    venue: 'Kensington Oval, Barbados',
-    match_date: new Date(Date.now() + 5 * 86400000).toISOString(),
-    status: 'upcoming',
-    tournament: 'T20 Series',
-    score: 'WI 150/5 (18) vs AFG 149/8 (20)',
-  },
-];
 
 export const News: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -188,45 +119,18 @@ export const News: React.FC = () => {
       />
 
       <div className="min-h-screen bg-gray-50">
-        {/* Fixture Cards Section */}
+        {/* Live Fixtures Section - now using API data */}
         <section className="py-6 bg-gradient-to-br from-green-50 to-green-100 border-b border-green-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex space-x-6 overflow-x-auto pb-2">
-              {demoFixtures.map((fixture) => (
-                <div
-                  key={fixture.id}
-                  className="min-w-[260px] bg-white border border-green-200 rounded-xl p-4 shadow-sm hover:shadow-lg transition-shadow duration-200 flex-shrink-0"
-                >
-                  <div className="flex items-center space-x-3 mb-2">
-                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                      fixture.status === 'live'
-                        ? 'bg-red-100 text-red-800'
-                        : 'bg-blue-100 text-blue-800'
-                    }`}>
-                      {fixture.status === 'live' ? 'LIVE' : 'UPCOMING'}
-                    </span>
-                    <span className="text-xs text-gray-500">{fixture.tournament}</span>
-                  </div>
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="font-semibold text-gray-900">{fixture.team1}</span>
-                    <span className="text-gray-500 mx-2">vs</span>
-                    <span className="font-semibold text-gray-900">{fixture.team2}</span>
-                  </div>
-                  <p className="text-xs text-gray-600 mb-2">{fixture.venue}</p>
-                  <div className="flex items-center justify-between text-xs text-gray-700 mb-2">
-                    <span>{format(new Date(fixture.match_date), 'MMM dd, yyyy')}</span>
-                    <span>{format(new Date(fixture.match_date), 'hh:mm a')}</span>
-                  </div>
-                  {fixture.score && (
-                    <div className="text-green-700 font-bold text-xs bg-green-50 rounded px-2 py-1 mb-1 text-center">
-                      {fixture.score}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
+            <FixturesList 
+              limit={5} 
+              compact={true} 
+              showHeader={false}
+              className=""
+            />
           </div>
         </section>
+        
         {/* Header Section */}
         <section className="bg-white shadow-sm">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -263,6 +167,7 @@ export const News: React.FC = () => {
             </div>
           </div>
         </section>
+        
         {/* News and Sidebar Section */}
         <section className="py-8">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row gap-8">
