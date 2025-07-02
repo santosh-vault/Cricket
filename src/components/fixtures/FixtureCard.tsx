@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Calendar, MapPin, Clock, Trophy, ExternalLink } from 'lucide-react';
+import { Calendar, MapPin, Clock, Trophy, ExternalLink, Globe } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { Fixture } from '../../hooks/useFixtures';
 
@@ -45,19 +45,53 @@ export const FixtureCard: React.FC<FixtureCardProps> = ({
 
   const { date, time } = formatDate(fixture.dateTimeGMT || fixture.date);
 
+  // Function to determine if a match is international
+  const isInternationalMatch = (): boolean => {
+    const internationalKeywords = [
+      'ICC', 'World Cup', 'T20 World Cup', 'ODI World Cup', 'Champions Trophy',
+      'Asia Cup', 'Test Championship', 'WTC', 'International', 'vs', 'Tour',
+      'Series', 'Ashes', 'Border-Gavaskar', 'Bilateral'
+    ];
+    
+    const domesticKeywords = [
+      'IPL', 'Indian Premier League', 'Big Bash', 'BBL', 'CPL', 'Caribbean Premier League',
+      'PSL', 'Pakistan Super League', 'The Hundred', 'County', 'Ranji', 'Duleep'
+    ];
+
+    const matchName = fixture.name?.toLowerCase() || '';
+    const matchType = fixture.matchType?.toLowerCase() || '';
+    
+    // Check if it's explicitly domestic
+    const isDomestic = domesticKeywords.some(keyword => 
+      matchName.includes(keyword.toLowerCase()) || matchType.includes(keyword.toLowerCase())
+    );
+    
+    if (isDomestic) return false;
+    
+    // Check if it's international
+    const isInternational = internationalKeywords.some(keyword => 
+      matchName.includes(keyword.toLowerCase()) || matchType.includes(keyword.toLowerCase())
+    );
+    
+    // Also check team names - if they are country names, it's likely international
+    const countryNames = [
+      'india', 'australia', 'england', 'south africa', 'new zealand', 'pakistan',
+      'sri lanka', 'bangladesh', 'west indies', 'afghanistan', 'zimbabwe', 'ireland'
+    ];
+    
+    const hasCountryTeams = fixture.teams?.some(team => 
+      countryNames.includes(team.toLowerCase())
+    ) || false;
+    
+    return isInternational || hasCountryTeams;
+  };
+
   const getScoreDisplay = () => {
     if (!fixture.score || fixture.score.length === 0) return null;
     
-    const team1Score = fixture.score.find(s => s.inning.includes('1st') || s.inning.includes('first'));
-    const team2Score = fixture.score.find(s => s.inning.includes('2nd') || s.inning.includes('second'));
-    
-    if (team1Score && team2Score) {
-      return `${team1Score.r}/${team1Score.w} (${team1Score.o}) vs ${team2Score.r}/${team2Score.w} (${team2Score.o})`;
-    } else if (team1Score) {
-      return `${team1Score.r}/${team1Score.w} (${team1Score.o})`;
-    }
-    
-    return null;
+    // Display actual scores from API
+    const scores = fixture.score.map(s => `${s.r}/${s.w} (${s.o})`);
+    return scores.join(' vs ');
   };
 
   const CardContent = () => {
@@ -68,8 +102,17 @@ export const FixtureCard: React.FC<FixtureCardProps> = ({
             <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(fixture.status)}`}>
               {fixture.status === 'live' ? '🔴 LIVE' : fixture.status.toUpperCase()}
             </span>
-            <span className="text-xs text-gray-500 truncate">{fixture.name}</span>
-            <ExternalLink className="h-3 w-3 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+            {isInternationalMatch() && (
+              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                <Globe className="h-3 w-3 mr-1" />
+                INT'L
+              </span>
+            )}
+            <ExternalLink className="h-3 w-3 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity duration-200 ml-auto" />
+          </div>
+          
+          <div className="mb-2">
+            <span className="text-xs text-gray-500 truncate block">{fixture.name}</span>
           </div>
           
           <div className="flex items-center justify-between mb-2">
@@ -116,6 +159,12 @@ export const FixtureCard: React.FC<FixtureCardProps> = ({
                 <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(fixture.status)}`}>
                   {fixture.status === 'live' ? '🔴 LIVE' : fixture.matchType?.toUpperCase() || 'MATCH'}
                 </span>
+                {isInternationalMatch() && (
+                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                    <Globe className="h-3 w-3 mr-1" />
+                    International
+                  </span>
+                )}
                 <span className="text-sm text-gray-600 font-medium">{fixture.name}</span>
                 <ExternalLink className="h-4 w-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
               </div>

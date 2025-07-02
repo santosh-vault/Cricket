@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Trophy, Clock, MapPin, Users, Target, Activity, RefreshCw } from 'lucide-react';
+import { ArrowLeft, Trophy, Clock, MapPin, Users, Target, Activity, RefreshCw, Globe } from 'lucide-react';
 import { SEOHead } from '../components/seo/SEOHead';
 import { format, parseISO } from 'date-fns';
 
@@ -146,11 +146,8 @@ export const Scorecard: React.FC = () => {
   const getScoreDisplay = (teamIndex: number) => {
     if (!matchData.score || matchData.score.length === 0) return null;
     
-    // Find score for this team
-    const teamScore = matchData.score.find(s => 
-      s.inning.toLowerCase().includes(teamIndex === 0 ? 'first' : 'second') ||
-      s.inning.includes(`${teamIndex + 1}`)
-    );
+    // Find score for this team based on inning
+    const teamScore = matchData.score.find((s, index) => index === teamIndex);
     
     if (teamScore) {
       return `${teamScore.r}/${teamScore.w} (${teamScore.o} overs)`;
@@ -159,28 +156,45 @@ export const Scorecard: React.FC = () => {
     return null;
   };
 
-  // Mock additional data for demonstration
-  const mockLiveData = {
-    currentBatsmen: [
-      { name: 'Virat Kohli', runs: 45, balls: 32, fours: 4, sixes: 1, strikeRate: 140.63, onStrike: true },
-      { name: 'AB de Villiers', runs: 23, balls: 18, fours: 2, sixes: 1, strikeRate: 127.78, onStrike: false }
-    ],
-    currentBowler: {
-      name: 'Jasprit Bumrah',
-      overs: 3.4,
-      maidens: 0,
-      runs: 28,
-      wickets: 2,
-      economy: 7.64
-    },
-    recentOvers: [
-      '1 4 6 0 1 2',
-      '0 1 4 0 0 W',
-      '2 1 0 4 1 1',
-      '0 0 1 6 4 0',
-      '1 2 0 4 1'
-    ],
-    partnership: { runs: 68, balls: 45, rate: 9.07 }
+  // Function to determine if a match is international
+  const isInternationalMatch = (): boolean => {
+    const internationalKeywords = [
+      'ICC', 'World Cup', 'T20 World Cup', 'ODI World Cup', 'Champions Trophy',
+      'Asia Cup', 'Test Championship', 'WTC', 'International', 'vs', 'Tour',
+      'Series', 'Ashes', 'Border-Gavaskar', 'Bilateral'
+    ];
+    
+    const domesticKeywords = [
+      'IPL', 'Indian Premier League', 'Big Bash', 'BBL', 'CPL', 'Caribbean Premier League',
+      'PSL', 'Pakistan Super League', 'The Hundred', 'County', 'Ranji', 'Duleep'
+    ];
+
+    const matchName = matchData.name?.toLowerCase() || '';
+    const matchType = matchData.matchType?.toLowerCase() || '';
+    
+    // Check if it's explicitly domestic
+    const isDomestic = domesticKeywords.some(keyword => 
+      matchName.includes(keyword.toLowerCase()) || matchType.includes(keyword.toLowerCase())
+    );
+    
+    if (isDomestic) return false;
+    
+    // Check if it's international
+    const isInternational = internationalKeywords.some(keyword => 
+      matchName.includes(keyword.toLowerCase()) || matchType.includes(keyword.toLowerCase())
+    );
+    
+    // Also check team names - if they are country names, it's likely international
+    const countryNames = [
+      'india', 'australia', 'england', 'south africa', 'new zealand', 'pakistan',
+      'sri lanka', 'bangladesh', 'west indies', 'afghanistan', 'zimbabwe', 'ireland'
+    ];
+    
+    const hasCountryTeams = matchData.teams?.some(team => 
+      countryNames.includes(team.toLowerCase())
+    ) || false;
+    
+    return isInternational || hasCountryTeams;
   };
 
   return (
@@ -210,6 +224,12 @@ export const Scorecard: React.FC = () => {
                   <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(matchData.status)}`}>
                     {matchData.status === 'live' ? '🔴 LIVE' : matchData.status.toUpperCase()}
                   </span>
+                  {isInternationalMatch() && (
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                      <Globe className="h-3 w-3 mr-1" />
+                      International
+                    </span>
+                  )}
                   <span className="text-green-100 font-medium">{matchData.name}</span>
                 </div>
                 {matchData.status === 'live' && (
@@ -296,115 +316,56 @@ export const Scorecard: React.FC = () => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Main Scorecard */}
               <div className="lg:col-span-2 space-y-6">
-                {/* Current Partnership (Live matches only) */}
-                {matchData.status === 'live' && (
-                  <div className="bg-white rounded-lg shadow-md p-6">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                      <Users className="h-5 w-5 mr-2 text-green-600" />
-                      Current Partnership
-                    </h3>
-                    <div className="grid grid-cols-2 gap-6">
-                      {mockLiveData.currentBatsmen.map((batsman, index) => (
-                        <div key={index} className={`p-4 rounded-lg ${batsman.onStrike ? 'bg-green-50 border-2 border-green-200' : 'bg-gray-50'}`}>
-                          <div className="flex items-center justify-between mb-2">
-                            <h4 className="font-semibold text-gray-900">{batsman.name}</h4>
-                            {batsman.onStrike && <span className="text-xs bg-green-600 text-white px-2 py-1 rounded-full">Batting</span>}
-                          </div>
-                          <div className="grid grid-cols-2 gap-2 text-sm">
-                            <div>Runs: <span className="font-semibold">{batsman.runs}</span></div>
-                            <div>Balls: <span className="font-semibold">{batsman.balls}</span></div>
-                            <div>4s: <span className="font-semibold">{batsman.fours}</span></div>
-                            <div>6s: <span className="font-semibold">{batsman.sixes}</span></div>
-                          </div>
-                          <div className="mt-2 text-xs text-gray-600">
-                            SR: {batsman.strikeRate}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                    
-                    <div className="mt-4 p-4 bg-blue-50 rounded-lg">
-                      <div className="text-sm text-gray-700">
-                        <strong>Partnership:</strong> {mockLiveData.partnership.runs} runs off {mockLiveData.partnership.balls} balls 
-                        (Rate: {mockLiveData.partnership.rate}/over)
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Current Bowler (Live matches only) */}
-                {matchData.status === 'live' && (
-                  <div className="bg-white rounded-lg shadow-md p-6">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                      <Target className="h-5 w-5 mr-2 text-red-600" />
-                      Current Bowler
-                    </h3>
-                    <div className="bg-red-50 p-4 rounded-lg">
-                      <h4 className="font-semibold text-gray-900 mb-3">{mockLiveData.currentBowler.name}</h4>
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                        <div>Overs: <span className="font-semibold">{mockLiveData.currentBowler.overs}</span></div>
-                        <div>Runs: <span className="font-semibold">{mockLiveData.currentBowler.runs}</span></div>
-                        <div>Wickets: <span className="font-semibold">{mockLiveData.currentBowler.wickets}</span></div>
-                        <div>Economy: <span className="font-semibold">{mockLiveData.currentBowler.economy}</span></div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Recent Overs */}
-                {matchData.status === 'live' && (
-                  <div className="bg-white rounded-lg shadow-md p-6">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                      <Activity className="h-5 w-5 mr-2 text-blue-600" />
-                      Recent Overs
-                    </h3>
-                    <div className="space-y-2">
-                      {mockLiveData.recentOvers.map((over, index) => (
-                        <div key={index} className="flex items-center space-x-4">
-                          <span className="text-sm font-medium text-gray-600 w-16">
-                            Over {mockLiveData.recentOvers.length - index}:
-                          </span>
-                          <div className="flex space-x-2">
-                            {over.split(' ').map((ball, ballIndex) => (
-                              <span
-                                key={ballIndex}
-                                className={`px-2 py-1 rounded text-xs font-semibold ${
-                                  ball === 'W' ? 'bg-red-100 text-red-800' :
-                                  ball === '4' ? 'bg-green-100 text-green-800' :
-                                  ball === '6' ? 'bg-purple-100 text-purple-800' :
-                                  'bg-gray-100 text-gray-800'
-                                }`}
-                              >
-                                {ball}
-                              </span>
-                            ))}
+                {/* Actual Score Display */}
+                <div className="bg-white rounded-lg shadow-md p-6">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                    <Trophy className="h-5 w-5 mr-2 text-green-600" />
+                    Match Scorecard
+                  </h3>
+                  
+                  {matchData.score && matchData.score.length > 0 ? (
+                    <div className="space-y-4">
+                      {matchData.score.map((score, index) => (
+                        <div key={index} className="p-4 bg-gray-50 rounded-lg">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <h4 className="font-semibold text-gray-900">
+                                {matchData.teams[index] || `Team ${index + 1}`}
+                              </h4>
+                              <p className="text-sm text-gray-600">{score.inning}</p>
+                            </div>
+                            <div className="text-right">
+                              <div className="text-2xl font-bold text-gray-900">
+                                {score.r}/{score.w}
+                              </div>
+                              <div className="text-sm text-gray-600">
+                                ({score.o} overs)
+                              </div>
+                            </div>
                           </div>
                         </div>
                       ))}
                     </div>
-                  </div>
-                )}
+                  ) : (
+                    <div className="text-center py-8">
+                      <Activity className="h-12 w-12 mx-auto mb-4 text-gray-400" />
+                      <p className="text-gray-600">
+                        {matchData.status === 'live' ? 'Live score data will appear here' : 'Score data not available'}
+                      </p>
+                    </div>
+                  )}
+                </div>
 
                 {/* Match Summary for completed matches */}
-                {matchData.status === 'completed' && (
+                {matchData.status === 'completed' && matchData.score && matchData.score.length > 0 && (
                   <div className="bg-white rounded-lg shadow-md p-6">
                     <h3 className="text-lg font-semibold text-gray-900 mb-4">Match Summary</h3>
                     <div className="space-y-4">
                       <div className="p-4 bg-green-50 rounded-lg">
                         <h4 className="font-semibold text-green-900 mb-2">Result</h4>
                         <p className="text-green-800">
-                          {matchData.teams[0]} won by 42 runs
+                          Match completed - Check official sources for detailed result
                         </p>
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="p-4 bg-gray-50 rounded-lg">
-                          <h5 className="font-semibold text-gray-900 mb-2">{matchData.teams[0]}</h5>
-                          <p className="text-gray-700">{getScoreDisplay(0)}</p>
-                        </div>
-                        <div className="p-4 bg-gray-50 rounded-lg">
-                          <h5 className="font-semibold text-gray-900 mb-2">{matchData.teams[1]}</h5>
-                          <p className="text-gray-700">{getScoreDisplay(1)}</p>
-                        </div>
                       </div>
                     </div>
                   </div>
@@ -433,6 +394,12 @@ export const Scorecard: React.FC = () => {
                       <span className="text-gray-600">Match Type:</span>
                       <span className="font-medium">{matchData.matchType}</span>
                     </div>
+                    {isInternationalMatch() && (
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Level:</span>
+                        <span className="font-medium text-green-600">International</span>
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -448,6 +415,14 @@ export const Scorecard: React.FC = () => {
                     </p>
                   </div>
                 )}
+
+                {/* Data Source Notice */}
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <h4 className="font-semibold text-blue-900 mb-2">Data Source</h4>
+                  <p className="text-blue-800 text-sm">
+                    Match data is provided by CricAPI. For detailed ball-by-ball commentary and additional statistics, please visit official cricket websites.
+                  </p>
+                </div>
               </div>
             </div>
           )}

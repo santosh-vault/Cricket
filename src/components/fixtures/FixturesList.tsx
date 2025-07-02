@@ -1,5 +1,5 @@
 import React from 'react';
-import { Trophy, RefreshCw, Clock } from 'lucide-react';
+import { Trophy, RefreshCw, Clock, Globe } from 'lucide-react';
 import { FixtureCard } from './FixtureCard';
 import { useFixtures } from '../../hooks/useFixtures';
 import { format } from 'date-fns';
@@ -19,7 +19,15 @@ export const FixturesList: React.FC<FixturesListProps> = ({
   className = "",
   autoRefresh = true
 }) => {
-  const { fixtures, loading, error, lastUpdated, refreshFixtures, getLiveMatchesCount } = useFixtures(limit, autoRefresh);
+  const { 
+    fixtures, 
+    loading, 
+    error, 
+    lastUpdated, 
+    refreshFixtures, 
+    getLiveMatchesCount, 
+    getInternationalMatchesCount 
+  } = useFixtures(limit, autoRefresh);
 
   if (loading && fixtures.length === 0) {
     return (
@@ -56,6 +64,7 @@ export const FixturesList: React.FC<FixturesListProps> = ({
   }
 
   const liveMatchesCount = getLiveMatchesCount();
+  const internationalMatchesCount = getInternationalMatchesCount();
 
   if (compact) {
     return (
@@ -63,13 +72,21 @@ export const FixturesList: React.FC<FixturesListProps> = ({
         {showHeader && (
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-2">
-              <h3 className="text-lg font-semibold text-gray-900">Live Fixtures</h3>
-              {liveMatchesCount > 0 && (
-                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                  <span className="w-2 h-2 bg-red-500 rounded-full mr-1 animate-pulse"></span>
-                  {liveMatchesCount} Live
-                </span>
-              )}
+              <h3 className="text-lg font-semibold text-gray-900">Cricket Fixtures</h3>
+              <div className="flex items-center space-x-2">
+                {liveMatchesCount > 0 && (
+                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                    <span className="w-2 h-2 bg-red-500 rounded-full mr-1 animate-pulse"></span>
+                    {liveMatchesCount} Live
+                  </span>
+                )}
+                {internationalMatchesCount > 0 && (
+                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                    <Globe className="h-3 w-3 mr-1" />
+                    {internationalMatchesCount} Int'l
+                  </span>
+                )}
+              </div>
             </div>
             <div className="flex items-center space-x-2">
               {lastUpdated && (
@@ -108,12 +125,20 @@ export const FixturesList: React.FC<FixturesListProps> = ({
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-3">
             <h2 className="text-2xl font-bold text-gray-900">Cricket Fixtures</h2>
-            {liveMatchesCount > 0 && (
-              <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">
-                <span className="w-2 h-2 bg-red-500 rounded-full mr-2 animate-pulse"></span>
-                {liveMatchesCount} Live Match{liveMatchesCount > 1 ? 'es' : ''}
-              </span>
-            )}
+            <div className="flex items-center space-x-2">
+              {liveMatchesCount > 0 && (
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">
+                  <span className="w-2 h-2 bg-red-500 rounded-full mr-2 animate-pulse"></span>
+                  {liveMatchesCount} Live Match{liveMatchesCount > 1 ? 'es' : ''}
+                </span>
+              )}
+              {internationalMatchesCount > 0 && (
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                  <Globe className="h-4 w-4 mr-2" />
+                  {internationalMatchesCount} International
+                </span>
+              )}
+            </div>
           </div>
           <div className="flex items-center space-x-3">
             {lastUpdated && (
