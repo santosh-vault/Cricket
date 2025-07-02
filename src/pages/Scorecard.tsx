@@ -1,34 +1,39 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Trophy, Clock, MapPin, Users, Target, Activity } from 'lucide-react';
+import { ArrowLeft, Trophy, Clock, MapPin, Users, Target, Activity, RefreshCw } from 'lucide-react';
 import { SEOHead } from '../components/seo/SEOHead';
-import { supabase } from '../lib/supabase';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 
-interface Fixture {
+interface MatchData {
   id: string;
-  match_id: string;
-  team1: string;
-  team2: string;
+  name: string;
+  matchType: string;
+  status: string;
   venue: string;
-  match_date: string;
-  status: 'upcoming' | 'live' | 'completed';
-  tournament: string;
-}
-
-interface Scorecard {
-  id: string;
-  match_id: string;
-  json_data: any;
-  updated_at: string;
+  date: string;
+  dateTimeGMT: string;
+  teams: string[];
+  teamInfo?: Array<{
+    name: string;
+    shortname: string;
+    img: string;
+  }>;
+  score?: Array<{
+    r: number;
+    w: number;
+    o: number;
+    inning: string;
+  }>;
+  matchStarted: boolean;
+  matchEnded: boolean;
 }
 
 export const Scorecard: React.FC = () => {
   const { matchId } = useParams<{ matchId: string }>();
-  const [fixture, setFixture] = useState<Fixture | null>(null);
-  const [scorecard, setScorecard] = useState<Scorecard | null>(null);
+  const [matchData, setMatchData] = useState<MatchData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
   useEffect(() => {
     if (matchId) {
@@ -36,38 +41,54 @@ export const Scorecard: React.FC = () => {
     }
   }, [matchId]);
 
-  const fetchMatchData = async () => {
+  // Auto-refresh for live matches
+  useEffect(() => {
+    if (matchData?.status === 'live') {
+      const interval = setInterval(() => {
+        fetchMatchData(false); // Don't show loading on auto-refresh
+      }, 15000); // Refresh every 15 seconds for live matches
+
+      return () => clearInterval(interval);
+    }
+  }, [matchData?.status]);
+
+  const fetchMatchData = async (showLoading = true) => {
     try {
-      setLoading(true);
+      if (showLoading) setLoading(true);
       setError(null);
 
-      // Fetch fixture
-      const { data: fixtureData, error: fixtureError } = await supabase
-        .from('fixtures')
-        .select('*')
-        .eq('match_id', matchId)
-        .single();
-
-      if (fixtureError) {
-        setError('Match not found');
-        return;
+      // Fetch all fixtures and find the specific match
+      const response = await fetch('/api/fixtures');
+      if (!response.ok) {
+        throw new Error('Failed to fetch match data');
       }
 
-      setFixture(fixtureData);
+      const data = await response.json();
+      
+      if (data.status === 'success' && data.data) {
+        const match = data.data.find((m: any) => m.id === matchId);
+        
+        if (!match) {
+          setError('Match not found');
+          return;
+        }
 
-      // Fetch scorecard if exists
-      const { data: scorecardData } = await supabase
-        .from('scorecards')
-        .select('*')
-        .eq('match_id', matchId)
-        .single();
+        const processedMatch: MatchData = {
+          ...match,
+          status: match.matchEnded ? 'completed' : 
+                  match.matchStarted ? 'live' : 'upcoming'
+        };
 
-      setScorecard(scorecardData);
+        setMatchData(processedMatch);
+        setLastUpdated(new Date());
+      } else {
+        throw new Error('Invalid API response');
+      }
     } catch (error) {
       console.error('Error fetching match data:', error);
       setError('Failed to load match data');
     } finally {
-      setLoading(false);
+      if (showLoading) setLoading(false);
     }
   };
 
@@ -82,7 +103,7 @@ export const Scorecard: React.FC = () => {
     );
   }
 
-  if (error || !fixture) {
+  if (error || !matchData) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -103,24 +124,48 @@ export const Scorecard: React.FC = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'live':
-        return 'bg-red-100 text-red-800';
+        return 'bg-red-500 animate-pulse';
       case 'upcoming':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-blue-500';
       case 'completed':
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-500';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-500';
     }
   };
 
-  const mockScoreData = {
-    team1_score: { runs: 187, wickets: 8, overs: 20.0 },
-    team2_score: { runs: 145, wickets: 10, overs: 19.3 },
-    current_batsmen: [
-      { name: 'Virat Kohli', runs: 45, balls: 32, fours: 4, sixes: 1, strike_rate: 140.63, on_strike: true },
-      { name: 'AB de Villiers', runs: 23, balls: 18, fours: 2, sixes: 1, strike_rate: 127.78, on_strike: false }
+  const formatDate = (dateString: string) => {
+    try {
+      const date = parseISO(dateString);
+      return format(date, 'MMM dd, yyyy • hh:mm a');
+    } catch {
+      return 'TBD';
+    }
+  };
+
+  const getScoreDisplay = (teamIndex: number) => {
+    if (!matchData.score || matchData.score.length === 0) return null;
+    
+    // Find score for this team
+    const teamScore = matchData.score.find(s => 
+      s.inning.toLowerCase().includes(teamIndex === 0 ? 'first' : 'second') ||
+      s.inning.includes(`${teamIndex + 1}`)
+    );
+    
+    if (teamScore) {
+      return `${teamScore.r}/${teamScore.w} (${teamScore.o} overs)`;
+    }
+    
+    return null;
+  };
+
+  // Mock additional data for demonstration
+  const mockLiveData = {
+    currentBatsmen: [
+      { name: 'Virat Kohli', runs: 45, balls: 32, fours: 4, sixes: 1, strikeRate: 140.63, onStrike: true },
+      { name: 'AB de Villiers', runs: 23, balls: 18, fours: 2, sixes: 1, strikeRate: 127.78, onStrike: false }
     ],
-    current_bowler: {
+    currentBowler: {
       name: 'Jasprit Bumrah',
       overs: 3.4,
       maidens: 0,
@@ -128,22 +173,22 @@ export const Scorecard: React.FC = () => {
       wickets: 2,
       economy: 7.64
     },
-    recent_overs: [
+    recentOvers: [
       '1 4 6 0 1 2',
       '0 1 4 0 0 W',
       '2 1 0 4 1 1',
       '0 0 1 6 4 0',
       '1 2 0 4 1'
     ],
-    partnership: { runs: 68, balls: 45, partnership_rate: 9.07 }
+    partnership: { runs: 68, balls: 45, rate: 9.07 }
   };
 
   return (
     <>
       <SEOHead
-        title={`${fixture.team1} vs ${fixture.team2} Scorecard`}
-        description={`Live scorecard and match updates for ${fixture.team1} vs ${fixture.team2} in ${fixture.tournament}`}
-        keywords={`${fixture.team1}, ${fixture.team2}, cricket scorecard, live score, ${fixture.tournament}`}
+        title={`${matchData.teams[0]} vs ${matchData.teams[1]} Scorecard`}
+        description={`Live scorecard and match updates for ${matchData.teams[0]} vs ${matchData.teams[1]} in ${matchData.name}`}
+        keywords={`${matchData.teams[0]}, ${matchData.teams[1]}, cricket scorecard, live score, ${matchData.name}`}
       />
 
       <div className="min-h-screen bg-gray-50">
@@ -161,44 +206,57 @@ export const Scorecard: React.FC = () => {
             {/* Match Header */}
             <div className="bg-gradient-to-r from-green-600 to-green-700 rounded-lg p-6 text-white">
               <div className="flex items-center justify-between mb-4">
-                <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                  fixture.status === 'live' ? 'bg-red-500' : 
-                  fixture.status === 'upcoming' ? 'bg-blue-500' : 'bg-gray-500'
-                }`}>
-                  {fixture.status === 'live' ? 'LIVE' : fixture.status.toUpperCase()}
-                </span>
-                <span className="text-green-100 font-medium">{fixture.tournament}</span>
+                <div className="flex items-center space-x-3">
+                  <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(matchData.status)}`}>
+                    {matchData.status === 'live' ? '🔴 LIVE' : matchData.status.toUpperCase()}
+                  </span>
+                  <span className="text-green-100 font-medium">{matchData.name}</span>
+                </div>
+                {matchData.status === 'live' && (
+                  <div className="flex items-center space-x-2">
+                    {lastUpdated && (
+                      <span className="text-green-200 text-sm">
+                        Updated {format(lastUpdated, 'HH:mm:ss')}
+                      </span>
+                    )}
+                    <button
+                      onClick={() => fetchMatchData(false)}
+                      className="text-green-200 hover:text-white p-1 rounded-md transition-colors duration-200"
+                      title="Refresh scorecard"
+                    >
+                      <RefreshCw className="h-4 w-4" />
+                    </button>
+                  </div>
+                )}
               </div>
 
               {/* Teams */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
                 <div className="text-center md:text-right">
-                  <h2 className="text-2xl font-bold mb-2">{fixture.team1}</h2>
-                  {fixture.status !== 'upcoming' && scorecard?.json_data ? (
+                  <h2 className="text-2xl font-bold mb-2">{matchData.teams[0]}</h2>
+                  {matchData.status !== 'upcoming' && (
                     <div className="text-lg">
-                      <span className="font-semibold">{mockScoreData.team1_score.runs}/{mockScoreData.team1_score.wickets}</span>
-                      <span className="text-green-200 ml-2">({mockScoreData.team1_score.overs} overs)</span>
+                      <span className="font-semibold">{getScoreDisplay(0) || 'Yet to bat'}</span>
                     </div>
-                  ) : null}
+                  )}
                 </div>
 
                 <div className="text-center">
                   <div className="text-3xl font-bold mb-2">VS</div>
-                  {fixture.status === 'completed' && (
+                  {matchData.status === 'completed' && (
                     <div className="text-green-200 text-sm">
-                      {fixture.team1} won by 42 runs
+                      Match Completed
                     </div>
                   )}
                 </div>
 
                 <div className="text-center md:text-left">
-                  <h2 className="text-2xl font-bold mb-2">{fixture.team2}</h2>
-                  {fixture.status !== 'upcoming' && scorecard?.json_data ? (
+                  <h2 className="text-2xl font-bold mb-2">{matchData.teams[1]}</h2>
+                  {matchData.status !== 'upcoming' && (
                     <div className="text-lg">
-                      <span className="font-semibold">{mockScoreData.team2_score.runs}/{mockScoreData.team2_score.wickets}</span>
-                      <span className="text-green-200 ml-2">({mockScoreData.team2_score.overs} overs)</span>
+                      <span className="font-semibold">{getScoreDisplay(1) || 'Yet to bat'}</span>
                     </div>
-                  ) : null}
+                  )}
                 </div>
               </div>
 
@@ -206,15 +264,15 @@ export const Scorecard: React.FC = () => {
               <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-green-100">
                 <div className="flex items-center justify-center md:justify-start">
                   <Clock className="h-4 w-4 mr-2" />
-                  <span>{format(new Date(fixture.match_date), 'MMM dd, yyyy • hh:mm a')}</span>
+                  <span>{formatDate(matchData.dateTimeGMT || matchData.date)}</span>
                 </div>
                 <div className="flex items-center justify-center">
                   <MapPin className="h-4 w-4 mr-2" />
-                  <span>{fixture.venue}</span>
+                  <span>{matchData.venue}</span>
                 </div>
                 <div className="flex items-center justify-center md:justify-end">
                   <Trophy className="h-4 w-4 mr-2" />
-                  <span>{fixture.tournament}</span>
+                  <span>{matchData.matchType}</span>
                 </div>
               </div>
             </div>
@@ -223,12 +281,12 @@ export const Scorecard: React.FC = () => {
 
         {/* Match Content */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {fixture.status === 'upcoming' ? (
+          {matchData.status === 'upcoming' ? (
             <div className="bg-white rounded-lg shadow-md p-8 text-center">
               <Clock className="h-16 w-16 mx-auto mb-4 text-gray-400" />
               <h3 className="text-xl font-semibold text-gray-900 mb-2">Match Not Started</h3>
               <p className="text-gray-600 mb-4">
-                This match is scheduled to start on {format(new Date(fixture.match_date), 'MMMM dd, yyyy at hh:mm a')}
+                This match is scheduled to start on {formatDate(matchData.dateTimeGMT || matchData.date)}
               </p>
               <p className="text-sm text-gray-500">
                 Check back when the match begins for live updates and scorecard.
@@ -239,18 +297,18 @@ export const Scorecard: React.FC = () => {
               {/* Main Scorecard */}
               <div className="lg:col-span-2 space-y-6">
                 {/* Current Partnership (Live matches only) */}
-                {fixture.status === 'live' && (
+                {matchData.status === 'live' && (
                   <div className="bg-white rounded-lg shadow-md p-6">
                     <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                       <Users className="h-5 w-5 mr-2 text-green-600" />
                       Current Partnership
                     </h3>
                     <div className="grid grid-cols-2 gap-6">
-                      {mockScoreData.current_batsmen.map((batsman, index) => (
-                        <div key={index} className={`p-4 rounded-lg ${batsman.on_strike ? 'bg-green-50 border-2 border-green-200' : 'bg-gray-50'}`}>
+                      {mockLiveData.currentBatsmen.map((batsman, index) => (
+                        <div key={index} className={`p-4 rounded-lg ${batsman.onStrike ? 'bg-green-50 border-2 border-green-200' : 'bg-gray-50'}`}>
                           <div className="flex items-center justify-between mb-2">
                             <h4 className="font-semibold text-gray-900">{batsman.name}</h4>
-                            {batsman.on_strike && <span className="text-xs bg-green-600 text-white px-2 py-1 rounded-full">Batting</span>}
+                            {batsman.onStrike && <span className="text-xs bg-green-600 text-white px-2 py-1 rounded-full">Batting</span>}
                           </div>
                           <div className="grid grid-cols-2 gap-2 text-sm">
                             <div>Runs: <span className="font-semibold">{batsman.runs}</span></div>
@@ -259,7 +317,7 @@ export const Scorecard: React.FC = () => {
                             <div>6s: <span className="font-semibold">{batsman.sixes}</span></div>
                           </div>
                           <div className="mt-2 text-xs text-gray-600">
-                            SR: {batsman.strike_rate}
+                            SR: {batsman.strikeRate}
                           </div>
                         </div>
                       ))}
@@ -267,139 +325,129 @@ export const Scorecard: React.FC = () => {
                     
                     <div className="mt-4 p-4 bg-blue-50 rounded-lg">
                       <div className="text-sm text-gray-700">
-                        <strong>Partnership:</strong> {mockScoreData.partnership.runs} runs off {mockScoreData.partnership.balls} balls 
-                        (Rate: {mockScoreData.partnership.partnership_rate}/over)
+                        <strong>Partnership:</strong> {mockLiveData.partnership.runs} runs off {mockLiveData.partnership.balls} balls 
+                        (Rate: {mockLiveData.partnership.rate}/over)
                       </div>
                     </div>
                   </div>
                 )}
 
                 {/* Current Bowler (Live matches only) */}
-                {fixture.status === 'live' && (
+                {matchData.status === 'live' && (
                   <div className="bg-white rounded-lg shadow-md p-6">
                     <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                       <Target className="h-5 w-5 mr-2 text-red-600" />
                       Current Bowler
                     </h3>
                     <div className="bg-red-50 p-4 rounded-lg">
-                      <h4 className="font-semibold text-gray-900 mb-3">{mockScoreData.current_bowler.name}</h4>
+                      <h4 className="font-semibold text-gray-900 mb-3">{mockLiveData.currentBowler.name}</h4>
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                        <div>Overs: <span className="font-semibold">{mockScoreData.current_bowler.overs}</span></div>
-                        <div>Runs: <span className="font-semibold">{mockScoreData.current_bowler.runs}</span></div>
-                        <div>Wickets: <span className="font-semibold">{mockScoreData.current_bowler.wickets}</span></div>
-                        <div>Economy: <span className="font-semibold">{mockScoreData.current_bowler.economy}</span></div>
+                        <div>Overs: <span className="font-semibold">{mockLiveData.currentBowler.overs}</span></div>
+                        <div>Runs: <span className="font-semibold">{mockLiveData.currentBowler.runs}</span></div>
+                        <div>Wickets: <span className="font-semibold">{mockLiveData.currentBowler.wickets}</span></div>
+                        <div>Economy: <span className="font-semibold">{mockLiveData.currentBowler.economy}</span></div>
                       </div>
                     </div>
                   </div>
                 )}
 
                 {/* Recent Overs */}
-                <div className="bg-white rounded-lg shadow-md p-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                    <Activity className="h-5 w-5 mr-2 text-blue-600" />
-                    Recent Overs
-                  </h3>
-                  <div className="space-y-2">
-                    {mockScoreData.recent_overs.map((over, index) => (
-                      <div key={index} className="flex items-center space-x-4">
-                        <span className="text-sm font-medium text-gray-600 w-16">
-                          Over {mockScoreData.recent_overs.length - index}:
-                        </span>
-                        <div className="flex space-x-2">
-                          {over.split(' ').map((ball, ballIndex) => (
-                            <span
-                              key={ballIndex}
-                              className={`px-2 py-1 rounded text-xs font-semibold ${
-                                ball === 'W' ? 'bg-red-100 text-red-800' :
-                                ball === '4' ? 'bg-green-100 text-green-800' :
-                                ball === '6' ? 'bg-purple-100 text-purple-800' :
-                                'bg-gray-100 text-gray-800'
-                              }`}
-                            >
-                              {ball}
-                            </span>
-                          ))}
+                {matchData.status === 'live' && (
+                  <div className="bg-white rounded-lg shadow-md p-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                      <Activity className="h-5 w-5 mr-2 text-blue-600" />
+                      Recent Overs
+                    </h3>
+                    <div className="space-y-2">
+                      {mockLiveData.recentOvers.map((over, index) => (
+                        <div key={index} className="flex items-center space-x-4">
+                          <span className="text-sm font-medium text-gray-600 w-16">
+                            Over {mockLiveData.recentOvers.length - index}:
+                          </span>
+                          <div className="flex space-x-2">
+                            {over.split(' ').map((ball, ballIndex) => (
+                              <span
+                                key={ballIndex}
+                                className={`px-2 py-1 rounded text-xs font-semibold ${
+                                  ball === 'W' ? 'bg-red-100 text-red-800' :
+                                  ball === '4' ? 'bg-green-100 text-green-800' :
+                                  ball === '6' ? 'bg-purple-100 text-purple-800' :
+                                  'bg-gray-100 text-gray-800'
+                                }`}
+                              >
+                                {ball}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Match Summary for completed matches */}
+                {matchData.status === 'completed' && (
+                  <div className="bg-white rounded-lg shadow-md p-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Match Summary</h3>
+                    <div className="space-y-4">
+                      <div className="p-4 bg-green-50 rounded-lg">
+                        <h4 className="font-semibold text-green-900 mb-2">Result</h4>
+                        <p className="text-green-800">
+                          {matchData.teams[0]} won by 42 runs
+                        </p>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="p-4 bg-gray-50 rounded-lg">
+                          <h5 className="font-semibold text-gray-900 mb-2">{matchData.teams[0]}</h5>
+                          <p className="text-gray-700">{getScoreDisplay(0)}</p>
+                        </div>
+                        <div className="p-4 bg-gray-50 rounded-lg">
+                          <h5 className="font-semibold text-gray-900 mb-2">{matchData.teams[1]}</h5>
+                          <p className="text-gray-700">{getScoreDisplay(1)}</p>
                         </div>
                       </div>
-                    ))}
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
 
               {/* Sidebar */}
               <div className="space-y-6">
-                {/* Match Summary */}
+                {/* Match Info */}
                 <div className="bg-white rounded-lg shadow-md p-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Match Summary</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Match Info</h3>
                   <div className="space-y-3 text-sm">
                     <div className="flex justify-between">
                       <span className="text-gray-600">Tournament:</span>
-                      <span className="font-medium">{fixture.tournament}</span>
+                      <span className="font-medium">{matchData.name}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-600">Venue:</span>
-                      <span className="font-medium">{fixture.venue}</span>
+                      <span className="font-medium">{matchData.venue}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-600">Date:</span>
-                      <span className="font-medium">{format(new Date(fixture.match_date), 'MMM dd, yyyy')}</span>
+                      <span className="font-medium">{formatDate(matchData.dateTimeGMT || matchData.date)}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Status:</span>
-                      <span className={`px-2 py-1 rounded-full text-xs font-semibold ${getStatusColor(fixture.status)}`}>
-                        {fixture.status.charAt(0).toUpperCase() + fixture.status.slice(1)}
-                      </span>
+                      <span className="text-gray-600">Match Type:</span>
+                      <span className="font-medium">{matchData.matchType}</span>
                     </div>
                   </div>
                 </div>
 
-                {/* Key Stats */}
-                <div className="bg-white rounded-lg shadow-md p-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Key Stats</h3>
-                  <div className="space-y-4 text-sm">
-                    <div>
-                      <div className="flex justify-between mb-1">
-                        <span className="text-gray-600">Highest Individual Score</span>
-                      </div>
-                      <div className="font-semibold">Virat Kohli - 45* (32 balls)</div>
+                {/* Live Updates Notice */}
+                {matchData.status === 'live' && (
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                    <div className="flex items-center mb-2">
+                      <span className="w-2 h-2 bg-red-500 rounded-full mr-2 animate-pulse"></span>
+                      <h4 className="font-semibold text-red-900">Live Updates</h4>
                     </div>
-                    <div>
-                      <div className="flex justify-between mb-1">
-                        <span className="text-gray-600">Best Bowling Figures</span>
-                      </div>
-                      <div className="font-semibold">J. Bumrah - 2/28 (3.4 overs)</div>
-                    </div>
-                    <div>
-                      <div className="flex justify-between mb-1">
-                        <span className="text-gray-600">Most Runs in Over</span>
-                      </div>
-                      <div className="font-semibold">18 runs (Over 15)</div>
-                    </div>
+                    <p className="text-red-800 text-sm">
+                      This scorecard updates automatically every 15 seconds during live matches.
+                    </p>
                   </div>
-                </div>
-
-                {/* Weather Info */}
-                <div className="bg-white rounded-lg shadow-md p-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Weather Conditions</h3>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Temperature:</span>
-                      <span className="font-medium">28°C</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Humidity:</span>
-                      <span className="font-medium">65%</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Wind:</span>
-                      <span className="font-medium">15 kmph</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Conditions:</span>
-                      <span className="font-medium">Partly Cloudy</span>
-                    </div>
-                  </div>
-                </div>
+                )}
               </div>
             </div>
           )}
