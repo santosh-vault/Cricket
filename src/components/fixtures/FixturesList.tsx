@@ -1,5 +1,5 @@
 import React from 'react';
-import { Trophy, RefreshCw, Clock, Globe } from 'lucide-react';
+import { Trophy, RefreshCw, Clock, Globe, Star } from 'lucide-react';
 import { FixtureCard } from './FixtureCard';
 import { useFixtures } from '../../hooks/useFixtures';
 import { format } from 'date-fns';
@@ -26,29 +26,33 @@ export const FixturesList: React.FC<FixturesListProps> = ({
     lastUpdated, 
     refreshFixtures, 
     getLiveMatchesCount, 
-    getInternationalMatchesCount 
+    getInternationalMatchesCount,
+    isInternationalMatch
   } = useFixtures(limit, autoRefresh);
 
   if (loading && fixtures.length === 0) {
     return (
-      <div className={`flex justify-center items-center py-8 ${className}`}>
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
-        <span className="ml-2 text-gray-600">Loading fixtures...</span>
+      <div className={`flex justify-center items-center py-12 ${className}`}>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
+          <span className="text-gray-600 font-medium">Loading cricket fixtures...</span>
+        </div>
       </div>
     );
   }
 
   if (error && fixtures.length === 0) {
     return (
-      <div className={`text-center py-8 ${className}`}>
-        <Trophy className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-        <p className="text-gray-600 mb-4">Failed to load fixtures</p>
+      <div className={`text-center py-12 ${className}`}>
+        <Trophy className="h-16 w-16 mx-auto mb-4 text-gray-400" />
+        <h3 className="text-lg font-semibold text-gray-900 mb-2">Failed to load fixtures</h3>
+        <p className="text-gray-600 mb-6">Unable to fetch cricket match data</p>
         <button
           onClick={refreshFixtures}
-          className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200"
+          className="inline-flex items-center px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200 font-semibold"
         >
-          <RefreshCw className="h-4 w-4 mr-2" />
-          Retry
+          <RefreshCw className="h-5 w-5 mr-2" />
+          Try Again
         </button>
       </div>
     );
@@ -56,9 +60,10 @@ export const FixturesList: React.FC<FixturesListProps> = ({
 
   if (fixtures.length === 0) {
     return (
-      <div className={`text-center py-8 ${className}`}>
-        <Trophy className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-        <p className="text-gray-600">No fixtures available at the moment</p>
+      <div className={`text-center py-12 ${className}`}>
+        <Trophy className="h-16 w-16 mx-auto mb-4 text-gray-400" />
+        <h3 className="text-lg font-semibold text-gray-900 mb-2">No fixtures available</h3>
+        <p className="text-gray-600">Check back later for upcoming cricket matches</p>
       </div>
     );
   }
@@ -70,48 +75,49 @@ export const FixturesList: React.FC<FixturesListProps> = ({
     return (
       <div className={className}>
         {showHeader && (
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center space-x-2">
-              <h3 className="text-lg font-semibold text-gray-900">Cricket Fixtures</h3>
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center space-x-3">
+              <h3 className="text-xl font-bold text-gray-900">Cricket Fixtures</h3>
               <div className="flex items-center space-x-2">
                 {liveMatchesCount > 0 && (
-                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                    <span className="w-2 h-2 bg-red-500 rounded-full mr-1 animate-pulse"></span>
+                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold bg-red-500 text-white shadow-md animate-pulse">
+                    <span className="w-2 h-2 bg-white rounded-full mr-2"></span>
                     {liveMatchesCount} Live
                   </span>
                 )}
                 {internationalMatchesCount > 0 && (
-                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                    <Globe className="h-3 w-3 mr-1" />
+                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold bg-green-500 text-white shadow-md">
+                    <Globe className="h-4 w-4 mr-1" />
                     {internationalMatchesCount} Int'l
                   </span>
                 )}
               </div>
             </div>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-3">
               {lastUpdated && (
-                <span className="text-xs text-gray-500">
+                <span className="text-sm text-gray-500 font-medium">
                   Updated {format(lastUpdated, 'HH:mm')}
                 </span>
               )}
               <button
                 onClick={refreshFixtures}
                 disabled={loading}
-                className="text-green-600 hover:text-green-700 p-1 rounded-md transition-colors duration-200 disabled:opacity-50"
+                className="text-green-600 hover:text-green-700 p-2 rounded-md transition-colors duration-200 disabled:opacity-50"
                 title="Refresh fixtures"
               >
-                <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+                <RefreshCw className={`h-5 w-5 ${loading ? 'animate-spin' : ''}`} />
               </button>
             </div>
           </div>
         )}
-        <div className="flex space-x-4 overflow-x-auto pb-2">
+        <div className="flex space-x-6 overflow-x-auto pb-4">
           {fixtures.map((fixture) => (
             <FixtureCard
               key={fixture.id}
               fixture={fixture}
               compact={true}
               showScore={true}
+              isInternational={isInternationalMatch(fixture)}
             />
           ))}
         </div>
@@ -122,49 +128,63 @@ export const FixturesList: React.FC<FixturesListProps> = ({
   return (
     <div className={className}>
       {showHeader && (
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center space-x-3">
-            <h2 className="text-2xl font-bold text-gray-900">Cricket Fixtures</h2>
-            <div className="flex items-center space-x-2">
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center space-x-4">
+            <h2 className="text-3xl font-bold text-gray-900">Cricket Fixtures</h2>
+            <div className="flex items-center space-x-3">
               {liveMatchesCount > 0 && (
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">
-                  <span className="w-2 h-2 bg-red-500 rounded-full mr-2 animate-pulse"></span>
+                <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-bold bg-red-500 text-white shadow-lg animate-pulse">
+                  <span className="w-2 h-2 bg-white rounded-full mr-2"></span>
                   {liveMatchesCount} Live Match{liveMatchesCount > 1 ? 'es' : ''}
                 </span>
               )}
               {internationalMatchesCount > 0 && (
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
-                  <Globe className="h-4 w-4 mr-2" />
+                <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-bold bg-green-500 text-white shadow-md">
+                  <Globe className="h-5 w-5 mr-2" />
                   {internationalMatchesCount} International
                 </span>
               )}
             </div>
           </div>
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-4">
             {lastUpdated && (
-              <div className="flex items-center text-sm text-gray-500">
-                <Clock className="h-4 w-4 mr-1" />
+              <div className="flex items-center text-sm text-gray-500 font-medium">
+                <Clock className="h-4 w-4 mr-2" />
                 Last updated: {format(lastUpdated, 'HH:mm:ss')}
               </div>
             )}
             <button
               onClick={refreshFixtures}
               disabled={loading}
-              className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200 disabled:opacity-50"
+              className="inline-flex items-center px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200 disabled:opacity-50 font-semibold shadow-md"
             >
-              <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+              <RefreshCw className={`h-5 w-5 mr-2 ${loading ? 'animate-spin' : ''}`} />
               Refresh
             </button>
           </div>
         </div>
       )}
-      <div className="space-y-4">
+      
+      {/* Priority notice for international matches */}
+      {internationalMatchesCount > 0 && (
+        <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+          <div className="flex items-center">
+            <Star className="h-5 w-5 text-green-600 mr-2" />
+            <span className="text-green-800 font-semibold">
+              International matches are prioritized and shown first
+            </span>
+          </div>
+        </div>
+      )}
+      
+      <div className="space-y-6">
         {fixtures.map((fixture) => (
           <FixtureCard
             key={fixture.id}
             fixture={fixture}
             compact={false}
             showScore={true}
+            isInternational={isInternationalMatch(fixture)}
           />
         ))}
       </div>

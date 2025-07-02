@@ -52,47 +52,92 @@ export const useFixtures = (limit?: number, autoRefresh: boolean = true) => {
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
-  // Function to determine if a match is international
+  // Enhanced function to determine if a match is international
   const isInternationalMatch = (fixture: Fixture): boolean => {
-    const internationalKeywords = [
-      'ICC', 'World Cup', 'T20 World Cup', 'ODI World Cup', 'Champions Trophy',
-      'Asia Cup', 'Test Championship', 'WTC', 'International', 'vs', 'Tour',
-      'Series', 'Ashes', 'Border-Gavaskar', 'Bilateral'
+    // Define country names and their variations
+    const countryTeams = [
+      // Full country names
+      'india', 'australia', 'england', 'south africa', 'new zealand', 'pakistan',
+      'sri lanka', 'bangladesh', 'west indies', 'afghanistan', 'zimbabwe', 'ireland',
+      'scotland', 'netherlands', 'nepal', 'oman', 'uae', 'united arab emirates',
+      'papua new guinea', 'namibia', 'kenya', 'uganda', 'canada', 'usa', 'united states',
+      
+      // Common abbreviations and variations
+      'ind', 'aus', 'eng', 'sa', 'nz', 'pak', 'sl', 'ban', 'wi', 'afg', 'zim', 'ire',
+      'sco', 'ned', 'nep', 'oma', 'png', 'nam', 'ken', 'uga', 'can',
+      
+      // Youth teams
+      'india u19', 'australia u19', 'england u19', 'south africa u19', 'new zealand u19',
+      'pakistan u19', 'sri lanka u19', 'bangladesh u19', 'west indies u19', 'afghanistan u19',
+      'india under 19', 'australia under 19', 'england under 19', 'south africa under 19',
+      
+      // Women's teams
+      'india women', 'australia women', 'england women', 'south africa women', 'new zealand women',
+      'pakistan women', 'sri lanka women', 'bangladesh women', 'west indies women',
+      'india w', 'australia w', 'england w', 'south africa w', 'new zealand w',
+      
+      // A teams and emerging teams
+      'india a', 'australia a', 'england a', 'south africa a', 'new zealand a',
+      'pakistan a', 'sri lanka a', 'bangladesh a'
     ];
-    
-    const domesticKeywords = [
-      'IPL', 'Indian Premier League', 'Big Bash', 'BBL', 'CPL', 'Caribbean Premier League',
-      'PSL', 'Pakistan Super League', 'The Hundred', 'County', 'Ranji', 'Duleep',
-      'Syed Mushtaq Ali', 'Vijay Hazare', 'Sheffield Shield', 'Plunket Shield'
+
+    // International tournament keywords
+    const internationalTournaments = [
+      'world cup', 'icc', 't20 world cup', 'odi world cup', 'champions trophy',
+      'asia cup', 'test championship', 'wtc', 'world test championship',
+      'bilateral', 'tour', 'series', 'ashes', 'border-gavaskar', 'trophy',
+      'international', 'tri-series', 'quadrangular', 'emerging teams',
+      'under 19 world cup', 'u19 world cup', 'women\'s world cup',
+      'commonwealth games', 'asian games'
+    ];
+
+    // Domestic league keywords (to exclude)
+    const domesticLeagues = [
+      'ipl', 'indian premier league', 'big bash', 'bbl', 'cpl', 'caribbean premier league',
+      'psl', 'pakistan super league', 'the hundred', 'county', 'ranji', 'duleep',
+      'syed mushtaq ali', 'vijay hazare', 'sheffield shield', 'plunket shield',
+      'royal london', 'vitality blast', 'natwest', 'friends provident',
+      'super smash', 'ford trophy', 'mzansi super league', 'csa t20',
+      'bangladesh premier league', 'bpl', 'afghanistan premier league', 'apl',
+      'everest premier league', 'epl', 'lanka premier league', 'lpl'
     ];
 
     const matchName = fixture.name?.toLowerCase() || '';
     const matchType = fixture.matchType?.toLowerCase() || '';
+    const venue = fixture.venue?.toLowerCase() || '';
     
-    // Check if it's explicitly domestic
-    const isDomestic = domesticKeywords.some(keyword => 
-      matchName.includes(keyword.toLowerCase()) || matchType.includes(keyword.toLowerCase())
+    // Check if it's explicitly a domestic league
+    const isDomestic = domesticLeagues.some(keyword => 
+      matchName.includes(keyword) || matchType.includes(keyword) || venue.includes(keyword)
     );
     
     if (isDomestic) return false;
-    
-    // Check if it's international
-    const isInternational = internationalKeywords.some(keyword => 
-      matchName.includes(keyword.toLowerCase()) || matchType.includes(keyword.toLowerCase())
+
+    // Check team names for country teams
+    const hasCountryTeams = fixture.teams?.some(team => {
+      const teamLower = team.toLowerCase().trim();
+      return countryTeams.some(country => {
+        // Exact match or team name contains country name
+        return teamLower === country || 
+               teamLower.includes(country) ||
+               // Handle cases like "India vs Australia"
+               teamLower.split(' ').some(word => word === country);
+      });
+    }) || false;
+
+    // Check for international tournament keywords
+    const hasInternationalKeywords = internationalTournaments.some(keyword => 
+      matchName.includes(keyword) || matchType.includes(keyword)
     );
-    
-    // Also check team names - if they are country names, it's likely international
-    const countryNames = [
-      'india', 'australia', 'england', 'south africa', 'new zealand', 'pakistan',
-      'sri lanka', 'bangladesh', 'west indies', 'afghanistan', 'zimbabwe', 'ireland',
-      'scotland', 'netherlands', 'nepal', 'oman', 'uae'
-    ];
-    
-    const hasCountryTeams = fixture.teams?.some(team => 
-      countryNames.includes(team.toLowerCase())
-    ) || false;
-    
-    return isInternational || hasCountryTeams;
+
+    // Additional checks for international matches
+    const hasVsInName = matchName.includes(' vs ') || matchName.includes(' v ');
+    const isTestOdiT20 = ['test', 'odi', 't20i', 't20 international'].some(format => 
+      matchType.includes(format) || matchName.includes(format)
+    );
+
+    // Return true if any international indicators are found
+    return hasCountryTeams || hasInternationalKeywords || (hasVsInName && isTestOdiT20);
   };
 
   const fetchFixtures = useCallback(async () => {
@@ -119,13 +164,7 @@ export const useFixtures = (limit?: number, autoRefresh: boolean = true) => {
                   match.matchStarted ? 'live' : 'upcoming'
         }));
 
-        // Sort fixtures with priority:
-        // 1. Live international matches
-        // 2. Live domestic matches
-        // 3. Upcoming international matches
-        // 4. Upcoming domestic matches
-        // 5. Completed international matches
-        // 6. Completed domestic matches
+        // Enhanced sorting with strict international priority
         processedFixtures.sort((a, b) => {
           const aIsInternational = isInternationalMatch(a);
           const bIsInternational = isInternationalMatch(b);
@@ -135,18 +174,27 @@ export const useFixtures = (limit?: number, autoRefresh: boolean = true) => {
           const aStatusOrder = statusOrder[a.status as keyof typeof statusOrder] ?? 3;
           const bStatusOrder = statusOrder[b.status as keyof typeof statusOrder] ?? 3;
           
-          // If different status, prioritize by status first
-          if (aStatusOrder !== bStatusOrder) {
-            return aStatusOrder - bStatusOrder;
-          }
-          
-          // Within same status, prioritize international matches
+          // Primary sort: International matches always come first
           if (aIsInternational !== bIsInternational) {
             return aIsInternational ? -1 : 1;
           }
           
-          // Within same status and type, sort by date
-          return new Date(a.dateTimeGMT || a.date).getTime() - new Date(b.dateTimeGMT || b.date).getTime();
+          // Secondary sort: Within same type (international/domestic), sort by status
+          if (aStatusOrder !== bStatusOrder) {
+            return aStatusOrder - bStatusOrder;
+          }
+          
+          // Tertiary sort: Within same status and type, sort by date
+          const aDate = new Date(a.dateTimeGMT || a.date).getTime();
+          const bDate = new Date(b.dateTimeGMT || b.date).getTime();
+          
+          // For live and upcoming matches, show sooner matches first
+          // For completed matches, show more recent matches first
+          if (a.status === 'completed') {
+            return bDate - aDate; // Newer completed matches first
+          } else {
+            return aDate - bDate; // Sooner upcoming/live matches first
+          }
         });
 
         // Apply limit if specified
@@ -209,6 +257,7 @@ export const useFixtures = (limit?: number, autoRefresh: boolean = true) => {
     lastUpdated,
     refreshFixtures,
     getLiveMatchesCount,
-    getInternationalMatchesCount
+    getInternationalMatchesCount,
+    isInternationalMatch
   };
 };
