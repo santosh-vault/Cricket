@@ -11,18 +11,20 @@ interface FixtureCardProps {
   isInternational?: boolean;
 }
 
-export const FixtureCard: React.FC<FixtureCardProps> = ({ 
+export const FixtureCard: React.FC<FixtureCardProps & { draggableProps?: any; dragHandleProps?: any; }> = ({ 
   fixture, 
   compact = false, 
   showScore = true,
-  isInternational = false
+  isInternational = false,
+  draggableProps = {},
+  dragHandleProps = {}
 }) => {
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
       case 'live':
-        return 'bg-red-500 text-white font-bold animate-pulse shadow-lg';
+        return 'bg-brand text-white font-bold animate-pulse shadow-lg';
       case 'upcoming':
-        return 'bg-blue-500 text-white font-semibold';
+        return 'bg-brand-light text-white font-semibold';
       case 'completed':
         return 'bg-gray-500 text-white font-medium';
       default:
@@ -66,8 +68,8 @@ export const FixtureCard: React.FC<FixtureCardProps> = ({
   const getCardBorder = () => {
     if (isInternational) {
       return fixture.status === 'live' 
-        ? 'border-2 border-red-400 shadow-lg ring-2 ring-red-200' 
-        : 'border-2 border-green-400 shadow-md';
+        ? 'border-1 border-brand shadow-lg ring-1 ring-brand-200' 
+        : 'border-1 border-brand-dark shadow-md';
     }
     return 'border border-gray-200';
   };
@@ -75,167 +77,93 @@ export const FixtureCard: React.FC<FixtureCardProps> = ({
   const CardContent = () => {
     if (compact) {
       return (
-        <div className={`min-w-[300px] bg-white rounded-xl p-5 shadow-sm hover:shadow-xl transition-all duration-300 flex-shrink-0 cursor-pointer group transform hover:-translate-y-1 ${getCardBorder()}`}>
+        <div {...draggableProps} {...dragHandleProps} className={`w-80 h-48 bg-white rounded-lg p-3 shadow-sm hover:shadow-xl transition-all duration-300 flex-shrink-0 cursor-pointer group transform hover:-translate-y-1 ${getCardBorder()}`}> 
           {/* Header with status and international badge */}
-          <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center justify-between mb-2">
             <div className="flex items-center space-x-2">
-              <span className={`px-3 py-1 rounded-full text-xs font-bold ${getStatusColor(fixture.status)}`}>
-                {fixture.status === 'live' ? '🔴 LIVE' : fixture.status.toUpperCase()}
-              </span>
+              <span className={`px-2 py-0.5 rounded-full text-xs font-bold font-sans ${getStatusColor(fixture.status)}`}>{fixture.status === 'live' ? '🔵 LIVE' : fixture.status.toUpperCase()}</span>
               {isInternational && (
-                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-bold bg-gradient-to-r from-green-500 to-green-600 text-white shadow-sm">
-                  <Globe className="h-3 w-3 mr-1" />
-                  INT'L
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-gradient-to-r from-brand to-brand-dark text-white shadow-sm font-sans">
+                  <Globe className="h-3 w-3 mr-1" />INT'L
                 </span>
               )}
             </div>
             <ExternalLink className="h-4 w-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-all duration-200" />
           </div>
-          
           {/* Tournament name */}
-          <div className="mb-3">
-            <span className="text-sm font-medium text-gray-700 line-clamp-1">{fixture.name}</span>
+          <div className="mb-1">
+            <span className="text-xs font-sans text-gray-700 line-clamp-1 max-w-[12rem] block truncate" title={fixture.name}>{fixture.name.length > 24 ? fixture.name.slice(0, 22) + '…' : fixture.name}</span>
           </div>
-          
           {/* Teams */}
-          <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center justify-between mb-2">
             <div className="flex-1 text-center">
-              <span className="font-bold text-gray-900 text-base block truncate">
-                {fixture.teams[0] || 'Team 1'}
-              </span>
+              <span className="font-bold text-brand text-base block truncate font-serif max-w-[7.5rem]" title={fixture.teams[0] || 'Team 1'}>{(fixture.teams[0] || 'Team 1').length > 16 ? (fixture.teams[0] || 'Team 1').slice(0, 14) + '…' : fixture.teams[0] || 'Team 1'}</span>
             </div>
-            <div className="px-3">
-              <span className="text-gray-500 font-bold text-lg">vs</span>
+            <div className="px-2">
+              <span className="text-gray-500 font-bold text-lg font-sans">vs</span>
             </div>
             <div className="flex-1 text-center">
-              <span className="font-bold text-gray-900 text-base block truncate">
-                {fixture.teams[1] || 'Team 2'}
-              </span>
+              <span className="font-bold text-brand text-base block truncate font-serif max-w-[7.5rem]" title={fixture.teams[1] || 'Team 2'}>{(fixture.teams[1] || 'Team 2').length > 16 ? (fixture.teams[1] || 'Team 2').slice(0, 14) + '…' : fixture.teams[1] || 'Team 2'}</span>
             </div>
           </div>
-          
           {/* Venue */}
-          <div className="mb-3">
-            <p className="text-sm text-gray-600 truncate flex items-center">
-              <MapPin className="h-3 w-3 mr-1 flex-shrink-0" />
-              {fixture.venue}
-            </p>
+          <div className="mb-1">
+            <p className="text-xs text-gray-600 truncate flex items-center font-sans"><MapPin className="h-3 w-3 mr-1 flex-shrink-0" />{fixture.venue}</p>
           </div>
-          
           {/* Date and Time */}
-          <div className="flex items-center justify-between text-sm text-gray-600 mb-3">
-            <span className="flex items-center">
-              <Calendar className="h-3 w-3 mr-1" />
-              {date}
-            </span>
-            <span className="flex items-center">
-              <Clock className="h-3 w-3 mr-1" />
-              {time}
-            </span>
+          <div className="flex items-center justify-between text-xs text-gray-600 mb-2 font-sans">
+            <span className="flex items-center"><Calendar className="h-3 w-3 mr-1" />{date}</span>
+            <span className="flex items-center"><Clock className="h-3 w-3 mr-1" />{time}</span>
           </div>
-          
           {/* Score Display */}
           {showScore && getScoreDisplay() && (
-            <div className="bg-gradient-to-r from-green-50 to-green-100 border border-green-200 rounded-lg px-3 py-2 mb-2">
-              <div className="text-green-800 font-bold text-sm text-center">
-                {getScoreDisplay()}
-              </div>
-            </div>
-          )}
-          
-          {/* Live indicator */}
-          {fixture.status === 'live' && (
-            <div className="text-center">
-              <span className="inline-flex items-center text-sm text-red-600 font-bold">
-                <span className="w-2 h-2 bg-red-500 rounded-full mr-2 animate-pulse"></span>
-                Live Updates
-              </span>
+            <div className="bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 rounded-lg px-2 py-1 mb-1">
+              <div className="text-blue-800 font-bold text-xs text-center font-sans">{getScoreDisplay()}</div>
             </div>
           )}
         </div>
       );
     }
-
     return (
-      <div className={`bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer group transform hover:-translate-y-1 ${getCardBorder()}`}>
-        <div className="p-6">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
-            <div className="flex-1">
-              {/* Header with badges */}
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center space-x-3">
-                  <span className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-bold ${getStatusColor(fixture.status)}`}>
-                    {fixture.status === 'live' ? '🔴 LIVE' : fixture.matchType?.toUpperCase() || 'MATCH'}
-                  </span>
-                  {isInternational && (
-                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold bg-gradient-to-r from-green-500 to-green-600 text-white shadow-md">
-                      <Globe className="h-4 w-4 mr-1" />
-                      International
-                    </span>
-                  )}
-                  <span className="text-base text-gray-700 font-semibold">{fixture.name}</span>
-                </div>
-                <ExternalLink className="h-5 w-5 text-gray-400 opacity-0 group-hover:opacity-100 transition-all duration-200" />
-              </div>
-              
-              {/* Teams section */}
-              <div className="mb-6">
-                <div className="flex items-center justify-center space-x-8 text-center">
-                  <div className="flex-1">
-                    <h3 className="text-xl font-bold text-gray-900 mb-1">
-                      {fixture.teams[0] || 'Team 1'}
-                    </h3>
-                  </div>
-                  <div className="px-4">
-                    <span className="text-3xl font-bold text-gray-400">vs</span>
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-xl font-bold text-gray-900 mb-1">
-                      {fixture.teams[1] || 'Team 2'}
-                    </h3>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Match details */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600 mb-4">
-                <div className="flex items-center">
-                  <Calendar className="h-4 w-4 mr-2 text-gray-400" />
-                  <span className="font-medium">{date}</span>
-                </div>
-                <div className="flex items-center">
-                  <Clock className="h-4 w-4 mr-2 text-gray-400" />
-                  <span className="font-medium">{time}</span>
-                </div>
-                <div className="flex items-center md:col-span-1">
-                  <MapPin className="h-4 w-4 mr-2 text-gray-400" />
-                  <span className="font-medium truncate">{fixture.venue}</span>
-                </div>
-              </div>
-              
-              {/* Score display */}
-              {showScore && getScoreDisplay() && (
-                <div className="mb-4">
-                  <div className="bg-gradient-to-r from-green-50 to-green-100 border-2 border-green-200 rounded-lg px-4 py-3 inline-block">
-                    <div className="text-green-800 font-bold text-lg">
-                      {getScoreDisplay()}
-                    </div>
-                  </div>
-                </div>
+      <div {...draggableProps} {...dragHandleProps} className={`w-[28rem] h-52 bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer group transform hover:-translate-y-1 ${getCardBorder()} p-4 mx-auto flex flex-col justify-between`}> 
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center space-x-2">
+              <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold font-sans ${getStatusColor(fixture.status)}`}>{fixture.status === 'live' ? '🔵 LIVE' : fixture.matchType?.toUpperCase() || 'MATCH'}</span>
+              {isInternational && (
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-gradient-to-r from-brand to-brand-dark text-white shadow-md font-sans"><Globe className="h-4 w-4 mr-1" />International</span>
               )}
-              
-              {/* Live indicator */}
-              {fixture.status === 'live' && (
-                <div className="mt-4">
-                  <span className="inline-flex items-center text-base text-red-600 font-bold">
-                    <span className="w-3 h-3 bg-red-500 rounded-full mr-2 animate-pulse"></span>
-                    Live Updates Available
-                  </span>
-                </div>
-              )}
+              <span className="text-base text-brand font-semibold font-serif max-w-[16rem] truncate block" title={fixture.name}>{fixture.name.length > 32 ? fixture.name.slice(0, 30) + '…' : fixture.name}</span>
+            </div>
+            <ExternalLink className="h-5 w-5 text-gray-400 opacity-0 group-hover:opacity-100 transition-all duration-200" />
+          </div>
+          {/* Teams section */}
+          <div className="mb-2">
+            <div className="flex items-center justify-center space-x-8 text-center">
+              <div className="flex-1">
+                <h3 className="text-lg font-bold text-brand mb-1 font-serif max-w-[10rem] truncate" title={fixture.teams[0] || 'Team 1'}>{(fixture.teams[0] || 'Team 1').length > 18 ? (fixture.teams[0] || 'Team 1').slice(0, 16) + '…' : fixture.teams[0] || 'Team 1'}</h3>
+              </div>
+              <div className="px-4">
+                <span className="text-2xl font-bold text-gray-400 font-sans">vs</span>
+              </div>
+              <div className="flex-1">
+                <h3 className="text-lg font-bold text-brand mb-1 font-serif max-w-[10rem] truncate" title={fixture.teams[1] || 'Team 2'}>{(fixture.teams[1] || 'Team 2').length > 18 ? (fixture.teams[1] || 'Team 2').slice(0, 16) + '…' : fixture.teams[1] || 'Team 2'}</h3>
+              </div>
             </div>
           </div>
+          {/* Match details */}
+          <div className="flex items-center justify-between text-xs text-gray-600 mb-2 font-sans">
+            <span className="flex items-center"><MapPin className="h-3 w-3 mr-1" />{fixture.venue}</span>
+            <span className="flex items-center"><Calendar className="h-3 w-3 mr-1" />{date}</span>
+            <span className="flex items-center"><Clock className="h-3 w-3 mr-1" />{time}</span>
+          </div>
         </div>
+        {/* Score Display */}
+        {showScore && getScoreDisplay() && (
+          <div className="bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 rounded-lg px-2 py-1 mb-1">
+            <div className="text-blue-800 font-bold text-xs text-center font-sans">{getScoreDisplay()}</div>
+          </div>
+        )}
       </div>
     );
   };

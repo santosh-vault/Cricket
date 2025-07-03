@@ -53,32 +53,32 @@ export const AdminLogin: React.FC = () => {
         description="Admin login page for CricNews content management system."
       />
 
-      <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-[#f8fafc] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 font-sans">
         <div className="max-w-md w-full space-y-8">
           <div className="text-center">
-            <Cricket className="mx-auto h-12 w-12 text-green-600" />
-            <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
+            <Cricket className="mx-auto h-12 w-12 text-blue-900" />
+            <h2 className="mt-6 text-3xl font-extrabold text-blue-900 font-sans">
               Admin Login
             </h2>
-            <p className="mt-2 text-sm text-gray-600">
+            <p className="mt-2 text-sm text-blue-700 font-sans">
               Sign in to access the admin dashboard
             </p>
           </div>
           
-          <form className="mt-8 space-y-6 bg-white p-8 rounded-lg shadow-md" onSubmit={handleSubmit}>
+          <form className="mt-8 space-y-6 bg-white p-8 rounded-lg shadow-xl font-sans text-blue-900" onSubmit={handleSubmit}>
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm">
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm font-sans">
                 {error}
               </div>
             )}
             
             <div className="space-y-4">
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="email" className="block text-sm font-medium text-blue-900 mb-1 font-sans">
                   Email Address
                 </label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-blue-400" />
                   <input
                     id="email"
                     name="email"
@@ -87,18 +87,18 @@ export const AdminLogin: React.FC = () => {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="pl-10 appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10"
+                    className="pl-10 appearance-none relative block w-full px-3 py-3 border border-blue-300 placeholder-blue-200 text-blue-900 rounded-md focus:outline-none focus:ring-blue-200 focus:border-blue-200 focus:z-10 font-sans"
                     placeholder="Enter your email"
                   />
                 </div>
               </div>
 
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="password" className="block text-sm font-medium text-blue-900 mb-1 font-sans">
                   Password
                 </label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-blue-400" />
                   <input
                     id="password"
                     name="password"
@@ -107,12 +107,12 @@ export const AdminLogin: React.FC = () => {
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="pl-10 pr-10 appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10"
+                    className="pl-10 pr-10 appearance-none relative block w-full px-3 py-3 border border-blue-300 placeholder-blue-200 text-blue-900 rounded-md focus:outline-none focus:ring-blue-200 focus:border-blue-200 focus:z-10 font-sans"
                     placeholder="Enter your password"
                   />
                   <button
                     type="button"
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-blue-400 hover:text-blue-700"
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
@@ -125,7 +125,7 @@ export const AdminLogin: React.FC = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+                className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-900 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 font-sans"
               >
                 {loading ? (
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
@@ -137,9 +137,9 @@ export const AdminLogin: React.FC = () => {
           </form>
 
           <div className="text-center">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-blue-700 font-sans">
               Don't have admin access?{' '}
-              <span className="text-green-600">Contact the system administrator</span>
+              <span className="text-blue-900 font-semibold">Contact the system administrator</span>
             </p>
           </div>
         </div>

@@ -21,12 +21,12 @@ export const Header: React.FC = () => {
   ];
 
   return (
-    <header className="bg-white shadow-lg sticky top-0 z-50">
+    <header className="bg-white shadow-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
-            <Cricket className="h-8 w-8 text-green-600" />
+            <Cricket className="h-8 w-8 text-brand-600" />
             <span className="text-2xl font-bold text-gray-900">CricNews</span>
           </Link>
 
@@ -36,7 +36,7 @@ export const Header: React.FC = () => {
               <Link
                 key={item.name}
                 to={item.path}
-                className="text-gray-700 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
+                className="text-gray-700 hover:text-brand-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
               >
                 {item.name}
               </Link>
@@ -50,9 +50,9 @@ export const Header: React.FC = () => {
                 {isAdmin && (
                   <Link
                     to="/admin"
-                    className="bg-green-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-green-700 transition-colors duration-200"
+                    className="bg-brand-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-brand-700 transition-colors duration-200"
                   >
-                    Admin
+                    Register
                   </Link>
                 )}
                 <div className="flex items-center space-x-2">
@@ -70,9 +70,9 @@ export const Header: React.FC = () => {
             ) : (
               <Link
                 to="/admin/login"
-                className="bg-green-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-green-700 transition-colors duration-200"
+                className="bg-blue-900 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-brand-700 transition-colors duration-200"
               >
-                Admin Login
+                Register
               </Link>
             )}
           </div>
@@ -81,7 +81,7 @@ export const Header: React.FC = () => {
           <div className="md:hidden">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-gray-700 hover:text-green-600 p-2 rounded-md"
+              className="text-gray-700 hover:text-brand-600 p-2 rounded-md"
             >
               {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
@@ -96,7 +96,7 @@ export const Header: React.FC = () => {
                 <Link
                   key={item.name}
                   to={item.path}
-                  className="text-gray-700 hover:text-green-600 px-3 py-2 rounded-md text-base font-medium block transition-colors duration-200"
+                  className="text-gray-700 hover:text-brand-600 px-3 py-2 rounded-md text-base font-medium block transition-colors duration-200"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {item.name}
@@ -107,10 +107,10 @@ export const Header: React.FC = () => {
                   {isAdmin && (
                     <Link
                       to="/admin"
-                      className="bg-green-600 text-white px-3 py-2 rounded-md text-base font-medium block hover:bg-green-700 transition-colors duration-200"
+                      className="bg-brand-600 text-white px-3 py-2 rounded-md text-base font-medium block hover:bg-brand-700 transition-colors duration-200"
                       onClick={() => setIsMenuOpen(false)}
                     >
-                      Admin Dashboard
+                      Register
                     </Link>
                   )}
                   <button
@@ -123,10 +123,10 @@ export const Header: React.FC = () => {
               ) : (
                 <Link
                   to="/admin/login"
-                  className="bg-green-600 text-white px-3 py-2 rounded-md text-base font-medium block hover:bg-green-700 transition-colors duration-200"
+                  className="bg-brand-600 text-white px-3 py-2 rounded-md text-base font-medium block hover:bg-brand-700 transition-colors duration-200"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  Admin Login
+                  Register
                 </Link>
               )}
             </div>

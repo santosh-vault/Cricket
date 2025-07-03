@@ -169,49 +169,45 @@ export const Blogs: React.FC = () => {
               ) : (
                 <div className="flex flex-col gap-6">
                   {blogs.map((blog) => (
-                    <article
-                      key={blog.id}
-                      className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-200 w-full flex flex-row"
-                    >
-                      {/* Left: Image */}
-                      <div className="w-32 h-32 bg-gray-200 flex items-center justify-center flex-shrink-0">
-                        {blog.thumbnail_url ? (
-                          <img
-                            src={blog.thumbnail_url}
-                            alt={blog.title}
-                            className="w-full h-full object-cover rounded-l-lg"
-                          />
-                        ) : (
-                          <div className="text-gray-400 text-center">
-                            <BookOpen className="h-8 w-8 mx-auto mb-2" />
-                            <p>Analysis</p>
-                          </div>
-                        )}
-                      </div>
-                      {/* Right: Text content */}
-                      <div className="flex-1 p-4 flex flex-col justify-between">
-                        <div>
-                          <div className="flex items-center justify-between text-xs text-gray-500 mb-2">
-                            <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-semibold">
-                              {blog.category}
-                            </span>
-                            <span>{format(new Date(blog.created_at), 'MMM dd, yyyy')}</span>
-                          </div>
-                          <h3 className="text-base font-semibold text-gray-900 mb-2 line-clamp-2">
-                            {blog.title}
-                          </h3>
-                          <p className="text-gray-600 text-xs mb-3 line-clamp-3">
-                            {blog.content.replace(/<[^>]*>/g, '').substring(0, 120)}...
-                          </p>
+                    <Link key={blog.id} to={`/blogs/${blog.slug}`} className="block">
+                      <article className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-200 w-full flex flex-row cursor-pointer group">
+                        {/* Left: Image */}
+                        <div className="w-40 h-40 bg-gray-200 flex items-center justify-center flex-shrink-0">
+                          {blog.thumbnail_url ? (
+                            <img
+                              src={blog.thumbnail_url}
+                              alt={blog.title}
+                              className="w-full h-full object-cover rounded-l-lg"
+                            />
+                          ) : (
+                            <div className="text-gray-400 text-center">
+                              <BookOpen className="h-8 w-8 mx-auto mb-2" />
+                              <p>Analysis</p>
+                            </div>
+                          )}
                         </div>
-                        <Link
-                          to={`/blogs/${blog.slug}`}
-                          className="text-blue-600 hover:text-blue-700 font-semibold text-xs transition-colors duration-200 mt-2"
-                        >
-                          Read Full Analysis →
-                        </Link>
-                      </div>
-                    </article>
+                        {/* Right: Text content */}
+                        <div className="flex-1 p-4 flex flex-col justify-between">
+                          <div>
+                            <div className="flex items-center justify-between text-xs text-gray-500 mb-2">
+                              <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-semibold">
+                                {blog.category}
+                              </span>
+                              <span>{format(new Date(blog.created_at), 'MMM dd, yyyy')}</span>
+                            </div>
+                            <h3 className="text-2xl font-bold text-blue-900 mb-2 line-clamp-2 font-serif group-hover:underline">
+                              {blog.title}
+                            </h3>
+                            <p className="text-gray-700 text-sm mb-3 line-clamp-3 font-sans">
+                              {blog.content.replace(/<[^>]*>/g, '').substring(0, 120)}...
+                            </p>
+                          </div>
+                          <span className="text-brand-600 hover:text-brand-700 font-semibold text-xs transition-colors duration-200 mt-2 font-sans">
+                            Read Full Analysis →
+                          </span>
+                        </div>
+                      </article>
+                    </Link>
                   ))}
                 </div>
               )}

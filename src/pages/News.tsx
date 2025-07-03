@@ -169,7 +169,7 @@ export const News: React.FC = () => {
         </section>
         
         {/* News and Sidebar Section */}
-        <section className="py-8">
+        <section className="py-8 border-b-4 border-blue-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row gap-8">
             {/* Main News (75%) - left side */}
             <div className="w-full md:w-3/4">
@@ -185,56 +185,58 @@ export const News: React.FC = () => {
               ) : (
                 <div className="flex flex-col gap-6">
                   {news.map((article) => (
-                    <article
+                    <Link
                       key={article.id}
-                      className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-200 w-full flex flex-row"
+                      to={`/news/${article.slug}`}
+                      className="block"
                     >
-                      {/* Left: Image */}
-                      <div className="w-32 h-32 bg-gray-200 flex items-center justify-center flex-shrink-0">
-                        {article.thumbnail_url ? (
-                          <img
-                            src={article.thumbnail_url}
-                            alt={article.title}
-                            className="w-full h-full object-cover rounded-l-lg"
-                          />
-                        ) : (
-                          <div className="text-gray-400 text-center">
-                            <Trophy className="h-8 w-8 mx-auto mb-2" />
-                            <p>Cricket News</p>
-                          </div>
-                        )}
-                      </div>
-                      {/* Right: Text content */}
-                      <div className="flex-1 p-4 flex flex-col justify-between">
-                        <div>
-                          <div className="flex items-center justify-between text-xs text-gray-500 mb-2">
-                            <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-semibold">
-                              {article.category}
-                            </span>
-                            <span>{format(new Date(article.created_at), 'MMM dd, yyyy')}</span>
-                          </div>
-                          <h3 className="text-base font-semibold text-gray-900 mb-2 line-clamp-2">
-                            {article.title}
-                          </h3>
-                          <p className="text-gray-600 text-xs mb-3 line-clamp-3">
-                            {article.content.replace(/<[^>]*>/g, '').substring(0, 120)}...
-                          </p>
+                      <article
+                        className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-200 w-full flex flex-row cursor-pointer group"
+                      >
+                        {/* Left: Image */}
+                        <div className="w-40 h-40 bg-blue-200 flex items-center justify-center flex-shrink-0">
+                          {article.thumbnail_url ? (
+                            <img
+                              src={article.thumbnail_url}
+                              alt={article.title}
+                              className="w-full h-full object-cover rounded-l-lg"
+                            />
+                          ) : (
+                            <div className="text-blue-400 text-center">
+                              <Trophy className="h-8 w-8 mx-auto mb-2" />
+                              <p>Cricket News</p>
+                            </div>
+                          )}
                         </div>
-                        <Link
-                          to={`/news/${article.slug}`}
-                          className="text-green-600 hover:text-green-700 font-semibold text-xs transition-colors duration-200 mt-2"
-                        >
-                          Read Full Story →
-                        </Link>
-                      </div>
-                    </article>
+                        {/* Right: Text content */}
+                        <div className="flex-1 p-4 flex flex-col justify-between">
+                          <div>
+                            <div className="flex items-center justify-between text-xs text-gray-500 mb-2">
+                              <span className="bg-brand-100 text-brand-800 px-2 py-1 rounded-full text-xs font-semibold">
+                                {article.category}
+                              </span>
+                              <span>{format(new Date(article.created_at), 'MMM dd, yyyy')}</span>
+                            </div>
+                            <h3 className="text-2xl font-bold text-blue-900 mb-2 line-clamp-2 font-serif group-hover:underline">
+                              {article.title}
+                            </h3>
+                            <p className="text-gray-700 text-sm mb-3 line-clamp-3 font-sans">
+                              {article.content.replace(/<[^>]*>/g, '').substring(0, 120)}...
+                            </p>
+                          </div>
+                          <span className="text-brand-600 hover:text-brand-700 font-semibold text-xs transition-colors duration-200 mt-2 font-sans">
+                            Read Full Story →
+                          </span>
+                        </div>
+                      </article>
+                    </Link>
                   ))}
                 </div>
               )}
             </div>
             {/* Most Read News (25%) - right side */}
             <aside className="w-full md:w-1/4">
-              <h3 className="text-base font-bold text-green-900 mb-4">Most Read News</h3>
+              <h3 className="text-base font-bold text-blue-900 mb-4 font-serif">Most Read News</h3>
               <div className="flex flex-col gap-4">
                 {news.slice(0, 5).map((article) => (
                   <div

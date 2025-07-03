@@ -105,16 +105,16 @@ export const FixturesManager: React.FC = () => {
   };
 
   const FixturesList = () => (
-    <div className="space-y-6">
+    <div className="space-y-6 font-sans">
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Cricket Fixtures</h2>
-          <p className="text-gray-600">Manage match schedules and fixtures</p>
+          <h2 className="text-2xl font-bold text-blue-900 font-sans">Cricket Fixtures</h2>
+          <p className="text-blue-700 font-sans">Manage match schedules and fixtures</p>
         </div>
         <Link
           to="/admin/fixtures/new"
-          className="bg-green-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-green-700 transition-colors duration-200 flex items-center"
+          className="bg-blue-900 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-800 transition-colors duration-200 flex items-center font-sans"
         >
           <Plus className="h-4 w-4 mr-2" />
           Add Fixture
@@ -122,15 +122,15 @@ export const FixturesManager: React.FC = () => {
       </div>
 
       {/* Filter */}
-      <div className="flex space-x-2">
+      <div className="flex space-x-2 font-sans">
         {(['all', 'upcoming', 'live', 'completed'] as const).map((status) => (
           <button
             key={status}
             onClick={() => setFilter(status)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 ${
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 font-sans ${
               filter === status
-                ? 'bg-green-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                ? 'bg-blue-900 text-white'
+                : 'bg-gray-100 text-blue-900 hover:bg-blue-50'
             }`}
           >
             {status.charAt(0).toUpperCase() + status.slice(1)}
@@ -140,29 +140,29 @@ export const FixturesManager: React.FC = () => {
 
       {/* Fixtures List */}
       {loading ? (
-        <div className="bg-white shadow rounded-lg p-8 text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto"></div>
-          <p className="mt-2 text-gray-600">Loading fixtures...</p>
+        <div className="bg-white shadow rounded-lg p-8 text-center font-sans">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-900 mx-auto"></div>
+          <p className="mt-2 text-blue-700 font-sans">Loading fixtures...</p>
         </div>
       ) : fixtures.length === 0 ? (
-        <div className="bg-white shadow rounded-lg p-8 text-center">
-          <Trophy className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-          <p className="text-gray-600">No fixtures found.</p>
+        <div className="bg-white shadow rounded-lg p-8 text-center font-sans">
+          <Trophy className="h-12 w-12 mx-auto mb-4 text-blue-400" />
+          <p className="text-blue-700 font-sans">No fixtures found.</p>
           <Link
             to="/admin/fixtures/new"
-            className="mt-4 inline-block bg-green-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-green-700 transition-colors duration-200"
+            className="mt-4 inline-block bg-blue-900 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-800 transition-colors duration-200 font-sans"
           >
             Add your first fixture
           </Link>
         </div>
       ) : (
-        <div className="bg-white shadow overflow-hidden rounded-lg">
-          <div className="px-4 py-5 sm:p-6">
-            <div className="space-y-4">
+        <div className="bg-white shadow overflow-hidden rounded-lg font-sans">
+          <div className="px-4 py-5 sm:p-6 font-sans">
+            <div className="space-y-4 font-sans">
               {fixtures.map((fixture) => (
                 <div
                   key={fixture.id}
-                  className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow duration-200"
+                  className="border border-blue-200 rounded-lg p-4 hover:shadow-md transition-shadow duration-200 font-sans"
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex-1">
@@ -170,28 +170,28 @@ export const FixturesManager: React.FC = () => {
                         <select
                           value={fixture.status}
                           onChange={(e) => updateStatus(fixture.id, e.target.value as any)}
-                          className={`px-2 py-1 rounded-full text-xs font-semibold border-0 ${getStatusColor(fixture.status)}`}
+                          className={`px-2 py-1 rounded-full text-xs font-semibold border-0 font-sans ${getStatusColor(fixture.status)}`}
                         >
                           <option value="upcoming">Upcoming</option>
                           <option value="live">Live</option>
                           <option value="completed">Completed</option>
                         </select>
-                        <span className="text-sm text-gray-600 font-medium">{fixture.tournament}</span>
+                        <span className="text-sm text-blue-700 font-medium font-sans">{fixture.tournament}</span>
                       </div>
                       
                       <div className="flex items-center justify-center space-x-4 text-center mb-3">
                         <div className="flex-1">
-                          <h3 className="font-semibold text-gray-900">{fixture.team1}</h3>
+                          <h3 className="font-semibold text-blue-900 font-sans">{fixture.team1}</h3>
                         </div>
                         <div className="px-3">
-                          <span className="text-lg font-bold text-gray-400">vs</span>
+                          <span className="text-lg font-bold text-blue-400">vs</span>
                         </div>
                         <div className="flex-1">
-                          <h3 className="font-semibold text-gray-900">{fixture.team2}</h3>
+                          <h3 className="font-semibold text-blue-900 font-sans">{fixture.team2}</h3>
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-sm text-gray-600">
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-sm text-blue-700 font-sans">
                         <div className="flex items-center">
                           <Calendar className="h-4 w-4 mr-1" />
                           <span>{format(new Date(fixture.match_date), 'MMM dd, yyyy')}</span>
@@ -210,7 +210,7 @@ export const FixturesManager: React.FC = () => {
                     <div className="flex items-center space-x-2 ml-4">
                       <Link
                         to={`/admin/fixtures/${fixture.id}/edit`}
-                        className="text-green-600 hover:text-green-900 p-1"
+                        className="text-blue-600 hover:text-blue-900 p-1"
                       >
                         <Edit className="h-4 w-4" />
                       </Link>

@@ -105,16 +105,9 @@ export const DashboardOverview: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 font-sans">
       {/* Welcome Section */}
-      <div className="bg-white shadow rounded-lg">
-        <div className="px-4 py-5 sm:p-6">
-          <h3 className="text-lg leading-6 font-medium text-gray-900">Welcome to Admin Dashboard</h3>
-          <div className="mt-2 max-w-xl text-sm text-gray-500">
-            <p>Manage your cricket news platform from this central dashboard. Monitor content, track engagement, and manage fixtures all in one place.</p>
-          </div>
-        </div>
-      </div>
+   
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
@@ -123,19 +116,16 @@ export const DashboardOverview: React.FC = () => {
             <div className="p-5">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
-                  <div className={`p-2 rounded-md ${item.color}`}>
+                  <div className={`p-2 rounded-md bg-blue-500`}>
                     <item.icon className="h-6 w-6 text-white" />
                   </div>
                 </div>
                 <div className="ml-5 w-0 flex-1">
                   <dl>
-                    <dt className="text-sm font-medium text-gray-500 truncate">{item.name}</dt>
+                    <dt className="text-sm font-medium text-blue-500 truncate">{item.name}</dt>
                     <dd className="flex items-baseline">
-                      <div className="text-2xl font-semibold text-gray-900">{item.value}</div>
-                      <div className={`ml-2 flex items-baseline text-sm font-semibold ${
-                        item.changeType === 'increase' ? 'text-green-600' : 
-                        item.changeType === 'decrease' ? 'text-red-600' : 'text-gray-500'
-                      }`}>
+                      <div className="text-2xl font-semibold text-blue-900">{item.value}</div>
+                      <div className={`ml-2 flex items-baseline text-sm font-semibold text-blue-700`}>
                         {item.changeType === 'increase' && <TrendingUp className="self-center flex-shrink-0 h-4 w-4 mr-1" />}
                         <span className="sr-only">
                           {item.changeType === 'increase' ? 'Increased' : item.changeType === 'decrease' ? 'Decreased' : 'No change'} by
@@ -152,55 +142,55 @@ export const DashboardOverview: React.FC = () => {
       </div>
 
       {/* Quick Actions */}
-      <div className="bg-white shadow rounded-lg">
+      <div className="bg-white shadow rounded-lg font-sans">
         <div className="px-4 py-5 sm:p-6">
-          <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">Quick Actions</h3>
+          <h3 className="text-lg leading-6 font-medium text-blue-900 mb-4">Quick Actions</h3>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <Link to="/admin/news/new" className="bg-green-50 hover:bg-green-100 border border-green-200 rounded-lg p-4 text-left transition-colors duration-200 block">
-              <FileText className="h-8 w-8 text-green-600 mb-2" />
-              <h4 className="text-sm font-medium text-green-900">Create News Article</h4>
-              <p className="text-xs text-green-700">Add new cricket news</p>
+            <Link to="/admin/news/new" className="bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg p-4 text-left transition-colors duration-200 block">
+              <FileText className="h-8 w-8 text-blue-600 mb-2" />
+              <h4 className="text-sm font-medium text-blue-900">Create News Article</h4>
+              <p className="text-xs text-blue-700">Add new cricket news</p>
             </Link>
             <Link to="/admin/blogs/new" className="bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg p-4 text-left transition-colors duration-200 block">
               <BookOpen className="h-8 w-8 text-blue-600 mb-2" />
               <h4 className="text-sm font-medium text-blue-900">Write Blog Post</h4>
               <p className="text-xs text-blue-700">Create analysis content</p>
             </Link>
-            <Link to="/admin/fixtures/new" className="bg-yellow-50 hover:bg-yellow-100 border border-yellow-200 rounded-lg p-4 text-left transition-colors duration-200 block">
-              <Calendar className="h-8 w-8 text-yellow-600 mb-2" />
-              <h4 className="text-sm font-medium text-yellow-900">Add Fixture</h4>
-              <p className="text-xs text-yellow-700">Schedule new match</p>
+            <Link to="/admin/fixtures/new" className="bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg p-4 text-left transition-colors duration-200 block">
+              <Calendar className="h-8 w-8 text-blue-600 mb-2" />
+              <h4 className="text-sm font-medium text-blue-900">Add Fixture</h4>
+              <p className="text-xs text-blue-700">Schedule new match</p>
             </Link>
-            <button className="bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg p-4 text-left transition-colors duration-200 block cursor-not-allowed" disabled>
-              <Trophy className="h-8 w-8 text-red-600 mb-2" />
-              <h4 className="text-sm font-medium text-red-900">Update Scorecard</h4>
-              <p className="text-xs text-red-700">Manage live scores</p>
+            <button className="bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg p-4 text-left transition-colors duration-200 block cursor-not-allowed" disabled>
+              <Trophy className="h-8 w-8 text-blue-600 mb-2" />
+              <h4 className="text-sm font-medium text-blue-900">Update Scorecard</h4>
+              <p className="text-xs text-blue-700">Manage live scores</p>
             </button>
           </div>
         </div>
       </div>
 
       {/* Recent Activity */}
-      <div className="bg-white shadow rounded-lg">
+      <div className="bg-white shadow rounded-lg font-sans">
         <div className="px-4 py-5 sm:p-6">
-          <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">Recent Activity</h3>
+          <h3 className="text-lg leading-6 font-medium text-blue-900 mb-4">Recent Activity</h3>
           <div className="flow-root">
             <ul className="-mb-8">
               <li>
                 <div className="relative pb-8">
                   <div className="relative flex space-x-3">
                     <div>
-                      <span className="h-8 w-8 rounded-full bg-green-500 flex items-center justify-center ring-8 ring-white">
+                      <span className="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center ring-8 ring-white">
                         <FileText className="h-4 w-4 text-white" />
                       </span>
                     </div>
                     <div className="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
                       <div>
-                        <p className="text-sm text-gray-500">
-                          Published <span className="font-medium text-gray-900">new cricket article</span>
+                        <p className="text-sm text-blue-700">
+                          Published <span className="font-medium text-blue-900">new cricket article</span>
                         </p>
                       </div>
-                      <div className="text-right text-sm whitespace-nowrap text-gray-500">
+                      <div className="text-right text-sm whitespace-nowrap text-blue-700">
                         <time>2 hours ago</time>
                       </div>
                     </div>
@@ -217,11 +207,11 @@ export const DashboardOverview: React.FC = () => {
                     </div>
                     <div className="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
                       <div>
-                        <p className="text-sm text-gray-500">
-                          Added <span className="font-medium text-gray-900">new fixture</span> for upcoming match
+                        <p className="text-sm text-blue-700">
+                          Added <span className="font-medium text-blue-900">new fixture</span> for upcoming match
                         </p>
                       </div>
-                      <div className="text-right text-sm whitespace-nowrap text-gray-500">
+                      <div className="text-right text-sm whitespace-nowrap text-blue-700">
                         <time>5 hours ago</time>
                       </div>
                     </div>
@@ -232,17 +222,17 @@ export const DashboardOverview: React.FC = () => {
                 <div className="relative">
                   <div className="relative flex space-x-3">
                     <div>
-                      <span className="h-8 w-8 rounded-full bg-yellow-500 flex items-center justify-center ring-8 ring-white">
+                      <span className="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center ring-8 ring-white">
                         <Trophy className="h-4 w-4 text-white" />
                       </span>
                     </div>
                     <div className="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
                       <div>
-                        <p className="text-sm text-gray-500">
-                          Updated <span className="font-medium text-gray-900">live scorecard</span>
+                        <p className="text-sm text-blue-700">
+                          Updated <span className="font-medium text-blue-900">live scorecard</span>
                         </p>
                       </div>
-                      <div className="text-right text-sm whitespace-nowrap text-gray-500">
+                      <div className="text-right text-sm whitespace-nowrap text-blue-700">
                         <time>1 day ago</time>
                       </div>
                     </div>

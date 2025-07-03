@@ -3,6 +3,7 @@ import { Trophy, RefreshCw, Clock, Globe, Star } from 'lucide-react';
 import { FixtureCard } from './FixtureCard';
 import { useFixtures } from '../../hooks/useFixtures';
 import { format } from 'date-fns';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 interface FixturesListProps {
   limit?: number;
@@ -30,6 +31,16 @@ export const FixturesList: React.FC<FixturesListProps> = ({
     isInternationalMatch
   } = useFixtures(limit, autoRefresh);
 
+  const [fixtureOrder, setFixtureOrder] = React.useState(fixtures.map(f => f.id));
+  React.useEffect(() => { setFixtureOrder(fixtures.map(f => f.id)); }, [fixtures]);
+  const onDragEnd = (result: any) => {
+    if (!result.destination) return;
+    const newOrder = Array.from(fixtureOrder);
+    const [removed] = newOrder.splice(result.source.index, 1);
+    newOrder.splice(result.destination.index, 0, removed);
+    setFixtureOrder(newOrder);
+  };
+
   if (loading && fixtures.length === 0) {
     return (
       <div className={`flex justify-center items-center py-12 ${className}`}>
@@ -49,7 +60,7 @@ export const FixturesList: React.FC<FixturesListProps> = ({
         <p className="text-gray-600 mb-6">Unable to fetch cricket match data</p>
         <button
           onClick={refreshFixtures}
-          className="inline-flex items-center px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200 font-semibold"
+          className="inline-flex items-center px-6 py-3 bg-brand-600 text-white rounded-lg hover:bg-brand-700 transition-colors duration-200 font-semibold"
         >
           <RefreshCw className="h-5 w-5 mr-2" />
           Try Again
@@ -73,7 +84,7 @@ export const FixturesList: React.FC<FixturesListProps> = ({
 
   if (compact) {
     return (
-      <div className={className}>
+      <div className={className + ' font-serif'}>
         {showHeader && (
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center space-x-3">
@@ -110,23 +121,40 @@ export const FixturesList: React.FC<FixturesListProps> = ({
             </div>
           </div>
         )}
-        <div className="flex space-x-6 overflow-x-auto pb-4">
-          {fixtures.map((fixture) => (
-            <FixtureCard
-              key={fixture.id}
-              fixture={fixture}
-              compact={true}
-              showScore={true}
-              isInternational={isInternationalMatch(fixture)}
-            />
-          ))}
-        </div>
+        <DragDropContext onDragEnd={onDragEnd}>
+          <Droppable droppableId="fixtures-droppable" direction="horizontal">
+            {(provided) => (
+              <div className="flex space-x-4 overflow-x-auto pb-4" ref={provided.innerRef} {...provided.droppableProps}>
+                {fixtureOrder.map((id, idx) => {
+                  const fixture = fixtures.find(f => f.id === id);
+                  if (!fixture) return null;
+                  return (
+                    <Draggable key={fixture.id} draggableId={fixture.id} index={idx}>
+                      {(provided) => (
+                        <FixtureCard
+                          fixture={fixture}
+                          compact={true}
+                          showScore={true}
+                          isInternational={isInternationalMatch(fixture)}
+                          draggableProps={provided.draggableProps}
+                          dragHandleProps={provided.dragHandleProps}
+                          ref={provided.innerRef}
+                        />
+                      )}
+                    </Draggable>
+                  );
+                })}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
       </div>
     );
   }
 
   return (
-    <div className={className}>
+    <div className={className + ' font-serif'}>
       {showHeader && (
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center space-x-4">
@@ -177,17 +205,34 @@ export const FixturesList: React.FC<FixturesListProps> = ({
         </div>
       )}
       
-      <div className="space-y-6">
-        {fixtures.map((fixture) => (
-          <FixtureCard
-            key={fixture.id}
-            fixture={fixture}
-            compact={false}
-            showScore={true}
-            isInternational={isInternationalMatch(fixture)}
-          />
-        ))}
-      </div>
+      <DragDropContext onDragEnd={onDragEnd}>
+        <Droppable droppableId="fixtures-droppable-list" direction="vertical">
+          {(provided) => (
+            <div className="space-y-4" ref={provided.innerRef} {...provided.droppableProps}>
+              {fixtureOrder.map((id, idx) => {
+                const fixture = fixtures.find(f => f.id === id);
+                if (!fixture) return null;
+                return (
+                  <Draggable key={fixture.id} draggableId={fixture.id} index={idx}>
+                    {(provided) => (
+                      <FixtureCard
+                        fixture={fixture}
+                        compact={false}
+                        showScore={true}
+                        isInternational={isInternationalMatch(fixture)}
+                        draggableProps={provided.draggableProps}
+                        dragHandleProps={provided.dragHandleProps}
+                        ref={provided.innerRef}
+                      />
+                    )}
+                  </Draggable>
+                );
+              })}
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
+      </DragDropContext>
     </div>
   );
 };

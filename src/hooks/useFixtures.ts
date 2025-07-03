@@ -51,6 +51,7 @@ export const useFixtures = (limit?: number, autoRefresh: boolean = true) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [isManual, setIsManual] = useState(false);
 
   // Enhanced function to determine if a match is international
   const isInternationalMatch = (fixture: Fixture): boolean => {
@@ -144,28 +145,23 @@ export const useFixtures = (limit?: number, autoRefresh: boolean = true) => {
     try {
       setLoading(true);
       setError(null);
-      
+      setIsManual(false);
       const response = await fetch('/api/fixtures');
       if (!response.ok) {
         throw new Error('Failed to fetch fixtures');
       }
-      
-      const data: ApiResponse = await response.json();
-      
-      if (data.status === 'success' && data.data) {
-        let processedFixtures = data.data.map(match => ({
+      const data = await response.json();
+      if ((data.status === 'success' || data.status === 'ok') && data.data) {
+        let processedFixtures = data.data.map((match: Fixture) => ({
           ...match,
-          // Ensure we have proper team names
           teams: match.teams || [],
-          // Format the date properly
           date: match.dateTimeGMT || match.date,
-          // Determine status based on match state
           status: match.matchEnded ? 'completed' : 
                   match.matchStarted ? 'live' : 'upcoming'
         }));
 
         // Enhanced sorting with strict international priority
-        processedFixtures.sort((a, b) => {
+        processedFixtures.sort((a: Fixture, b: Fixture) => {
           const aIsInternational = isInternationalMatch(a);
           const bIsInternational = isInternationalMatch(b);
           
@@ -204,13 +200,38 @@ export const useFixtures = (limit?: number, autoRefresh: boolean = true) => {
 
         setFixtures(processedFixtures);
         setLastUpdated(new Date());
+      } else if (data.status === 'manual' && data.data) {
+        // Manual fallback: map manual fixture fields to expected structure
+        setIsManual(true);
+        let processedFixtures = data.data.map((match: any) => ({
+          id: match.id,
+          name: `${match.team1} vs ${match.team2}`,
+          matchType: match.tournament || '',
+          status: match.status || 'upcoming',
+          venue: match.venue || '',
+          date: match.match_date || '',
+          dateTimeGMT: match.match_date || '',
+          teams: [match.team1, match.team2],
+          teamInfo: [],
+          score: [],
+          series_id: '',
+          fantasyEnabled: false,
+          bbbEnabled: false,
+          hasSquad: false,
+          matchStarted: match.status === 'live',
+          matchEnded: match.status === 'completed',
+        }));
+        if (limit) {
+          processedFixtures = processedFixtures.slice(0, limit);
+        }
+        setFixtures(processedFixtures);
+        setLastUpdated(new Date());
       } else {
         throw new Error('Invalid API response');
       }
     } catch (err) {
       console.error('Error fetching fixtures:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch fixtures');
-      // Don't clear fixtures on error, keep showing last known data
       if (fixtures.length === 0) {
         setFixtures([]);
       }
@@ -258,6 +279,7 @@ export const useFixtures = (limit?: number, autoRefresh: boolean = true) => {
     refreshFixtures,
     getLiveMatchesCount,
     getInternationalMatchesCount,
-    isInternationalMatch
+    isInternationalMatch,
+    isManual
   };
 };

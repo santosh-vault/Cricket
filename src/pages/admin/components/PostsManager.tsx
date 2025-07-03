@@ -110,20 +110,20 @@ export const PostsManager: React.FC<PostsManagerProps> = ({ type }) => {
   };
 
   const PostsList = () => (
-    <div className="space-y-6">
+    <div className="space-y-6 font-sans">
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">
+          <h2 className="text-2xl font-bold text-blue-900 font-sans">
             {type === 'news' ? 'News Articles' : 'Blog Posts'}
           </h2>
-          <p className="text-gray-600">
+          <p className="text-blue-700 font-sans">
             Manage your {type === 'news' ? 'news articles' : 'blog posts'}
           </p>
         </div>
         <Link
           to={`/admin/${type}/new`}
-          className="bg-green-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-green-700 transition-colors duration-200 flex items-center"
+          className="bg-blue-900 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-800 transition-colors duration-200 flex items-center font-sans"
         >
           <Plus className="h-4 w-4 mr-2" />
           Add {type === 'news' ? 'News' : 'Blog Post'}
@@ -132,14 +132,14 @@ export const PostsManager: React.FC<PostsManagerProps> = ({ type }) => {
 
       {/* Bulk Actions */}
       {selectedPosts.length > 0 && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 font-sans">
           <div className="flex items-center justify-between">
-            <span className="text-sm text-blue-800">
+            <span className="text-sm text-blue-800 font-sans">
               {selectedPosts.length} posts selected
             </span>
             <button
               onClick={handleBulkDelete}
-              className="bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700 transition-colors duration-200"
+              className="bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700 transition-colors duration-200 font-sans"
             >
               Delete Selected
             </button>
@@ -149,29 +149,29 @@ export const PostsManager: React.FC<PostsManagerProps> = ({ type }) => {
 
       {/* Posts Table */}
       {loading ? (
-        <div className="bg-white shadow rounded-lg p-8 text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto"></div>
-          <p className="mt-2 text-gray-600">Loading posts...</p>
+        <div className="bg-white shadow rounded-lg p-8 text-center font-sans">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-900 mx-auto"></div>
+          <p className="mt-2 text-blue-700 font-sans">Loading posts...</p>
         </div>
       ) : posts.length === 0 ? (
-        <div className="bg-white shadow rounded-lg p-8 text-center">
-          <p className="text-gray-600">No {type} posts found.</p>
+        <div className="bg-white shadow rounded-lg p-8 text-center font-sans">
+          <p className="text-blue-700 font-sans">No {type} posts found.</p>
           <Link
             to={`/admin/${type}/new`}
-            className="mt-4 inline-block bg-green-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-green-700 transition-colors duration-200"
+            className="mt-4 inline-block bg-blue-900 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-800 transition-colors duration-200 font-sans"
           >
             Create your first {type} post
           </Link>
         </div>
       ) : (
-        <div className="bg-white shadow overflow-hidden rounded-lg">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+        <div className="bg-white shadow overflow-hidden rounded-lg font-sans">
+          <table className="min-w-full divide-y divide-blue-200 font-sans">
+            <thead className="bg-blue-50 font-sans">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-blue-700 uppercase tracking-wider font-sans">
                   <input
                     type="checkbox"
-                    className="rounded border-gray-300 text-green-600 focus:ring-green-500"
+                    className="rounded border-blue-300 text-blue-900 focus:ring-blue-500 font-sans"
                     onChange={(e) => {
                       if (e.target.checked) {
                         setSelectedPosts(posts.map(post => post.id));
@@ -182,19 +182,19 @@ export const PostsManager: React.FC<PostsManagerProps> = ({ type }) => {
                     checked={selectedPosts.length === posts.length && posts.length > 0}
                   />
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-blue-700 uppercase tracking-wider font-sans">
                   Title
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-blue-700 uppercase tracking-wider font-sans">
                   Category
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-blue-700 uppercase tracking-wider font-sans">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-blue-700 uppercase tracking-wider font-sans">
                   Created
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-right text-xs font-medium text-blue-700 uppercase tracking-wider font-sans">
                   Actions
                 </th>
               </tr>
