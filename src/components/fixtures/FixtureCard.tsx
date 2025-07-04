@@ -22,7 +22,7 @@ export const FixtureCard: React.FC<FixtureCardProps & { draggableProps?: any; dr
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
       case 'live':
-        return 'bg-brand text-white font-bold animate-pulse shadow-lg';
+        return 'bg-red-600 text-white font-bold animate-pulse shadow-md';
       case 'upcoming':
         return 'bg-brand-light text-white font-semibold';
       case 'completed':
@@ -68,7 +68,7 @@ export const FixtureCard: React.FC<FixtureCardProps & { draggableProps?: any; dr
   const getCardBorder = () => {
     if (isInternational) {
       return fixture.status === 'live' 
-        ? 'border-1 border-brand shadow-lg ring-1 ring-brand-200' 
+        ? 'border-1 border-brand shadow-md ring-1 ring-brand-200' 
         : 'border-1 border-brand-dark shadow-md';
     }
     return 'border border-gray-200';
@@ -77,7 +77,7 @@ export const FixtureCard: React.FC<FixtureCardProps & { draggableProps?: any; dr
   const CardContent = () => {
     if (compact) {
       return (
-        <div {...draggableProps} {...dragHandleProps} className={`w-80 h-48 bg-white rounded-lg p-3 shadow-sm hover:shadow-xl transition-all duration-300 flex-shrink-0 cursor-pointer group transform hover:-translate-y-1 ${getCardBorder()}`}> 
+        <div {...draggableProps} {...dragHandleProps} className={`bg-white rounded-lg p-3 shadow-md hover:shadow-md transition-all duration-300 flex-shrink-0 cursor-pointer group transform hover:-translate-y-1 ${getCardBorder()} w-full`}> 
           {/* Header with status and international badge */}
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center space-x-2">
@@ -125,7 +125,7 @@ export const FixtureCard: React.FC<FixtureCardProps & { draggableProps?: any; dr
       );
     }
     return (
-      <div {...draggableProps} {...dragHandleProps} className={`w-[28rem] h-52 bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer group transform hover:-translate-y-1 ${getCardBorder()} p-4 mx-auto flex flex-col justify-between`}> 
+      <div {...draggableProps} {...dragHandleProps} className={`bg-white rounded-lg shadow-md hover:shadow-md transition-all duration-300 cursor-pointer group transform hover:-translate-y-1 ${getCardBorder()} p-4 mx-auto flex flex-col justify-between w-full`}> 
         <div>
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center space-x-2">

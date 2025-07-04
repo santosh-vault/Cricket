@@ -1,11 +1,11 @@
 User-agent: *
 Allow: /
 
-# Sitemap
+# Sitemap location
 Sitemap: https://your-domain.com/sitemap.xml
 
-# Crawl delay
+# Crawl delay for bots
 Crawl-delay: 1
 
-# Disallow admin pages
+# Disallow admin and private pages
 Disallow: /admin/

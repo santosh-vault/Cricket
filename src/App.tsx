@@ -12,6 +12,8 @@ import { Scorecard } from './pages/Scorecard';
 import { AdminLogin } from './pages/admin/AdminLogin';
 import { AdminDashboard } from './pages/admin/AdminDashboard';
 import { AdminRoute } from './components/auth/AdminRoute';
+import { Features } from './pages/Features';
+import { Ranking } from './pages/Ranking';
 
 function App() {
   return (
@@ -43,6 +45,8 @@ function App() {
                 </AdminRoute>
               }
             />
+            <Route path="features" element={<Features />} />
+            <Route path="ranking" element={<Ranking />} />
           </Route>
         </Routes>
       </Router>

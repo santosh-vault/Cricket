@@ -1,21 +1,22 @@
 import React, { useState } from 'react';
 import { Routes, Route, Link, useLocation } from 'react-router-dom';
-import { 
-  LayoutDashboard, 
-  FileText, 
-  BookOpen, 
-  Calendar, 
+import {
+  LayoutDashboard,
+  FileText,
+  BookOpen,
+  Calendar,
   Trophy,
   Settings,
   Users,
   Plus,
-  Menu,
-  X
+  Menu, // Mobile menu icon
+  X // Mobile close icon
 } from 'lucide-react';
 import { SEOHead } from '../../components/seo/SEOHead';
 import { PostsManager } from './components/PostsManager';
 import { FixturesManager } from './components/FixturesManager';
 import { DashboardOverview } from './components/DashboardOverview';
+import { RankingsManager } from './components/RankingsManager';
 
 export const AdminDashboard: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -27,93 +28,75 @@ export const AdminDashboard: React.FC = () => {
     { name: 'Blog Posts', href: '/admin/blogs', icon: BookOpen, current: location.pathname.includes('/admin/blogs') },
     { name: 'Fixtures', href: '/admin/fixtures', icon: Calendar, current: location.pathname.includes('/admin/fixtures') },
     { name: 'Scorecards', href: '/admin/scorecards', icon: Trophy, current: location.pathname.includes('/admin/scorecards') },
+    { name: 'ICC Rankings', href: '/admin/rankings', icon: Trophy, current: location.pathname.includes('/admin/rankings') },
   ];
 
   return (
     <>
       <SEOHead
-        title="Admin Dashboard"
-        description="Admin dashboard for managing cricket news, blogs, fixtures, and scorecards."
+        title="Admin Dashboard - CricNews CMS"
+        description="Admin dashboard for managing cricket news, blogs, fixtures, and scorecards for CricNews."
       />
 
-      <div className="min-h-screen bg-[#f8fafc] font-sans">
-        {/* Mobile sidebar */}
-        <div className={`fixed inset-0 flex z-40 md:hidden ${sidebarOpen ? '' : 'hidden'}`}>
-          <div className="fixed inset-0 bg-gray-600 bg-opacity-75" onClick={() => setSidebarOpen(false)} />
-          <div className="relative flex-1 flex flex-col max-w-xs w-full pt-5 pb-4 bg-white">
-            <div className="absolute top-0 right-0 -mr-12 pt-2">
-              <button
-                className="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
-                onClick={() => setSidebarOpen(false)}
-              >
-                <X className="h-6 w-6 text-white" />
-              </button>
-            </div>
-           
-            <div className="mt-5 flex-1 h-0 overflow-y-auto">
-              <nav className="px-2 space-y-1">
-                {navigation.map((item) => (
-                  <Link
-                    key={item.name}
-                    to={item.href}
-                    className={`${
-                      item.current
-                        ? 'bg-blue-100 text-blue-900'
-                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                    } group flex items-center px-2 py-2 text-base font-medium rounded-md`}
-                    onClick={() => setSidebarOpen(false)}
-                  >
-                    <item.icon className="mr-4 h-6 w-6" />
-                    {item.name}
-                  </Link>
-                ))}
-              </nav>
-            </div>
-          </div>
-        </div>
+      {/* Outer container: Sets min-height for the entire viewport and uses flex-col for stacking header, then content + sidebar */}
+      <div className="min-h-screen bg-gray-50 font-sans flex flex-col">
 
-        {/* Desktop sidebar */}
-        <div className="hidden md:flex md:w-64 md:flex-col md:fixed pt-12 md:inset-y-0">
-          <div className="flex flex-col flex-grow pt-5 bg-white overflow-y-auto border-r border-gray-200">
-            
-            <div className="mt-5 flex-grow flex flex-col">
-              <nav className="flex-1 px-2 pb-4 space-y-1">
-                {navigation.map((item) => (
-                  <Link
-                    key={item.name}
-                    to={item.href}
-                    className={`${
-                      item.current
-                        ? 'bg-blue-100 text-blue-900'
-                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                    } group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors duration-200`}
-                  >
-                    <item.icon className="mr-3 h-5 w-5" />
-                    {item.name}
-                  </Link>
-                ))}
-              </nav>
-            </div>
-          </div>
-        </div>
+        {/* --- MAIN LAYOUT CONTAINER (content below header) --- */}
+        {/* This div starts below the fixed header (mt-16) and handles the sidebar + main content side-by-side layout */}
+        <div className="flex flex-1  relative"> {/* `relative` for containing fixed sidebar, `flex-1` to grow vertically */}
 
-        {/* Main content */}
-        <div className="md:pl-64 flex flex-col flex-1">
-          <main className="flex-1">
-            <div className="py-6">
-              <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-                <Routes>
-                  <Route index element={<DashboardOverview />} />
-                  <Route path="news/*" element={<PostsManager type="news" />} />
-                  <Route path="blogs/*" element={<PostsManager type="blog" />} />
-                  <Route path="fixtures/*" element={<FixturesManager />} />
-                  <Route path="scorecards/*" element={<div>Scorecards Management (Coming Soon)</div>} />
-                </Routes>
+
+          {/* --- DESKTOP SIDEBAR --- */}
+          {/* Fixed to left, starts below header, spans remaining height */}
+          <div className="hidden md:flex md:w-64 md:flex-col fixed top-16 bottom-0 left-0 z-20 "> {/* Fixed, top-16, bottom-0, left-0 */}
+            <div className="flex flex-col flex-grow bg-blue-900 overflow-y-auto border-r border-blue-800 shadow-md">
+              {/* This div takes full height of the fixed sidebar area */}
+              <div className="flex-grow flex flex-col pt-5">
+                <nav className="flex-1 px-2 pb-4 space-y-1">
+                  {navigation.map((item) => (
+                    <Link
+                      key={item.name}
+                      to={item.href}
+                      className={`${
+                        item.current
+                          ? 'bg-blue-700 text-white rounded-lg shadow-md'
+                          : 'text-blue-200 hover:bg-blue-700 hover:text-white rounded-lg'
+                      } group flex items-center px-4 py-3 text-sm font-medium transition-all duration-200`}
+                    >
+                      <item.icon className="mr-3 h-5 w-5 text-blue-300 flex-shrink-0" aria-hidden="true" />
+                      {item.name}
+                    </Link>
+                  ))}
+                </nav>
               </div>
             </div>
+          </div>
+
+          {/* --- MAIN CONTENT AREA --- */}
+          {/* This section will take the remaining width and handle its own scrolling */}
+          <main className="flex-1 bg-gray-50 md:ml-64 py-8 px-4 sm:px-6 lg:px-12 overflow-y-auto"> {/* md:ml-64 to clear sidebar */}
+            <div className="max-w-7xl mx-auto">
+              <h1 className="text-3xl font-extrabold text-gray-900 mb-6 capitalize">
+                {navigation.find(item => location.pathname.includes(item.href))?.name || 'Dashboard Overview'}
+              </h1>
+              <Routes>
+                <Route index element={<DashboardOverview />} />
+                <Route path="news/*" element={<PostsManager type="news" />} />
+                <Route path="blogs/*" element={<PostsManager type="blog" />} />
+                <Route path="fixtures/*" element={<FixturesManager />} />
+                <Route path="scorecards/*" element={
+                  <div className="bg-white rounded-lg shadow p-8 text-center text-gray-600">
+                    <Trophy className="h-12 w-12 mx-auto mb-4 text-gray-400" />
+                    <p className="text-xl font-semibold">Scorecards Management</p>
+                    <p className="mt-2">This feature is currently under development. Stay tuned for updates!</p>
+                  </div>
+                } />
+                <Route path="rankings/*" element={<RankingsManager />} />
+              </Routes>
+            </div>
           </main>
-        </div>
-      </div>
+        </div> {/* End of flex-1 mt-16 container */}
+      </div> {/* End of min-h-screen container */}
     </>
   );
 };

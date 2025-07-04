@@ -186,7 +186,7 @@ export const NewsDetail: React.FC = () => {
             <img
               src={post.thumbnail_url}
               alt={post.title}
-              className="w-full h-64 md:h-96 object-cover rounded-lg shadow-lg"
+              className="w-full h-64 md:h-96 object-cover rounded-lg shadow-md"
             />
           </div>
         )}
@@ -227,7 +227,7 @@ export const NewsDetail: React.FC = () => {
                 {relatedPosts.map((relatedPost) => (
                   <article
                     key={relatedPost.id}
-                    className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-200"
+                    className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-md transition-shadow duration-200"
                   >
                     <div className="h-32 bg-gray-200 flex items-center justify-center">
                       {relatedPost.thumbnail_url ? (

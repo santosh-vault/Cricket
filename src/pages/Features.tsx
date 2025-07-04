@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { Search, Filter, Calendar, Tag, BookOpen, ChevronRight, TrendingUp } from 'lucide-react';
+import { Search, Filter, Calendar, ChevronRight, BookOpen, TrendingUp } from 'lucide-react';
 import { SEOHead } from '../components/seo/SEOHead';
-import { FixturesList } from '../components/fixtures/FixturesList';
 import { supabase } from '../lib/supabase';
 import { format } from 'date-fns';
 
@@ -17,35 +16,35 @@ interface Post {
   created_at: string;
 }
 
-export const Blogs: React.FC = () => {
+export const Features: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [blogs, setBlogs] = useState<Post[]>([]);
+  const [features, setFeatures] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || '');
 
   const predefinedCategories = [
-    'Analysis',
-    'Opinion',
-    'Player Profiles',
-    'Match Analysis',
-    'Statistics',
-    'History',
-    'Coaching Tips',
-    'Fantasy Cricket'
+    'Exclusive',
+    'Spotlight',
+    'Interviews',
+    'Behind the Scenes',
+    'Special Reports',
+    'Features',
+    'Stories',
+    'Editorial'
   ];
 
   useEffect(() => {
-    fetchBlogs();
+    fetchFeatures();
   }, [searchParams]);
 
-  const fetchBlogs = async () => {
+  const fetchFeatures = async () => {
     setLoading(true);
     try {
       let query = supabase
         .from('posts')
         .select('*')
-        .eq('type', 'blog')
+        .eq('type', 'feature')
         .eq('is_published', true)
         .order('created_at', { ascending: false });
 
@@ -63,9 +62,9 @@ export const Blogs: React.FC = () => {
       const { data, error } = await query;
 
       if (error) throw error;
-      setBlogs(data || []);
+      setFeatures(data || []);
     } catch (error) {
-      console.error('Error fetching blogs:', error);
+      console.error('Error fetching features:', error);
     } finally {
       setLoading(false);
     }
@@ -96,9 +95,9 @@ export const Blogs: React.FC = () => {
   return (
     <>
       <SEOHead
-        title="Cricket Blogs"
-        description="Read expert cricket analysis, player profiles, match insights, and in-depth commentary from our team of cricket writers and analysts."
-        keywords="cricket blogs, cricket analysis, cricket opinion, player profiles, match analysis, cricket insights"
+        title="Cricket Features"
+        description="Read exclusive cricket features, interviews, special reports, and in-depth stories from our team."
+        keywords="cricket features, exclusive, interviews, special reports, cricket stories"
       />
 
       <div className="min-h-screen bg-gray-100 font-sans">
@@ -106,7 +105,7 @@ export const Blogs: React.FC = () => {
         <section className="bg-white shadow-md py-6 border-b border-gray-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-6 text-center">
-              Cricket <span className="text-blue-600">Blogs & Analysis</span>
+              Cricket <span className="text-blue-600">Features & Stories</span>
             </h2>
             {/* Search and Filter Section */}
             <div className="flex flex-col md:flex-row gap-4 items-center bg-gray-50 p-4 rounded-lg border border-gray-100 shadow-md">
@@ -116,7 +115,7 @@ export const Blogs: React.FC = () => {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search cricket blogs and analysis..."
+                  placeholder="Search cricket features and stories..."
                   className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base text-gray-800 transition-all duration-200"
                 />
               </form>
@@ -140,20 +139,20 @@ export const Blogs: React.FC = () => {
           </div>
         </section>
 
-        {/* Blogs and Sidebar Section */}
+        {/* Features and Sidebar Section */}
         <section className="py-12 bg-gray-100">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row gap-10">
-            {/* Main Blogs (75%) - left side */}
+            {/* Main Features (75%) - left side */}
             <div className="w-full md:w-3/4">
               {loading ? (
                 <div className="flex flex-col justify-center items-center py-20 bg-white rounded-xl shadow-md">
                   <div className="animate-spin rounded-full h-24 w-24 border-t-4 border-b-4 border-blue-600"></div>
-                  <p className="ml-4 text-xl text-blue-700 font-semibold mt-4">Loading insightful cricket blogs...</p>
+                  <p className="ml-4 text-xl text-blue-700 font-semibold mt-4">Loading exclusive cricket features...</p>
                 </div>
-              ) : blogs.length === 0 ? (
+              ) : features.length === 0 ? (
                 <div className="text-center py-20 bg-white rounded-xl shadow-md p-8">
                   <BookOpen className="h-20 w-20 mx-auto mb-6 text-gray-400 opacity-70" />
-                  <h3 className="text-2xl font-bold text-gray-900 mb-3">No Blogs Found!</h3>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-3">No Features Found!</h3>
                   <p className="text-gray-600 text-lg max-w-md mx-auto">Try adjusting your search or filter criteria.</p>
                   { (searchQuery || selectedCategory) && (
                     <button
@@ -170,17 +169,17 @@ export const Blogs: React.FC = () => {
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
-                  {blogs.map((blog) => (
-                    <Link key={blog.id} to={`/blogs/${blog.slug}`} className="block group">
+                  {features.map((feature) => (
+                    <Link key={feature.id} to={`/features/${feature.slug}`} className="block group">
                       <article
                         className="bg-white rounded-2xl shadow-md hover:shadow-md transition-all duration-300 overflow-hidden flex flex-col h-full border border-gray-200"
                       >
                         {/* Image */}
                         <div className="h-56 bg-gray-100 flex items-center justify-center overflow-hidden relative">
-                          {blog.thumbnail_url ? (
+                          {feature.thumbnail_url ? (
                             <img
-                              src={blog.thumbnail_url}
-                              alt={blog.title}
+                              src={feature.thumbnail_url}
+                              alt={feature.title}
                               className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
                             />
                           ) : (
@@ -191,22 +190,22 @@ export const Blogs: React.FC = () => {
                           )}
                           <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
                           <span className="absolute bottom-4 left-6 bg-blue-600 text-white px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide">
-                            {blog.category}
+                            {feature.category}
                           </span>
                         </div>
                         {/* Text content */}
                         <div className="p-6 flex-1 flex flex-col justify-between">
                           <div>
                             <h3 className="text-2xl font-bold text-gray-900 mb-3 leading-tight line-clamp-2 group-hover:text-blue-700 transition-colors duration-300">
-                              {blog.title}
+                              {feature.title}
                             </h3>
                             <p className="text-gray-700 text-base mb-4 line-clamp-3 leading-relaxed">
-                              {blog.content.replace(/<[^>]*>/g, '').substring(0, 180)}...
+                              {feature.content.replace(/<[^>]*>/g, '').substring(0, 180)}...
                             </p>
                           </div>
                           <div className="flex justify-between items-center text-sm text-gray-500 mt-auto pt-3 border-t border-gray-100">
                             <span className="flex items-center">
-                              <Calendar className="h-4 w-4 mr-1.5 text-gray-400" /> {format(new Date(blog.created_at), 'MMM dd, yyyy')}
+                              <Calendar className="h-4 w-4 mr-1.5 text-gray-400" /> {format(new Date(feature.created_at), 'MMM dd, yyyy')}
                             </span>
                             <span className="text-blue-600 font-semibold flex items-center group-hover:text-blue-800">
                               Read More <ChevronRight className="h-4 w-4 ml-1.5 transform group-hover:translate-x-1 transition-transform duration-200" />
@@ -219,25 +218,25 @@ export const Blogs: React.FC = () => {
                 </div>
               )}
             </div>
-            {/* Most Read Blogs (25%) - right side */}
+            {/* Most Read Features (25%) - right side */}
             <aside className="w-full md:w-1/4">
               <div className="bg-white rounded-xl shadow-md p-6 sticky top-28 border border-gray-200">
                 <h3 className="text-xl font-bold text-gray-900 mb-5 flex items-center">
-                  <TrendingUp className="h-6 w-6 mr-2 text-red-500" /> Most Read Blogs
+                  <TrendingUp className="h-6 w-6 mr-2 text-red-500" /> Most Read Features
                 </h3>
                 <div className="flex flex-col divide-y divide-gray-100">
-                  {blogs.slice(0, 5).map((blog, index) => (
-                    <Link key={blog.id} to={`/blogs/${blog.slug}`} className="block py-3 group">
+                  {features.slice(0, 5).map((feature, index) => (
+                    <Link key={feature.id} to={`/features/${feature.slug}`} className="block py-3 group">
                       <h4 className="font-semibold text-lg text-gray-800 mb-1 leading-snug line-clamp-3 group-hover:text-blue-700 transition-colors duration-200">
-                        <span className="text-blue-500 mr-2 font-bold">{index + 1}.</span> {blog.title}
+                        <span className="text-blue-500 mr-2 font-bold">{index + 1}.</span> {feature.title}
                       </h4>
                       <div className="flex items-center text-xs text-gray-500">
                         <Calendar className="h-3.5 w-3.5 mr-1 text-gray-400" />
-                        <span>{format(new Date(blog.created_at), 'MMM dd, yyyy')}</span>
+                        <span>{format(new Date(feature.created_at), 'MMM dd, yyyy')}</span>
                       </div>
                     </Link>
                   ))}
-                  <Link to="/most-read-blogs" className="mt-4 block text-blue-600 text-sm font-semibold hover:underline flex items-center justify-center pt-3">
+                  <Link to="/most-read-features" className="mt-4 block text-blue-600 text-sm font-semibold hover:underline flex items-center justify-center pt-3">
                     View More <ChevronRight className="h-4 w-4 ml-1" />
                   </Link>
                 </div>
@@ -248,22 +247,4 @@ export const Blogs: React.FC = () => {
       </div>
     </>
   );
-};
-
-// Add custom animation to your global CSS or a dedicated styles file (e.g., globals.css) if you want the loading spinner text to pulse
-/*
-@keyframes pulse-slow {
-  0%, 100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.7;
-    transform: scale(0.95);
-  }
-}
-
-.animate-pulse-slow {
-  animation: pulse-slow 3s infinite ease-in-out;
-}
-*/
+}; 

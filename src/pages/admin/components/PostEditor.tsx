@@ -92,6 +92,7 @@ export const PostEditor: React.FC<PostEditorProps> = ({ type: initialType, onSav
   };
 
   const onSubmit = async (data: PostFormData) => {
+    if (!window.confirm('Are you sure you want to save this post?')) return;
     if (!user) return;
 
     setSaving(true);

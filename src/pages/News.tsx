@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { Search, Filter, Calendar, Tag, Trophy } from 'lucide-react';
+import { Search, Filter, Calendar, Tag, Trophy, ChevronRight, Newspaper, TrendingUp } from 'lucide-react';
 import { SEOHead } from '../components/seo/SEOHead';
 import { FixturesList } from '../components/fixtures/FixturesList';
 import { supabase } from '../lib/supabase';
@@ -118,43 +118,30 @@ export const News: React.FC = () => {
         keywords="cricket news, cricket updates, match reports, cricket interviews, cricket analysis"
       />
 
-      <div className="min-h-screen bg-gray-50">
-        {/* Live Fixtures Section - now using API data */}
-        <section className="py-6 bg-gradient-to-br from-green-50 to-green-100 border-b border-green-200">
+      <div className="min-h-screen bg-gray-100 font-sans">
+        {/* Header Section with Search and Filter */}
+        <section className="bg-white shadow-md py-6 border-b border-gray-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <FixturesList 
-              limit={5} 
-              compact={true} 
-              showHeader={false}
-              className=""
-            />
-          </div>
-        </section>
-        
-        {/* Header Section */}
-        <section className="bg-white shadow-sm">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <h2 className="text-lg font-semibold text-gray-900 mb-2">Cricket News</h2>
-            {/* Search and Filter Section (compact) */}
-            <div className="flex flex-col lg:flex-row gap-2 items-center">
-              <form onSubmit={handleSearch} className="flex-1">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search cricket news..."
-                    className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm"
-                  />
-                </div>
+            <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-6 text-center">
+              Cricket <span className="text-blue-600">News & Updates</span>
+            </h2>
+            <div className="flex flex-col md:flex-row gap-4 items-center bg-gray-50 p-4 rounded-lg border border-gray-100 shadow-md">
+              <form onSubmit={handleSearch} className="flex-1 w-full relative">
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search cricket news..."
+                  className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base text-gray-800 transition-all duration-200"
+                />
               </form>
-              <div className="flex items-center space-x-1">
-                <Filter className="h-4 w-4 text-gray-400" />
+              <div className="w-full md:w-auto flex-shrink-0 relative">
+                <Filter className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                 <select
                   value={selectedCategory}
                   onChange={(e) => handleCategoryChange(e.target.value)}
-                  className="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm"
+                  className="w-full md:w-auto appearance-none pr-10 pl-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base text-gray-800 bg-white cursor-pointer transition-all duration-200"
                 >
                   <option value="">All Categories</option>
                   {predefinedCategories.map((category) => (
@@ -163,70 +150,90 @@ export const News: React.FC = () => {
                     </option>
                   ))}
                 </select>
+                <ChevronRight className="absolute right-4 top-1/2 transform -translate-y-1/2 rotate-90 h-5 w-5 text-gray-400 pointer-events-none" />
               </div>
             </div>
           </div>
         </section>
-        
+
         {/* News and Sidebar Section */}
-        <section className="py-8 border-b-4 border-blue-200">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row gap-8">
+        <section className="py-12 bg-gray-100">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row gap-10">
             {/* Main News (75%) - left side */}
-            <div className="w-full md:w-3/4">
+            <div className="w-full lg:w-3/4">
               {loading ? (
-                <div className="flex justify-center items-center py-20">
-                  <div className="animate-spin rounded-full h-20 w-20 border-b-2 border-green-600"></div>
+                <div className="flex flex-col justify-center items-center py-20 bg-white rounded-xl shadow-md">
+                  <div className="animate-spin rounded-full h-24 w-24 border-t-4 border-b-4 border-blue-600"></div>
+                  <p className="ml-4 text-xl text-blue-700 font-semibold mt-4">Loading the latest cricket headlines...</p>
                 </div>
               ) : news.length === 0 ? (
-                <div className="text-center py-20">
-                  <h3 className="text-base font-semibold text-gray-900 mb-2">No news found</h3>
-                  <p className="text-gray-600 text-sm">Try adjusting your search or filter criteria.</p>
+                <div className="text-center py-20 bg-white rounded-xl shadow-md p-8">
+                  <Trophy className="h-20 w-20 text-blue-400 mx-auto mb-6 opacity-70" />
+                  <h3 className="text-2xl font-bold text-gray-900 mb-3">No News Found!</h3>
+                  <p className="text-gray-600 text-lg max-w-md mx-auto">
+                    It seems your search or filter criteria didn't match any articles. Try broadening your search or selecting a different category.
+                  </p>
+                  {searchQuery || selectedCategory ? (
+                    <button
+                      onClick={() => {
+                        setSearchQuery('');
+                        setSelectedCategory('');
+                        setSearchParams({});
+                      }}
+                      className="mt-6 px-6 py-3 bg-blue-600 text-white rounded-full font-semibold hover:bg-blue-700 transition-colors duration-300 shadow-md"
+                    >
+                      Reset Filters
+                    </button>
+                  ) : null}
                 </div>
               ) : (
-                <div className="flex flex-col gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
                   {news.map((article) => (
                     <Link
                       key={article.id}
                       to={`/news/${article.slug}`}
-                      className="block"
+                      className="block group"
                     >
                       <article
-                        className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-200 w-full flex flex-row cursor-pointer group"
+                        className="bg-white rounded-2xl shadow-md hover:shadow-md transition-all duration-300 overflow-hidden flex flex-col h-full border border-gray-200"
                       >
-                        {/* Left: Image */}
-                        <div className="w-40 h-40 bg-blue-200 flex items-center justify-center flex-shrink-0">
+                        {/* Image */}
+                        <div className="h-56 bg-gray-100 flex items-center justify-center overflow-hidden relative">
                           {article.thumbnail_url ? (
                             <img
                               src={article.thumbnail_url}
                               alt={article.title}
-                              className="w-full h-full object-cover rounded-l-lg"
+                              className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
                             />
                           ) : (
-                            <div className="text-blue-400 text-center">
-                              <Trophy className="h-8 w-8 mx-auto mb-2" />
-                              <p>Cricket News</p>
+                            <div className="text-blue-400 text-center p-6 opacity-70">
+                              <Newspaper className="h-16 w-16 mx-auto mb-3" />
+                              <p className="text-lg font-medium">No Image</p>
                             </div>
                           )}
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                          <span className="absolute bottom-4 left-6 bg-blue-600 text-white px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide">
+                            {article.category}
+                          </span>
                         </div>
-                        {/* Right: Text content */}
-                        <div className="flex-1 p-4 flex flex-col justify-between">
+                        {/* Text content */}
+                        <div className="p-6 flex-1 flex flex-col justify-between">
                           <div>
-                            <div className="flex items-center justify-between text-xs text-gray-500 mb-2">
-                              <span className="bg-brand-100 text-brand-800 px-2 py-1 rounded-full text-xs font-semibold">
-                                {article.category}
-                              </span>
-                              <span>{format(new Date(article.created_at), 'MMM dd, yyyy')}</span>
-                            </div>
-                            <h3 className="text-2xl font-bold text-blue-900 mb-2 line-clamp-2 font-serif group-hover:underline">
+                            <h3 className="text-2xl font-bold text-gray-900 mb-3 leading-tight line-clamp-2 group-hover:text-blue-700 transition-colors duration-300">
                               {article.title}
                             </h3>
-                            <p className="text-gray-700 text-sm mb-3 line-clamp-3 font-sans">
-                              {article.content.replace(/<[^>]*>/g, '').substring(0, 120)}...
+                            <p className="text-gray-700 text-base mb-4 line-clamp-3 leading-relaxed">
+                              {article.content.replace(/<[^>]*>/g, '').substring(0, 180)}...
                             </p>
                           </div>
-                          <span className="text-brand-600 hover:text-brand-700 font-semibold text-xs transition-colors duration-200 mt-2 font-sans">
-                            Read Full Story →
-                          </span>
+                          <div className="flex justify-between items-center text-sm text-gray-500 mt-auto pt-3 border-t border-gray-100">
+                            <span className="flex items-center">
+                              <Calendar className="h-4 w-4 mr-1.5 text-gray-400" /> {format(new Date(article.created_at), 'MMM dd, yyyy')}
+                            </span>
+                            <span className="text-blue-600 font-semibold flex items-center group-hover:text-blue-800">
+                              Read More <ChevronRight className="h-4 w-4 ml-1.5 transform group-hover:translate-x-1 transition-transform duration-200" />
+                            </span>
+                          </div>
                         </div>
                       </article>
                     </Link>
@@ -235,22 +242,32 @@ export const News: React.FC = () => {
               )}
             </div>
             {/* Most Read News (25%) - right side */}
-            <aside className="w-full md:w-1/4">
-              <h3 className="text-base font-bold text-blue-900 mb-4 font-serif">Most Read News</h3>
-              <div className="flex flex-col gap-4">
-                {news.slice(0, 5).map((article) => (
-                  <div
-                    key={article.id}
-                    className="bg-green-50 border border-green-200 rounded-lg shadow hover:shadow-lg transition-shadow duration-200 p-3 flex flex-col justify-between"
-                  >
-                    <h4 className="font-semibold text-sm text-gray-900 mb-1 line-clamp-2">
-                      <Link to={`/news/${article.slug}`} className="hover:underline">
-                        {article.title.length > 60 ? article.title.slice(0, 57) + '...' : article.title}
-                      </Link>
-                    </h4>
-                    <span className="text-xs text-gray-500 mb-1">{format(new Date(article.created_at), 'MMM dd, yyyy')}</span>
-                  </div>
-                ))}
+            <aside className="w-full lg:w-1/4">
+              <div className="bg-white rounded-xl shadow-md p-6 sticky top-28 border border-gray-200">
+                <h3 className="text-xl font-bold text-gray-900 mb-5 flex items-center">
+                  <TrendingUp className="h-6 w-6 mr-2 text-red-500" /> Most Read News
+                </h3>
+                <div className="flex flex-col divide-y divide-gray-100">
+                  {/*
+                    This section currently uses 'news.slice(0, 5)' as a placeholder for "Most Read".
+                    In a real application, you'd fetch a separate list of truly most-read articles
+                    from your backend here.
+                  */}
+                  {news.slice(0, 5).map((article, index) => (
+                    <Link key={article.id} to={`/news/${article.slug}`} className="block py-3 group">
+                      <h4 className="font-semibold text-lg text-gray-800 mb-1 leading-snug line-clamp-3 group-hover:text-blue-700 transition-colors duration-200">
+                        <span className="text-blue-500 mr-2 font-bold">{index + 1}.</span> {article.title}
+                      </h4>
+                      <div className="flex items-center text-xs text-gray-500">
+                        <Calendar className="h-3.5 w-3.5 mr-1 text-gray-400" />
+                        <span>{format(new Date(article.created_at), 'MMM dd, yyyy')}</span>
+                      </div>
+                    </Link>
+                  ))}
+                  <Link to="/most-read" className="mt-4 block text-blue-600 text-sm font-semibold hover:underline flex items-center justify-center pt-3">
+                    View More <ChevronRight className="h-4 w-4 ml-1" />
+                  </Link>
+                </div>
               </div>
             </aside>
           </div>
@@ -259,3 +276,21 @@ export const News: React.FC = () => {
     </>
   );
 };
+
+// Add custom animation to your global CSS or a dedicated styles file (e.g., globals.css)
+/*
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(0.95);
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 3s infinite ease-in-out;
+}
+*/

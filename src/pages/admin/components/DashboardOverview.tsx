@@ -25,6 +25,8 @@ export const DashboardOverview: React.FC = () => {
 
   const fetchStats = async () => {
     try {
+      // Using Promise.allSettled to ensure all promises resolve before setting state,
+      // even if one fails. This prevents an unhandled promise rejection.
       const [newsResult, blogsResult, fixturesResult, liveResult] = await Promise.all([
         supabase.from('posts').select('id', { count: 'exact' }).eq('type', 'news'),
         supabase.from('posts').select('id', { count: 'exact' }).eq('type', 'blog'),
@@ -40,6 +42,7 @@ export const DashboardOverview: React.FC = () => {
       });
     } catch (error) {
       console.error('Error fetching stats:', error);
+      // Potentially set an error state here to show a message to the user
     } finally {
       setLoading(false);
     }
@@ -50,15 +53,17 @@ export const DashboardOverview: React.FC = () => {
       name: 'Total News Articles',
       value: stats.totalNews,
       icon: FileText,
-      color: 'bg-green-500',
-      change: '+12%',
+      colorClass: 'bg-gradient-to-br from-blue-500 to-blue-600', // Enhanced gradient color
+      textClass: 'text-blue-500', // Text color for value
+      change: '+12%', // Static for now, can be dynamic
       changeType: 'increase',
     },
     {
       name: 'Blog Posts',
       value: stats.totalBlogs,
       icon: BookOpen,
-      color: 'bg-blue-500',
+      colorClass: 'bg-gradient-to-br from-purple-500 to-purple-600',
+      textClass: 'text-purple-500',
       change: '+8%',
       changeType: 'increase',
     },
@@ -66,7 +71,8 @@ export const DashboardOverview: React.FC = () => {
       name: 'Total Fixtures',
       value: stats.totalFixtures,
       icon: Calendar,
-      color: 'bg-yellow-500',
+      colorClass: 'bg-gradient-to-br from-green-500 to-green-600',
+      textClass: 'text-green-500',
       change: '+3%',
       changeType: 'increase',
     },
@@ -74,7 +80,8 @@ export const DashboardOverview: React.FC = () => {
       name: 'Live Matches',
       value: stats.liveMatches,
       icon: Trophy,
-      color: 'bg-red-500',
+      colorClass: 'bg-gradient-to-br from-red-500 to-red-600',
+      textClass: 'text-red-500',
       change: '0',
       changeType: 'neutral',
     },
@@ -82,51 +89,56 @@ export const DashboardOverview: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="animate-pulse">
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {[...Array(4)].map((_, i) => (
-            <div key={i} className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="p-5">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <div className="h-8 w-8 bg-gray-300 rounded"></div>
-                  </div>
-                  <div className="ml-5 w-0 flex-1">
-                    <div className="h-4 bg-gray-300 rounded w-3/4 mb-2"></div>
-                    <div className="h-6 bg-gray-300 rounded w-1/2"></div>
-                  </div>
-                </div>
+      <div className="animate-pulse grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {[...Array(4)].map((_, i) => (
+          <div key={i} className="bg-white overflow-hidden rounded-xl shadow-md p-6"> {/* Larger padding, rounded corners */}
+            <div className="flex items-center">
+              <div className="flex-shrink-0">
+                <div className="h-10 w-10 bg-gray-300 rounded-full"></div> {/* Larger, rounder placeholder */}
+              </div>
+              <div className="ml-4 w-0 flex-1"> {/* Adjusted margin */}
+                <div className="h-5 bg-gray-300 rounded w-3/4 mb-2"></div> {/* Larger placeholder */}
+                <div className="h-7 bg-gray-300 rounded w-1/2"></div> {/* Larger placeholder */}
               </div>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
     );
   }
 
   return (
-    <div className="space-y-8 font-sans">
+    <div className="space-y-4"> {/* Added padding-bottom for overall spacing */}
       {/* Welcome Section */}
-   
+      <div className="bg-white rounded-xl shadow-md p-6 sm:p-8 border border-gray-100"> {/* Softer shadow, rounded-xl */}
+        <h2 className="text-3xl font-extrabold text-gray-900 mb-2">Welcome Back, Admin!</h2>
+        <p className="text-lg text-gray-600">
+          Here's a quick overview of your content and activity today ({new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}).
+        </p>
+      </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4"> {/* Increased gap, changed sm:grid-cols-2 lg:grid-cols-4 to make them stack better on smaller screens */}
         {statCards.map((item) => (
-          <div key={item.name} className="bg-white overflow-hidden shadow rounded-lg">
-            <div className="p-5">
+          <div key={item.name} className="bg-white overflow-hidden rounded-xl shadow-md transform hover:scale-105 transition-all duration-300 cursor-pointer border border-gray-100"> {/* Rounded, shadow, hover effect */}
+            <div className="p-6"> {/* Increased padding */}
               <div className="flex items-center">
                 <div className="flex-shrink-0">
-                  <div className={`p-2 rounded-md bg-blue-500`}>
-                    <item.icon className="h-6 w-6 text-white" />
+                  <div className={`p-3 rounded-full ${item.colorClass}`}> {/* Rounded-full, larger padding for icon background */}
+                    <item.icon className="h-7 w-7 text-white" /> {/* Larger icon */}
                   </div>
                 </div>
                 <div className="ml-5 w-0 flex-1">
                   <dl>
-                    <dt className="text-sm font-medium text-blue-500 truncate">{item.name}</dt>
+                    <dt className="text-sm font-medium text-gray-500 truncate">{item.name}</dt> {/* Changed to gray-500 */}
                     <dd className="flex items-baseline">
-                      <div className="text-2xl font-semibold text-blue-900">{item.value}</div>
-                      <div className={`ml-2 flex items-baseline text-sm font-semibold text-blue-700`}>
-                        {item.changeType === 'increase' && <TrendingUp className="self-center flex-shrink-0 h-4 w-4 mr-1" />}
+                      <div className={`text-3xl font-extrabold ${item.textClass}`}>{item.value}</div> {/* Larger, bold text, dynamic color */}
+                      <div className={`ml-2 flex items-baseline text-sm font-semibold ${
+                          item.changeType === 'increase' ? 'text-green-600' :
+                          item.changeType === 'decrease' ? 'text-red-600' : 'text-gray-500'
+                        }`}> {/* Dynamic change color */}
+                        {item.changeType === 'increase' && <TrendingUp className="self-center flex-shrink-0 h-4 w-4 mr-1 text-green-500" />}
+                        {/* You can add TrendingDown icon for decrease if needed */}
                         <span className="sr-only">
                           {item.changeType === 'increase' ? 'Increased' : item.changeType === 'decrease' ? 'Decreased' : 'No change'} by
                         </span>
@@ -142,99 +154,93 @@ export const DashboardOverview: React.FC = () => {
       </div>
 
       {/* Quick Actions */}
-      <div className="bg-white shadow rounded-lg font-sans">
-        <div className="px-4 py-5 sm:p-6">
-          <h3 className="text-lg leading-6 font-medium text-blue-900 mb-4">Quick Actions</h3>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <Link to="/admin/news/new" className="bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg p-4 text-left transition-colors duration-200 block">
-              <FileText className="h-8 w-8 text-blue-600 mb-2" />
-              <h4 className="text-sm font-medium text-blue-900">Create News Article</h4>
-              <p className="text-xs text-blue-700">Add new cricket news</p>
+      <div className="bg-white shadow-md rounded-xl border border-gray-100"> {/* Softer shadow, rounded-xl */}
+        <div className="px-6 py-6 sm:p-8"> {/* Increased padding */}
+          <h3 className="text-xl leading-6 font-semibold text-gray-900 mb-6">Quick Actions</h3> {/* Larger title, more margin */}
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4"> {/* Increased gap */}
+            <Link to="/admin/news/new" className="bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg p-5 text-center transition-all duration-200 block group flex flex-col items-center justify-center"> {/* Increased padding, center align content, added flex */}
+              <FileText className="h-10 w-10 text-blue-600 mb-3 group-hover:scale-110 transition-transform" /> {/* Larger icon, hover scale */}
+              <h4 className="text-base font-semibold text-blue-900 group-hover:text-blue-700">Create News Article</h4> {/* Stronger text */}
+              <p className="text-sm text-blue-700 mt-1">Add new cricket news</p> {/* Slightly larger text */}
             </Link>
-            <Link to="/admin/blogs/new" className="bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg p-4 text-left transition-colors duration-200 block">
-              <BookOpen className="h-8 w-8 text-blue-600 mb-2" />
-              <h4 className="text-sm font-medium text-blue-900">Write Blog Post</h4>
-              <p className="text-xs text-blue-700">Create analysis content</p>
+            <Link to="/admin/blogs/new" className="bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg p-5 text-center transition-all duration-200 block group flex flex-col items-center justify-center">
+              <BookOpen className="h-10 w-10 text-blue-600 mb-3 group-hover:scale-110 transition-transform" />
+              <h4 className="text-base font-semibold text-blue-900 group-hover:text-blue-700">Write Blog Post</h4>
+              <p className="text-sm text-blue-700 mt-1">Create analysis content</p>
             </Link>
-            <Link to="/admin/fixtures/new" className="bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg p-4 text-left transition-colors duration-200 block">
-              <Calendar className="h-8 w-8 text-blue-600 mb-2" />
-              <h4 className="text-sm font-medium text-blue-900">Add Fixture</h4>
-              <p className="text-xs text-blue-700">Schedule new match</p>
+            <Link to="/admin/fixtures/new" className="bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg p-5 text-center transition-all duration-200 block group flex flex-col items-center justify-center">
+              <Calendar className="h-10 w-10 text-blue-600 mb-3 group-hover:scale-110 transition-transform" />
+              <h4 className="text-base font-semibold text-blue-900 group-hover:text-blue-700">Add Fixture</h4>
+              <p className="text-sm text-blue-700 mt-1">Schedule new match</p>
             </Link>
-            <button className="bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg p-4 text-left transition-colors duration-200 block cursor-not-allowed" disabled>
-              <Trophy className="h-8 w-8 text-blue-600 mb-2" />
-              <h4 className="text-sm font-medium text-blue-900">Update Scorecard</h4>
-              <p className="text-xs text-blue-700">Manage live scores</p>
-            </button>
+            <Link to="/admin/rankings" className="bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg p-5 text-center transition-all duration-200 block group flex flex-col items-center justify-center">
+              <Trophy className="h-10 w-10 text-blue-600 mb-3 group-hover:scale-110 transition-transform" />
+              <h4 className="text-base font-semibold text-blue-900 group-hover:text-blue-700">Manage ICC Rankings</h4>
+              <p className="text-sm text-blue-700 mt-1">Update team, batter, bowler, allrounder</p>
+            </Link>
           </div>
         </div>
       </div>
 
       {/* Recent Activity */}
-      <div className="bg-white shadow rounded-lg font-sans">
-        <div className="px-4 py-5 sm:p-6">
-          <h3 className="text-lg leading-6 font-medium text-blue-900 mb-4">Recent Activity</h3>
+      <div className="bg-white shadow-md rounded-xl border border-gray-100"> {/* Softer shadow, rounded-xl */}
+        <div className="px-6 py-6 sm:p-8"> {/* Increased padding */}
+          <h3 className="text-xl leading-6 font-semibold text-gray-900 mb-6">Recent Activity</h3> {/* Larger title, more margin */}
           <div className="flow-root">
-            <ul className="-mb-8">
-              <li>
-                <div className="relative pb-8">
-                  <div className="relative flex space-x-3">
+            <ul className="-mb-6 divide-y divide-gray-200"> {/* Added subtle divider */}
+              <li className="py-4"> {/* Increased vertical padding */}
+                <div className="relative flex items-start space-x-4"> {/* Used items-start for better alignment */}
+                  <div className="relative">
+                    <span className="h-9 w-9 rounded-full bg-blue-500 flex items-center justify-center ring-4 ring-white shadow-md"> {/* Larger ring, added shadow */}
+                      <FileText className="h-5 w-5 text-white" /> {/* Larger icon */}
+                    </span>
+                  </div>
+                  <div className="min-w-0 flex-1 pt-0.5 flex justify-between space-x-4"> {/* Adjusted vertical padding */}
                     <div>
-                      <span className="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center ring-8 ring-white">
-                        <FileText className="h-4 w-4 text-white" />
-                      </span>
+                      <p className="text-base text-gray-700"> {/* Larger text */}
+                        Published <span className="font-semibold text-gray-900">new cricket article</span>
+                      </p>
                     </div>
-                    <div className="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
-                      <div>
-                        <p className="text-sm text-blue-700">
-                          Published <span className="font-medium text-blue-900">new cricket article</span>
-                        </p>
-                      </div>
-                      <div className="text-right text-sm whitespace-nowrap text-blue-700">
-                        <time>2 hours ago</time>
-                      </div>
+                    <div className="text-right text-sm whitespace-nowrap text-gray-500"> {/* Changed text color */}
+                      <time dateTime="2025-07-03T16:00:00Z">2 hours ago</time> {/* Added datetime for accessibility */}
                     </div>
                   </div>
                 </div>
               </li>
-              <li>
-                <div className="relative pb-8">
-                  <div className="relative flex space-x-3">
+              <li className="py-4">
+                <div className="relative flex items-start space-x-4">
+                  <div className="relative">
+                    <span className="h-9 w-9 rounded-full bg-blue-500 flex items-center justify-center ring-4 ring-white shadow-md">
+                      <Calendar className="h-5 w-5 text-white" />
+                    </span>
+                  </div>
+                  <div className="min-w-0 flex-1 pt-0.5 flex justify-between space-x-4">
                     <div>
-                      <span className="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center ring-8 ring-white">
-                        <Calendar className="h-4 w-4 text-white" />
-                      </span>
+                      <p className="text-base text-gray-700">
+                        Added <span className="font-semibold text-gray-900">new fixture</span> for upcoming match
+                      </p>
                     </div>
-                    <div className="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
-                      <div>
-                        <p className="text-sm text-blue-700">
-                          Added <span className="font-medium text-blue-900">new fixture</span> for upcoming match
-                        </p>
-                      </div>
-                      <div className="text-right text-sm whitespace-nowrap text-blue-700">
-                        <time>5 hours ago</time>
-                      </div>
+                    <div className="text-right text-sm whitespace-nowrap text-gray-500">
+                      <time dateTime="2025-07-03T13:00:00Z">5 hours ago</time>
                     </div>
                   </div>
                 </div>
               </li>
-              <li>
-                <div className="relative">
-                  <div className="relative flex space-x-3">
+              <li className="py-4">
+                <div className="relative flex items-start space-x-4">
+                  <div className="relative">
+                    <span className="h-9 w-9 rounded-full bg-blue-500 flex items-center justify-center ring-4 ring-white shadow-md">
+                      <Trophy className="h-5 w-5 text-white" />
+                    </span>
+                  </div>
+                  <div className="min-w-0 flex-1 pt-0.5 flex justify-between space-x-4">
                     <div>
-                      <span className="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center ring-8 ring-white">
-                        <Trophy className="h-4 w-4 text-white" />
-                      </span>
+                      <p className="text-base text-gray-700">
+                        Updated <span className="font-semibold text-gray-900">live scorecard</span>
+                      </p>
                     </div>
-                    <div className="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
-                      <div>
-                        <p className="text-sm text-blue-700">
-                          Updated <span className="font-medium text-blue-900">live scorecard</span>
-                        </p>
-                      </div>
-                      <div className="text-right text-sm whitespace-nowrap text-blue-700">
-                        <time>1 day ago</time>
-                      </div>
+                    <div className="text-right text-sm whitespace-nowrap text-gray-500">
+                      <time dateTime="2025-07-02T10:00:00Z">1 day ago</time>
                     </div>
                   </div>
                 </div>

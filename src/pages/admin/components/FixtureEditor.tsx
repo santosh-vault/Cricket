@@ -96,6 +96,7 @@ export const FixtureEditor: React.FC<FixtureEditorProps> = ({ onSave }) => {
   };
 
   const onSubmit = async (data: FixtureFormData) => {
+    if (!window.confirm('Are you sure you want to save this fixture?')) return;
     setSaving(true);
     try {
       const fixtureData = {

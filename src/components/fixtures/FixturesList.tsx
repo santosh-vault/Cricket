@@ -3,7 +3,7 @@ import { Trophy, RefreshCw, Clock, Globe, Star } from 'lucide-react';
 import { FixtureCard } from './FixtureCard';
 import { useFixtures } from '../../hooks/useFixtures';
 import { format } from 'date-fns';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable, Draggable, DraggableProvided, DroppableProvided } from 'react-beautiful-dnd';
 
 interface FixturesListProps {
   limit?: number;
@@ -97,7 +97,7 @@ export const FixturesList: React.FC<FixturesListProps> = ({
                   </span>
                 )}
                 {internationalMatchesCount > 0 && (
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold bg-green-500 text-white shadow-md">
+                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold bg-blue-500 text-white shadow-md">
                     <Globe className="h-4 w-4 mr-1" />
                     {internationalMatchesCount} Int'l
                   </span>
@@ -113,7 +113,7 @@ export const FixturesList: React.FC<FixturesListProps> = ({
               <button
                 onClick={refreshFixtures}
                 disabled={loading}
-                className="text-green-600 hover:text-green-700 p-2 rounded-md transition-colors duration-200 disabled:opacity-50"
+                className="text-blue-600 hover:text-blue-700 p-2 rounded-md transition-colors duration-200 disabled:opacity-50"
                 title="Refresh fixtures"
               >
                 <RefreshCw className={`h-5 w-5 ${loading ? 'animate-spin' : ''}`} />
@@ -123,23 +123,22 @@ export const FixturesList: React.FC<FixturesListProps> = ({
         )}
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="fixtures-droppable" direction="horizontal">
-            {(provided) => (
+            {(provided: DroppableProvided) => (
               <div className="flex space-x-4 overflow-x-auto pb-4" ref={provided.innerRef} {...provided.droppableProps}>
                 {fixtureOrder.map((id, idx) => {
                   const fixture = fixtures.find(f => f.id === id);
                   if (!fixture) return null;
                   return (
                     <Draggable key={fixture.id} draggableId={fixture.id} index={idx}>
-                      {(provided) => (
-                        <FixtureCard
-                          fixture={fixture}
-                          compact={true}
-                          showScore={true}
-                          isInternational={isInternationalMatch(fixture)}
-                          draggableProps={provided.draggableProps}
-                          dragHandleProps={provided.dragHandleProps}
-                          ref={provided.innerRef}
-                        />
+                      {(provided: DraggableProvided) => (
+                        <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
+                          <FixtureCard
+                            fixture={fixture}
+                            compact={true}
+                            showScore={true}
+                            isInternational={isInternationalMatch(fixture)}
+                          />
+                        </div>
                       )}
                     </Draggable>
                   );
@@ -161,13 +160,13 @@ export const FixturesList: React.FC<FixturesListProps> = ({
             <h2 className="text-3xl font-bold text-gray-900">Cricket Fixtures</h2>
             <div className="flex items-center space-x-3">
               {liveMatchesCount > 0 && (
-                <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-bold bg-red-500 text-white shadow-lg animate-pulse">
+                <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-bold bg-red-500 text-white shadow-md animate-pulse">
                   <span className="w-2 h-2 bg-white rounded-full mr-2"></span>
                   {liveMatchesCount} Live Match{liveMatchesCount > 1 ? 'es' : ''}
                 </span>
               )}
               {internationalMatchesCount > 0 && (
-                <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-bold bg-green-500 text-white shadow-md">
+                <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-bold bg-blue-500 text-white shadow-md">
                   <Globe className="h-5 w-5 mr-2" />
                   {internationalMatchesCount} International
                 </span>
@@ -184,7 +183,7 @@ export const FixturesList: React.FC<FixturesListProps> = ({
             <button
               onClick={refreshFixtures}
               disabled={loading}
-              className="inline-flex items-center px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200 disabled:opacity-50 font-semibold shadow-md"
+              className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 disabled:opacity-50 font-semibold shadow-md"
             >
               <RefreshCw className={`h-5 w-5 mr-2 ${loading ? 'animate-spin' : ''}`} />
               Refresh
@@ -195,10 +194,10 @@ export const FixturesList: React.FC<FixturesListProps> = ({
       
       {/* Priority notice for international matches */}
       {internationalMatchesCount > 0 && (
-        <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+        <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
           <div className="flex items-center">
-            <Star className="h-5 w-5 text-green-600 mr-2" />
-            <span className="text-green-800 font-semibold">
+            <Star className="h-5 w-5 text-blue-600 mr-2" />
+            <span className="text-blue-800 font-semibold">
               International matches are prioritized and shown first
             </span>
           </div>
@@ -207,23 +206,22 @@ export const FixturesList: React.FC<FixturesListProps> = ({
       
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="fixtures-droppable-list" direction="vertical">
-          {(provided) => (
-            <div className="space-y-4" ref={provided.innerRef} {...provided.droppableProps}>
+          {(provided: DroppableProvided) => (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8" ref={provided.innerRef} {...provided.droppableProps}>
               {fixtureOrder.map((id, idx) => {
                 const fixture = fixtures.find(f => f.id === id);
                 if (!fixture) return null;
                 return (
                   <Draggable key={fixture.id} draggableId={fixture.id} index={idx}>
-                    {(provided) => (
-                      <FixtureCard
-                        fixture={fixture}
-                        compact={false}
-                        showScore={true}
-                        isInternational={isInternationalMatch(fixture)}
-                        draggableProps={provided.draggableProps}
-                        dragHandleProps={provided.dragHandleProps}
-                        ref={provided.innerRef}
-                      />
+                    {(provided: DraggableProvided) => (
+                      <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
+                        <FixtureCard
+                          fixture={fixture}
+                          compact={false}
+                          showScore={true}
+                          isInternational={isInternationalMatch(fixture)}
+                        />
+                      </div>
                     )}
                   </Draggable>
                 );
