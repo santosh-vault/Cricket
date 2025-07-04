@@ -223,7 +223,7 @@ export const Features: React.FC = () => {
                             <span className="flex items-center">
                               <Calendar className="h-4 w-4 mr-1.5 text-gray-400" /> {format(new Date(feature.created_at), 'MMM dd, yyyy')}
                             </span>
-                            <span className="text-blue-600 font-semibold flex items-center group-hover:text-blue-800">
+                            <span className="text-blue-600 font-semibold flex items-center group-hover:text-blue-800 read-more">
                               Read More <ChevronRight className="h-4 w-4 ml-1.5 transform group-hover:translate-x-1 transition-transform duration-200" />
                             </span>
                           </div>

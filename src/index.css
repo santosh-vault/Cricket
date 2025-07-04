@@ -1,3 +1,49 @@
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@600&family=Crimson+Pro:wght@400&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif font-semibold;
+    font-family: 'Merriweather', Georgia, serif;
+  }
+  p, li, blockquote, span, div, input, textarea, label, td, th {
+    @apply font-crimsonpro;
+    font-family: 'Crimson Pro', serif;
+    font-weight: 400;
+  }
+  nav, .nav, .navigation, .navbar, .nav-item, .nav-link, .sidebar, .sidebar-item, .sidebar-link, .category, .categories, .tag, .tags, .btn, button, select, option, input[type="button"], input[type="submit"], input[type="reset"], .button, .tab, .tabs, .menu, .menu-item, .dropdown, .dropdown-item, .pagination, .pagination-item, .pagination-link {
+    @apply font-sans;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+  
+  /* Specific targeting for register/login, show all rankings, and read more buttons */
+  a[href*="/admin/login"], .read-more, .show-all-rankings, .register-login-btn {
+    @apply font-sans font-semibold;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 600;
+  }
+}
+
+@layer components {
+  /* Custom typography for detail pages */
+  .detail-content {
+    font-size: 1.25rem; /* 20px */
+    line-height: 1.75;
+  }
+  
+  .detail-content p {
+    margin-bottom: 1.5rem;
+    font-size: 1.25rem;
+    line-height: 1.75;
+  }
+  
+  .detail-content h1, .detail-content h2, .detail-content h3, .detail-content h4, .detail-content h5, .detail-content h6 {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    line-height: 1.8;
+    font-weight: 600;
+  }
+}

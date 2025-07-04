@@ -13,6 +13,7 @@ import { AdminLogin } from './pages/admin/AdminLogin';
 import { AdminDashboard } from './pages/admin/AdminDashboard';
 import { AdminRoute } from './components/auth/AdminRoute';
 import { Features } from './pages/Features';
+import { FeatureDetail } from './pages/FeatureDetail';
 import { Ranking } from './pages/Ranking';
 
 function App() {
@@ -46,6 +47,7 @@ function App() {
               }
             />
             <Route path="features" element={<Features />} />
+            <Route path="features/:slug" element={<FeatureDetail />} />
             <Route path="ranking" element={<Ranking />} />
           </Route>
         </Routes>

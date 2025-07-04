@@ -97,7 +97,7 @@ export const Header: React.FC = () => {
               ) : (
                 <Link
                   to="/admin/login"
-                  className="bg-white text-blue-800 px-4 py-2 rounded-full text-sm font-medium hover:bg-blue-100 shadow-md transition-all duration-300 ease-in-out"
+                  className="bg-white text-blue-800 px-4 py-2 rounded-full text-sm font-bold hover:bg-blue-100 shadow-md transition-all duration-300 ease-in-out register-login-btn"
                 >
                   Register / Login
                 </Link>
@@ -158,7 +158,7 @@ export const Header: React.FC = () => {
                 ) : (
                   <Link
                     to="/admin/login"
-                    className="bg-white text-blue-900 px-3 py-2 rounded-md text-base font-medium block hover:bg-blue-100 transition-colors duration-200"
+                    className="bg-white text-blue-900 px-3 py-2 rounded-md text-base font-light block hover:bg-blue-100 transition-colors duration-200 register-login-btn"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     Register / Login

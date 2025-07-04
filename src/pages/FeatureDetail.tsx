@@ -27,7 +27,7 @@ interface RelatedPost {
   created_at: string;
 }
 
-export const NewsDetail: React.FC = () => {
+export const FeatureDetail: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const [post, setPost] = useState<Post | null>(null);
   const [relatedPosts, setRelatedPosts] = useState<RelatedPost[]>([]);
@@ -50,12 +50,12 @@ export const NewsDetail: React.FC = () => {
         .from('posts')
         .select('*')
         .eq('slug', slug)
-        .eq('type', 'news')
+        .eq('type', 'feature')
         .eq('is_published', true)
         .single();
 
       if (postError) {
-        setError('News article not found');
+        setError('Feature article not found');
         return;
       }
 
@@ -65,7 +65,7 @@ export const NewsDetail: React.FC = () => {
       const { data: relatedData } = await supabase
         .from('posts')
         .select('id, title, slug, category, thumbnail_url, created_at')
-        .eq('type', 'news')
+        .eq('type', 'feature')
         .eq('is_published', true)
         .eq('category', postData.category)
         .neq('id', postData.id)
@@ -74,7 +74,7 @@ export const NewsDetail: React.FC = () => {
       setRelatedPosts(relatedData || []);
     } catch (error) {
       console.error('Error fetching post:', error);
-      setError('Failed to load news article');
+      setError('Failed to load feature article');
     } finally {
       setLoading(false);
     }
@@ -103,7 +103,7 @@ export const NewsDetail: React.FC = () => {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-green-600"></div>
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
       </div>
     );
   }
@@ -112,13 +112,13 @@ export const NewsDetail: React.FC = () => {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">News Article Not Found</h1>
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">Feature Article Not Found</h1>
           <p className="text-gray-600 mb-8">The article you're looking for doesn't exist or has been removed.</p>
           <Link
-            to="/news"
-            className="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors duration-200"
+            to="/features"
+            className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors duration-200"
           >
-            Back to News
+            Back to Features
           </Link>
         </div>
       </div>
@@ -135,28 +135,28 @@ export const NewsDetail: React.FC = () => {
         type="article"
         publishedTime={post.created_at}
         modifiedTime={post.updated_at}
-        url={`/news/${post.slug}`}
+        url={`/features/${post.slug}`}
       />
 
       <article className="min-h-screen bg-white">
         {/* Header */}
-        <header className="bg-gray-50 py-8">
+        <header className="bg-gradient-to-br from-blue-50 to-indigo-50 py-12">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <Link
-              to="/news"
-              className="inline-flex items-center text-green-600 hover:text-green-700 mb-6 transition-colors duration-200"
+              to="/features"
+              className="inline-flex items-center text-blue-600 hover:text-blue-700 mb-8 transition-colors duration-200"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to News
+              Back to Features
             </Link>
             
             <div className="mb-6">
-              <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-semibold">
+              <span className="bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-semibold">
                 {post.category}
               </span>
             </div>
             
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-loose">
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-normal">
               {post.title}
             </h1>
             
@@ -167,11 +167,11 @@ export const NewsDetail: React.FC = () => {
               </div>
               <div className="flex items-center">
                 <User className="h-5 w-5 mr-2" />
-                <span>CricNews Editorial Team</span>
+                <span>CricNews Feature Team</span>
               </div>
               <button
                 onClick={handleShare}
-                className="flex items-center text-green-600 hover:text-green-700 transition-colors duration-200"
+                className="flex items-center text-blue-600 hover:text-blue-700 transition-colors duration-200"
               >
                 <Share2 className="h-5 w-5 mr-2" />
                 Share
@@ -208,7 +208,7 @@ export const NewsDetail: React.FC = () => {
                 {post.tags.map((tag, index) => (
                   <span
                     key={index}
-                    className="bg-gray-100 text-gray-700 px-3 py-2 rounded-lg text-sm hover:bg-gray-200 transition-colors duration-200"
+                    className="bg-blue-100 text-blue-800 px-3 py-2 rounded-lg text-sm hover:bg-blue-200 transition-colors duration-200"
                   >
                     {tag}
                   </span>
@@ -222,7 +222,7 @@ export const NewsDetail: React.FC = () => {
         {relatedPosts.length > 0 && (
           <section className="bg-gray-50 py-16">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <h2 className="text-3xl font-bold text-gray-900 mb-8">Related News</h2>
+              <h2 className="text-3xl font-bold text-gray-900 mb-8">Related Features</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {relatedPosts.map((relatedPost) => (
                   <article
@@ -239,13 +239,13 @@ export const NewsDetail: React.FC = () => {
                       ) : (
                         <div className="text-gray-400 text-center">
                           <Calendar className="h-8 w-8 mx-auto mb-1" />
-                          <p className="text-xs">News</p>
+                          <p className="text-xs">Feature</p>
                         </div>
                       )}
                     </div>
                     <div className="p-4">
                       <div className="text-xs text-gray-500 mb-2">
-                        <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full font-semibold">
+                        <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full font-semibold">
                           {relatedPost.category}
                         </span>
                       </div>
@@ -256,8 +256,8 @@ export const NewsDetail: React.FC = () => {
                         {format(new Date(relatedPost.created_at), 'MMM dd, yyyy')}
                       </p>
                       <Link
-                        to={`/news/${relatedPost.slug}`}
-                        className="text-green-600 hover:text-green-700 text-xs font-semibold transition-colors duration-200 read-more"
+                        to={`/features/${relatedPost.slug}`}
+                        className="text-blue-600 hover:text-blue-700 text-xs font-semibold transition-colors duration-200 read-more"
                       >
                         Read More →
                       </Link>
@@ -271,4 +271,4 @@ export const NewsDetail: React.FC = () => {
       </article>
     </>
   );
-};
+}; 

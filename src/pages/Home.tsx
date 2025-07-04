@@ -47,7 +47,7 @@ function ICCRankingsCard() {
 
   return (
     <div className="bg-white rounded-2xl p-6 flex flex-col text-gray-900 border border-gray-100">
-      <h3 className="text-2xl font-extrabold text-blue-800 mb-5 flex items-center">
+      <h3 className="text-2xl font-extrabold text-gray-900 mb-5 flex items-center">
         <Trophy className="h-6 w-6 mr-3 text-yellow-500" /> ICC Rankings
       </h3>
       <div className="flex space-x-2 mb-4 overflow-x-auto pb-2 -mx-2 px-2"> {/* Added overflow for small screens */}
@@ -97,7 +97,7 @@ function ICCRankingsCard() {
               </div>
             ))}
             {rankings.length > 6 && (
-              <Link to="/ranking" className="block w-full mt-2 py-2 text-center bg-blue-50 text-blue-700 font-semibold rounded-lg hover:bg-blue-100 transition-colors duration-200">
+              <Link to="/ranking" className="block w-full mt-2 py-2 text-center bg-blue-50 text-blue-700 font-semibold rounded-lg hover:bg-blue-100 transition-colors duration-200 show-all-rankings">
                 Show All Rankings
               </Link>
             )}
@@ -228,7 +228,7 @@ export const Home: React.FC = () => {
                         </span>
                       </div>
                       <div className="p-6 flex-1 flex flex-col justify-between">
-                        <h3 className="text-3xl font-extrabold text-gray-900 mb-3 leading-tight line-clamp-2 group-hover:text-blue-700 transition-colors duration-300">
+                        <h3 className="text-2xl font-extrabold text-gray-900 mb-3 leading-tight line-clamp-2 group-hover:text-blue-700 transition-colors duration-300">
                           {latestNews[0].title}
                         </h3>
                         <p className="text-gray-700 text-base mb-4 line-clamp-3 leading-relaxed">
@@ -238,7 +238,7 @@ export const Home: React.FC = () => {
                           <span className="flex items-center">
                             <Clock className="h-4 w-4 mr-1 text-gray-400" /> {format(new Date(latestNews[0].created_at), 'MMM dd, yyyy')}
                           </span>
-                          <span className="text-blue-600 font-semibold flex items-center">
+                          <span className="text-blue-600 font-semibold flex items-center read-more">
                             Read More <ChevronRight className="h-4 w-4 ml-1 transform group-hover:translate-x-1 transition-transform duration-200" />
                           </span>
                         </div>
@@ -274,7 +274,7 @@ export const Home: React.FC = () => {
                             </h3>
                             <div className="flex items-center text-xs text-gray-500">
                               <Clock className="h-3 w-3 mr-1 text-gray-400" /> {format(new Date(article.created_at), 'MMM dd, yyyy')}
-                              <span className="ml-auto text-blue-600 font-semibold flex items-center">
+                              <span className="ml-auto text-blue-600 font-semibold flex items-center read-more">
                                 Read More <ChevronRight className="h-3 w-3 ml-1 transform group-hover:translate-x-1 transition-transform duration-200" />
                               </span>
                             </div>
