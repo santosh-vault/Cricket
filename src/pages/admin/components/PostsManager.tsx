@@ -11,7 +11,7 @@ interface Post {
   slug: string;
   content: string;
   category: string;
-  type: 'news' | 'blog';
+  type: 'news' | 'blog' | 'feature';
   tags: string[];
   thumbnail_url: string | null;
   is_published: boolean;
@@ -20,7 +20,7 @@ interface Post {
 }
 
 interface PostsManagerProps {
-  type: 'news' | 'blog';
+  type: 'news' | 'blog' | 'feature';
 }
 
 export const PostsManager: React.FC<PostsManagerProps> = ({ type }) => {
@@ -115,10 +115,10 @@ export const PostsManager: React.FC<PostsManagerProps> = ({ type }) => {
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-2xl font-bold text-blue-900 font-sans">
-            {type === 'news' ? 'News Articles' : 'Blog Posts'}
+            {type === 'news' ? 'News Articles' : type === 'blog' ? 'Blog Posts' : 'Features'}
           </h2>
           <p className="text-blue-700 font-sans">
-            Manage your {type === 'news' ? 'news articles' : 'blog posts'}
+            Manage your {type === 'news' ? 'news articles' : type === 'blog' ? 'blog posts' : 'features'}
           </p>
         </div>
         <Link
@@ -126,7 +126,7 @@ export const PostsManager: React.FC<PostsManagerProps> = ({ type }) => {
           className="bg-blue-900 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-800 transition-colors duration-200 flex items-center font-sans"
         >
           <Plus className="h-4 w-4 mr-2" />
-          Add {type === 'news' ? 'News' : 'Blog Post'}
+          Add {type === 'news' ? 'News' : type === 'blog' ? 'Blog Post' : 'Feature'}
         </Link>
       </div>
 
@@ -297,14 +297,8 @@ export const PostsManager: React.FC<PostsManagerProps> = ({ type }) => {
   return (
     <Routes>
       <Route index element={<PostsList />} />
-      <Route 
-        path="new" 
-        element={<PostEditor type={type} onSave={fetchPosts} />} 
-      />
-      <Route 
-        path=":id/edit" 
-        element={<PostEditor type={type} onSave={fetchPosts} />} 
-      />
+      <Route path="new" element={<PostEditor type={type} onSave={fetchPosts} />} />
+      <Route path=":id/edit" element={<PostEditor type={type} onSave={fetchPosts} />} />
     </Routes>
   );
 };

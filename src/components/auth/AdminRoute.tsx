@@ -10,7 +10,7 @@ export const AdminRoute: React.FC<AdminRouteProps> = ({ children }) => {
   const { user, isAdmin, loading } = useAuth();
 
   // Add some debugging
-  console.log('AdminRoute - user:', user?.email, 'isAdmin:', isAdmin, 'loading:', loading);
+  console.log('AdminRoute - user:', user?.email, 'isAdmin:', isAdmin, 'loading:', loading, 'pathname:', window.location.pathname);
 
   if (loading) {
     return (

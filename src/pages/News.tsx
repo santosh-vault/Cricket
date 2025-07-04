@@ -120,12 +120,12 @@ export const News: React.FC = () => {
 
       <div className="min-h-screen bg-gray-100 font-sans">
         {/* Header Section with Search and Filter */}
-        <section className="bg-white shadow-md py-6 border-b border-gray-200">
+        <section className="bg-white py-6 border-b border-gray-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-6 text-center">
               Cricket <span className="text-blue-600">News & Updates</span>
             </h2>
-            <div className="flex flex-col md:flex-row gap-4 items-center bg-gray-50 p-4 rounded-lg border border-gray-100 shadow-md">
+            <div className="flex flex-col md:flex-row gap-4 items-center bg-gray-50 p-4 rounded-lg border border-gray-100">
               <form onSubmit={handleSearch} className="flex-1 w-full relative">
                 <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                 <input
@@ -162,12 +162,12 @@ export const News: React.FC = () => {
             {/* Main News (75%) - left side */}
             <div className="w-full lg:w-3/4">
               {loading ? (
-                <div className="flex flex-col justify-center items-center py-20 bg-white rounded-xl shadow-md">
+                <div className="flex flex-col justify-center items-center py-20 bg-white rounded-xl">
                   <div className="animate-spin rounded-full h-24 w-24 border-t-4 border-b-4 border-blue-600"></div>
                   <p className="ml-4 text-xl text-blue-700 font-semibold mt-4">Loading the latest cricket headlines...</p>
                 </div>
               ) : news.length === 0 ? (
-                <div className="text-center py-20 bg-white rounded-xl shadow-md p-8">
+                <div className="text-center py-20 bg-white rounded-xl p-8">
                   <Trophy className="h-20 w-20 text-blue-400 mx-auto mb-6 opacity-70" />
                   <h3 className="text-2xl font-bold text-gray-900 mb-3">No News Found!</h3>
                   <p className="text-gray-600 text-lg max-w-md mx-auto">
@@ -195,7 +195,7 @@ export const News: React.FC = () => {
                       className="block group"
                     >
                       <article
-                        className="bg-white rounded-2xl shadow-md hover:shadow-md transition-all duration-300 overflow-hidden flex flex-col h-full border border-gray-200"
+                        className="bg-white rounded-2xl transition-all duration-300 overflow-hidden flex flex-col h-full border border-gray-100"
                       >
                         {/* Image */}
                         <div className="h-56 bg-gray-100 flex items-center justify-center overflow-hidden relative">
@@ -243,7 +243,7 @@ export const News: React.FC = () => {
             </div>
             {/* Most Read News (25%) - right side */}
             <aside className="w-full lg:w-1/4">
-              <div className="bg-white rounded-xl shadow-md p-6 sticky top-28 border border-gray-200">
+              <div className="bg-white rounded-xl p-6 sticky top-28 border border-gray-200">
                 <h3 className="text-xl font-bold text-gray-900 mb-5 flex items-center">
                   <TrendingUp className="h-6 w-6 mr-2 text-red-500" /> Most Read News
                 </h3>

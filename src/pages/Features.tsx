@@ -4,6 +4,7 @@ import { Search, Filter, Calendar, ChevronRight, BookOpen, TrendingUp } from 'lu
 import { SEOHead } from '../components/seo/SEOHead';
 import { supabase } from '../lib/supabase';
 import { format } from 'date-fns';
+import { useAuth } from '../hooks/useAuth';
 
 interface Post {
   id: string;
@@ -22,6 +23,7 @@ export const Features: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || '');
+  const { isAdmin } = useAuth();
 
   const predefinedCategories = [
     'Exclusive',
@@ -102,13 +104,27 @@ export const Features: React.FC = () => {
 
       <div className="min-h-screen bg-gray-100 font-sans">
         {/* Header Section */}
-        <section className="bg-white shadow-md py-6 border-b border-gray-200">
+        <section className="bg-white py-6 border-b border-gray-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-6 text-center">
               Cricket <span className="text-blue-600">Features & Stories</span>
             </h2>
+            {/* Add Feature Button for Admins */}
+            {isAdmin && (
+              <div className="flex justify-end mb-4">
+                <Link 
+                  to="/admin/features/new" 
+                  className="bg-blue-700 text-white px-5 py-2 rounded-lg font-semibold hover:bg-blue-800 transition-colors duration-200"
+                  onClick={() => {
+                    console.log('Add Feature button clicked - navigating to /admin/features/new');
+                  }}
+                >
+                  + Add Feature
+                </Link>
+              </div>
+            )}
             {/* Search and Filter Section */}
-            <div className="flex flex-col md:flex-row gap-4 items-center bg-gray-50 p-4 rounded-lg border border-gray-100 shadow-md">
+            <div className="flex flex-col md:flex-row gap-4 items-center bg-gray-50 p-4 rounded-lg border border-gray-100">
               <form onSubmit={handleSearch} className="flex-1 w-full relative">
                 <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                 <input
@@ -145,12 +161,12 @@ export const Features: React.FC = () => {
             {/* Main Features (75%) - left side */}
             <div className="w-full md:w-3/4">
               {loading ? (
-                <div className="flex flex-col justify-center items-center py-20 bg-white rounded-xl shadow-md">
+                <div className="flex flex-col justify-center items-center py-20 bg-white rounded-xl">
                   <div className="animate-spin rounded-full h-24 w-24 border-t-4 border-b-4 border-blue-600"></div>
                   <p className="ml-4 text-xl text-blue-700 font-semibold mt-4">Loading exclusive cricket features...</p>
                 </div>
               ) : features.length === 0 ? (
-                <div className="text-center py-20 bg-white rounded-xl shadow-md p-8">
+                <div className="text-center py-20 bg-white rounded-xl p-8">
                   <BookOpen className="h-20 w-20 mx-auto mb-6 text-gray-400 opacity-70" />
                   <h3 className="text-2xl font-bold text-gray-900 mb-3">No Features Found!</h3>
                   <p className="text-gray-600 text-lg max-w-md mx-auto">Try adjusting your search or filter criteria.</p>
@@ -161,7 +177,7 @@ export const Features: React.FC = () => {
                         setSelectedCategory('');
                         setSearchParams({});
                       }}
-                      className="mt-6 px-6 py-3 bg-blue-600 text-white rounded-full font-semibold hover:bg-blue-700 transition-colors duration-300 shadow-md"
+                      className="mt-6 px-6 py-3 bg-blue-600 text-white rounded-full font-semibold hover:bg-blue-700 transition-colors duration-300"
                     >
                       Reset Filters
                     </button>
@@ -172,7 +188,7 @@ export const Features: React.FC = () => {
                   {features.map((feature) => (
                     <Link key={feature.id} to={`/features/${feature.slug}`} className="block group">
                       <article
-                        className="bg-white rounded-2xl shadow-md hover:shadow-md transition-all duration-300 overflow-hidden flex flex-col h-full border border-gray-200"
+                        className="bg-white rounded-2xl transition-all duration-300 overflow-hidden flex flex-col h-full border border-gray-100"
                       >
                         {/* Image */}
                         <div className="h-56 bg-gray-100 flex items-center justify-center overflow-hidden relative">
@@ -220,7 +236,7 @@ export const Features: React.FC = () => {
             </div>
             {/* Most Read Features (25%) - right side */}
             <aside className="w-full md:w-1/4">
-              <div className="bg-white rounded-xl shadow-md p-6 sticky top-28 border border-gray-200">
+              <div className="bg-white rounded-xl p-6 sticky top-28 border border-gray-200">
                 <h3 className="text-xl font-bold text-gray-900 mb-5 flex items-center">
                   <TrendingUp className="h-6 w-6 mr-2 text-red-500" /> Most Read Features
                 </h3>

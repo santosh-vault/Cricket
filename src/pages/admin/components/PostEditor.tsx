@@ -45,7 +45,9 @@ export const PostEditor: React.FC<PostEditorProps> = ({ type: initialType, onSav
 
   const categories = type === 'news' 
     ? ['International', 'Domestic', 'IPL', 'T20 World Cup', 'ODI World Cup', 'Test Cricket', 'Women\'s Cricket', 'U19 Cricket']
-    : ['Analysis', 'Opinion', 'Player Profiles', 'Match Analysis', 'Statistics', 'History', 'Coaching Tips', 'Fantasy Cricket'];
+    : type === 'blog'
+    ? ['Analysis', 'Opinion', 'Player Profiles', 'Match Analysis', 'Statistics', 'History', 'Coaching Tips', 'Fantasy Cricket']
+    : ['Exclusive', 'Spotlight', 'Interviews', 'Behind the Scenes', 'Special Reports', 'Features', 'Stories', 'Editorial'];
 
   useEffect(() => {
     if (isEditing) {
@@ -132,7 +134,13 @@ export const PostEditor: React.FC<PostEditorProps> = ({ type: initialType, onSav
       if (error) throw error;
 
       onSave();
-      navigate(`/admin/${data.type}`);
+      if (data.type === 'blog') {
+        navigate('/admin/blogs');
+      } else if (data.type === 'feature') {
+        navigate('/admin/features');
+      } else {
+        navigate('/admin/news');
+      }
     } catch (error) {
       console.error('Error saving post:', error);
       alert('Failed to save post');

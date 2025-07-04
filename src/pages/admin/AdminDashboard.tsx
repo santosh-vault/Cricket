@@ -26,8 +26,8 @@ export const AdminDashboard: React.FC = () => {
     { name: 'Dashboard', href: '/admin', icon: LayoutDashboard, current: location.pathname === '/admin' },
     { name: 'News Articles', href: '/admin/news', icon: FileText, current: location.pathname.includes('/admin/news') },
     { name: 'Blog Posts', href: '/admin/blogs', icon: BookOpen, current: location.pathname.includes('/admin/blogs') },
+    { name: 'Features', href: '/admin/features', icon: BookOpen, current: location.pathname.includes('/admin/features') },
     { name: 'Fixtures', href: '/admin/fixtures', icon: Calendar, current: location.pathname.includes('/admin/fixtures') },
-    { name: 'Scorecards', href: '/admin/scorecards', icon: Trophy, current: location.pathname.includes('/admin/scorecards') },
     { name: 'ICC Rankings', href: '/admin/rankings', icon: Trophy, current: location.pathname.includes('/admin/rankings') },
   ];
 
@@ -76,21 +76,12 @@ export const AdminDashboard: React.FC = () => {
           {/* This section will take the remaining width and handle its own scrolling */}
           <main className="flex-1 bg-gray-50 md:ml-64 py-8 px-4 sm:px-6 lg:px-12 overflow-y-auto"> {/* md:ml-64 to clear sidebar */}
             <div className="max-w-7xl mx-auto">
-              <h1 className="text-3xl font-extrabold text-gray-900 mb-6 capitalize">
-                {navigation.find(item => location.pathname.includes(item.href))?.name || 'Dashboard Overview'}
-              </h1>
               <Routes>
                 <Route index element={<DashboardOverview />} />
                 <Route path="news/*" element={<PostsManager type="news" />} />
                 <Route path="blogs/*" element={<PostsManager type="blog" />} />
+                <Route path="features/*" element={<PostsManager type="feature" />} />
                 <Route path="fixtures/*" element={<FixturesManager />} />
-                <Route path="scorecards/*" element={
-                  <div className="bg-white rounded-lg shadow p-8 text-center text-gray-600">
-                    <Trophy className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-                    <p className="text-xl font-semibold">Scorecards Management</p>
-                    <p className="mt-2">This feature is currently under development. Stay tuned for updates!</p>
-                  </div>
-                } />
                 <Route path="rankings/*" element={<RankingsManager />} />
               </Routes>
             </div>

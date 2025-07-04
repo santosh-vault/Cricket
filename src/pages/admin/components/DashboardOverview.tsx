@@ -178,6 +178,11 @@ export const DashboardOverview: React.FC = () => {
               <h4 className="text-base font-semibold text-blue-900 group-hover:text-blue-700">Manage ICC Rankings</h4>
               <p className="text-sm text-blue-700 mt-1">Update team, batter, bowler, allrounder</p>
             </Link>
+            <Link to="/admin/features/new" className="bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg p-5 text-center transition-all duration-200 block group flex flex-col items-center justify-center">
+              <BookOpen className="h-10 w-10 text-blue-600 mb-3 group-hover:scale-110 transition-transform" />
+              <h4 className="text-base font-semibold text-blue-900 group-hover:text-blue-700">Create Feature</h4>
+              <p className="text-sm text-blue-700 mt-1">Add exclusive cricket features</p>
+            </Link>
           </div>
         </div>
       </div>

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../../../lib/supabase';
 import { Plus, Edit, Trash2 } from 'lucide-react';
+import { useAuth } from '../../../hooks/useAuth';
 
 interface Ranking {
   id: string;
@@ -8,6 +9,7 @@ interface Ranking {
   category: 'team' | 'batter' | 'bowler' | 'allrounder';
   rank: number;
   team_name: string;
+  player_name?: string;
   flag_emoji: string;
   rating: number;
   updated_at: string;
@@ -18,24 +20,48 @@ const categories = ['team', 'batter', 'bowler', 'allrounder'] as const;
 
 export const RankingsManager: React.FC = () => {
   const [selectedFormat, setSelectedFormat] = useState<'test'|'odi'|'t20'>('test');
-  const [selectedCategory, setSelectedCategory] = useState<'team'|'batter'|'bowler'|'allrounder'>('team');
-  const [rankings, setRankings] = useState<Ranking[]>([]);
+  const [rankings, setRankings] = useState<Record<string, Ranking[]>>({
+    team: [],
+    batter: [],
+    bowler: [],
+    allrounder: []
+  });
   const [loading, setLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState<Partial<Ranking>>({ format: 'test', category: 'team' });
   const [editingId, setEditingId] = useState<string|null>(null);
+  const { user, isAdmin } = useAuth();
 
-  useEffect(() => { fetchRankings(); }, [selectedFormat, selectedCategory]);
+  useEffect(() => { fetchAllRankings(); }, [selectedFormat]);
 
-  async function fetchRankings() {
+  async function fetchAllRankings() {
     setLoading(true);
-    const { data, error } = await supabase
-      .from('icc_rankings')
-      .select('*')
-      .eq('format', selectedFormat)
-      .eq('category', selectedCategory)
-      .order('rank', { ascending: true });
-    if (!error) setRankings(data || []);
+    const newRankings: Record<string, Ranking[]> = {
+      team: [],
+      batter: [],
+      bowler: [],
+      allrounder: []
+    };
+
+    try {
+      const promises = categories.map(async (category) => {
+        const { data, error } = await supabase
+          .from('icc_rankings')
+          .select('*')
+          .eq('format', selectedFormat)
+          .eq('category', category)
+          .order('rank', { ascending: true });
+        
+        if (!error) {
+          newRankings[category] = data || [];
+        }
+      });
+
+      await Promise.all(promises);
+      setRankings(newRankings);
+    } catch (error) {
+      console.error('Error fetching rankings:', error);
+    }
     setLoading(false);
   }
 
@@ -46,93 +72,223 @@ export const RankingsManager: React.FC = () => {
   async function handleSave(e: React.FormEvent) {
     e.preventDefault();
     if (!form.team_name || !form.rank || !form.rating) return;
+    
     if (editingId) {
       await supabase.from('icc_rankings').update({ ...form, updated_at: new Date().toISOString() }).eq('id', editingId);
     } else {
       await supabase.from('icc_rankings').insert([{ ...form, updated_at: new Date().toISOString() }]);
     }
-    setShowForm(false); setForm({ format: selectedFormat, category: selectedCategory }); setEditingId(null);
-    fetchRankings();
+    setShowForm(false); 
+    setForm({ format: selectedFormat, category: 'team' }); 
+    setEditingId(null);
+    fetchAllRankings();
   }
 
   async function handleEdit(r: Ranking) {
-    setForm(r); setShowForm(true); setEditingId(r.id);
+    setForm(r); 
+    setShowForm(true); 
+    setEditingId(r.id);
   }
 
   async function handleDelete(id: string) {
     if (window.confirm('Delete this ranking?')) {
       await supabase.from('icc_rankings').delete().eq('id', id);
-      fetchRankings();
+      fetchAllRankings();
     }
   }
 
+  function getDisplayName(ranking: Ranking) {
+    return ranking.team_name || ranking.player_name || 'Unknown';
+  }
+
+  console.log('RankingsManager render - showForm:', showForm);
   return (
-    <div className="max-w-4xl mx-auto py-8">
-      <h1 className="text-2xl font-bold mb-6">Manage ICC Rankings</h1>
-      <div className="flex gap-4 mb-4">
-        {formats.map(f => (
-          <button key={f} onClick={() => setSelectedFormat(f)} className={`px-4 py-2 rounded ${selectedFormat===f?'bg-blue-900 text-white':'bg-blue-50 text-blue-900'}`}>{f.toUpperCase()}</button>
-        ))}
+    <div className="max-w-7xl mx-auto py-8">
+      <h1 className="text-3xl font-bold mb-6">Manage ICC Rankings</h1>
+      <div className="mb-4 p-4 bg-blue-50 rounded-lg">
+        <p className="text-sm text-blue-800">
+          User: {user?.email || 'Not logged in'} | Admin: {isAdmin ? 'Yes' : 'No'}
+        </p>
       </div>
-      <div className="flex gap-4 mb-6">
-        {categories.map(c => (
-          <button key={c} onClick={() => setSelectedCategory(c)} className={`px-3 py-1 rounded ${selectedCategory===c?'bg-blue-900 text-white':'bg-blue-50 text-blue-900'}`}>{c.charAt(0).toUpperCase()+c.slice(1)}</button>
-        ))}
-      </div>
-      <button className="mb-4 px-4 py-2 bg-green-600 text-white rounded flex items-center" onClick={()=>{setShowForm(true);setForm({format:selectedFormat,category:selectedCategory});setEditingId(null);}}><Plus className="h-4 w-4 mr-2"/>Add Ranking</button>
-      {showForm && (
-        <form onSubmit={handleSave} className="bg-white p-4 rounded shadow mb-6 flex flex-col gap-3">
-          <div className="flex gap-3">
-            <select name="format" value={form.format} onChange={handleInput} className="border rounded px-2 py-1">
-              {formats.map(f=>(<option key={f} value={f}>{f.toUpperCase()}</option>))}
-            </select>
-            <select name="category" value={form.category} onChange={handleInput} className="border rounded px-2 py-1">
-              {categories.map(c=>(<option key={c} value={c}>{c.charAt(0).toUpperCase()+c.slice(1)}</option>))}
-            </select>
-            <input name="rank" type="number" min={1} value={form.rank||''} onChange={handleInput} placeholder="Rank" className="border rounded px-2 py-1 w-20"/>
-            <input name="team_name" value={form.team_name||''} onChange={handleInput} placeholder="Team/Player Name" className="border rounded px-2 py-1 flex-1"/>
-            <input name="flag_emoji" value={form.flag_emoji||''} onChange={handleInput} placeholder="Flag Emoji" className="border rounded px-2 py-1 w-20"/>
-            <input name="rating" type="number" min={0} value={form.rating||''} onChange={handleInput} placeholder="Rating" className="border rounded px-2 py-1 w-24"/>
-          </div>
+      
+      {/* Format Selection and Add Button Row */}
+      <div className="mb-8 flex justify-between items-center">
+        <div className="flex gap-4">
+          {formats.map(f => (
+            <button 
+              key={f} 
+              onClick={() => setSelectedFormat(f)} 
+              className={`px-6 py-3 rounded-lg font-semibold transition-all duration-200 ${
+                selectedFormat===f
+                  ?'bg-blue-900 text-white shadow-md'
+                  :'bg-blue-50 text-blue-900 hover:bg-blue-100'
+              }`}
+            >
+              {f.toUpperCase()}
+            </button>
+          ))}
+        </div>
+        
+        {isAdmin ? (
           <div className="flex gap-2">
-            <button type="submit" className="bg-blue-900 text-white px-4 py-2 rounded">{editingId?'Update':'Add'}</button>
-            <button type="button" className="bg-gray-200 px-4 py-2 rounded" onClick={()=>{setShowForm(false);setEditingId(null);}}>Cancel</button>
+            <button 
+              className="px-6 py-3 bg-blue-600 text-white rounded-lg flex items-center hover:bg-blue-700 transition-colors duration-200 shadow-md" 
+              onClick={()=>{
+                console.log('Add New Ranking button clicked');
+                setShowForm(true);
+                setForm({format:selectedFormat,category:'team'});
+                setEditingId(null);
+                console.log('showForm set to true');
+              }}
+            >
+              <Plus className="h-5 w-5 mr-2"/>Add New Ranking
+            </button>
+            <button 
+              className="px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-200 shadow-md" 
+              onClick={()=>{
+                console.log('Test modal button clicked');
+                alert('Test modal button clicked!');
+                setShowForm(true);
+              }}
+            >
+              Test Modal
+            </button>
           </div>
-        </form>
-      )}
-      <div className="bg-white rounded shadow">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead>
-            <tr>
-              <th className="px-4 py-2 text-left">Rank</th>
-              <th className="px-4 py-2 text-left">Flag</th>
-              <th className="px-4 py-2 text-left">Name</th>
-              <th className="px-4 py-2 text-left">Rating</th>
-              <th className="px-4 py-2 text-left">Updated</th>
-              <th className="px-4 py-2"></th>
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
-              <tr><td colSpan={6} className="text-center py-8">Loading...</td></tr>
-            ) : rankings.length === 0 ? (
-              <tr><td colSpan={6} className="text-center py-8">No rankings found.</td></tr>
-            ) : rankings.map(r => (
-              <tr key={r.id} className="hover:bg-blue-50">
-                <td className="px-4 py-2">{r.rank}</td>
-                <td className="px-4 py-2 text-xl">{r.flag_emoji}</td>
-                <td className="px-4 py-2">{r.team_name}</td>
-                <td className="px-4 py-2">{r.rating}</td>
-                <td className="px-4 py-2 text-xs text-gray-500">{r.updated_at ? new Date(r.updated_at).toLocaleDateString() : ''}</td>
-                <td className="px-4 py-2 flex gap-2">
-                  <button className="text-blue-600" onClick={()=>handleEdit(r)}><Edit className="h-4 w-4"/></button>
-                  <button className="text-red-600" onClick={()=>handleDelete(r.id)}><Trash2 className="h-4 w-4"/></button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        ) : (
+          <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+            <p className="text-yellow-800">You need admin privileges to add/edit rankings.</p>
+          </div>
+        )}
       </div>
+      
+      {/* Popup Modal for Add/Edit Form */}
+      {showForm && isAdmin && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4" style={{position: 'fixed', top: 0, left: 0, right: 0, bottom: 0}}>
+          <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-xl font-semibold text-gray-900">
+                  {editingId ? 'Edit Ranking' : 'Add New Ranking'} - MODAL IS WORKING!
+                </h3>
+                <button 
+                  onClick={() => {setShowForm(false); setEditingId(null);}}
+                  className="text-gray-400 hover:text-gray-600 text-2xl font-bold"
+                >
+                  ×
+                </button>
+              </div>
+              
+              <form onSubmit={handleSave} className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Format</label>
+                    <select name="format" value={form.format} onChange={handleInput} className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                      {formats.map(f=>(<option key={f} value={f}>{f.toUpperCase()}</option>))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                    <select name="category" value={form.category} onChange={handleInput} className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                      {categories.map(c=>(<option key={c} value={c}>{c.charAt(0).toUpperCase()+c.slice(1)}</option>))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Rank</label>
+                    <input name="rank" type="number" min={1} value={form.rank||''} onChange={handleInput} placeholder="Rank" className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"/>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Team/Player Name</label>
+                    <input name="team_name" value={form.team_name||''} onChange={handleInput} placeholder="Team/Player Name" className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"/>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Flag Emoji</label>
+                    <input name="flag_emoji" value={form.flag_emoji||''} onChange={handleInput} placeholder="Flag Emoji" className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"/>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Rating</label>
+                    <input name="rating" type="number" min={0} step="0.01" value={form.rating||''} onChange={handleInput} placeholder="Rating" className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"/>
+                  </div>
+                </div>
+                
+                <div className="flex gap-3 pt-4 border-t border-gray-200">
+                  <button type="submit" className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-semibold">
+                    {editingId?'Update':'Add'} Ranking
+                  </button>
+                  <button 
+                    type="button" 
+                    className="bg-gray-200 px-6 py-2 rounded-lg hover:bg-gray-300 transition-colors duration-200 font-semibold" 
+                    onClick={()=>{setShowForm(false);setEditingId(null);}}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Rankings Grid - Separate Columns for Each Category */}
+      {loading ? (
+        <div className="text-center py-12">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading rankings...</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-6">
+          {categories.map(category => (
+            <div key={category} className="bg-white rounded-lg shadow-md border border-gray-200">
+              <div className="bg-blue-50 px-4 py-3 border-b border-gray-200">
+                <h3 className="text-lg font-semibold text-blue-900 capitalize">
+                  {category.charAt(0).toUpperCase() + category.slice(1)} Rankings
+                </h3>
+                <p className="text-sm text-blue-700">{rankings[category]?.length || 0} entries</p>
+              </div>
+              
+              <div className="p-4">
+                {rankings[category]?.length === 0 ? (
+                  <p className="text-center text-gray-500 py-8">No {category} rankings found.</p>
+                ) : (
+                  <div className="space-y-3">
+                    {rankings[category]?.map(ranking => (
+                      <div key={ranking.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200">
+                        <div className="flex items-center space-x-3 flex-1">
+                          <span className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold">
+                            {ranking.rank}
+                          </span>
+                          <span className="text-2xl">{ranking.flag_emoji}</span>
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium text-gray-900 truncate">{getDisplayName(ranking)}</p>
+                            <p className="text-sm text-gray-600">{ranking.rating}</p>
+                          </div>
+                        </div>
+                        {isAdmin && (
+                          <div className="flex space-x-2">
+                            <button 
+                              className="text-blue-600 hover:text-blue-800 p-1 rounded transition-colors duration-200" 
+                              onClick={()=>handleEdit(ranking)}
+                              title="Edit"
+                            >
+                              <Edit className="h-4 w-4"/>
+                            </button>
+                            <button 
+                              className="text-red-600 hover:text-red-800 p-1 rounded transition-colors duration-200" 
+                              onClick={()=>handleDelete(ranking.id)}
+                              title="Delete"
+                            >
+                              <Trash2 className="h-4 w-4"/>
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }; 
