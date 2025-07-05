@@ -6,6 +6,7 @@ import { FixturesList } from '../components/fixtures/FixturesList';
 import { supabase } from '../lib/supabase';
 import { format } from 'date-fns';
 import { useFixtures } from '../hooks/useFixtures';
+import ReactCountryFlag from 'react-country-flag';
 
 // Interface for Post remains the same
 interface Post {
@@ -77,7 +78,16 @@ function ICCRankingsCard() {
             {rankings.slice(0, 7).map(row => (
               <div key={row.id} className="flex items-center py-3 text-base justify-between">
                 <span className="w-8 text-gray-600 font-bold">{row.rank}.</span>
-                {row.flag_emoji && <span className="w-8 h-8 flex items-center justify-center text-xl mr-3">{row.flag_emoji}</span>}
+                {row.flag_emoji ? (
+                  <ReactCountryFlag
+                    countryCode={row.flag_emoji}
+                    svg
+                    style={{ width: '1.25em', height: '1.25em', marginRight: '0.5em', borderRadius: '0.25em', verticalAlign: 'middle' }}
+                    title={row.team_name}
+                  />
+                ) : (
+                  <span style={{ width: '1.25em', height: '1.25em', marginRight: '0.5em', fontSize: '1.25em', display: 'inline-block', textAlign: 'center', verticalAlign: 'middle' }}>🏏</span>
+                )}
                 <span className="flex-1 text-gray-800 font-medium text-lg">{row.team_name}</span>
                 <span className="font-bold text-blue-700 text-lg">{row.rating}</span>
               </div>

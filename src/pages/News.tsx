@@ -244,7 +244,7 @@ export const News: React.FC = () => {
             {/* Most Read News (25%) - right side */}
             <aside className="w-full lg:w-1/4">
               <div className="bg-white rounded-xl p-6 sticky top-28 border border-gray-200">
-                <h3 className="text-xl font-bold text-gray-900 mb-5 flex items-center">
+                <h3 className="text-lg font-bold text-gray-900 mb-5 flex items-center">
                   <TrendingUp className="h-6 w-6 mr-2 text-red-500" /> Most Read News
                 </h3>
                 <div className="flex flex-col divide-y divide-gray-100">
@@ -255,7 +255,7 @@ export const News: React.FC = () => {
                   */}
                   {news.slice(0, 5).map((article, index) => (
                     <Link key={article.id} to={`/news/${article.slug}`} className="block py-3 group">
-                      <h4 className="font-semibold text-lg text-gray-800 mb-1 leading-snug line-clamp-3 group-hover:text-blue-700 transition-colors duration-200">
+                      <h4 className="font-semibold text-base text-gray-800 mb-1 leading-snug line-clamp-3 group-hover:text-blue-700 transition-colors duration-200">
                         <span className="text-blue-500 mr-2 font-bold">{index + 1}.</span> {article.title}
                       </h4>
                       <div className="flex items-center text-xs text-gray-500">

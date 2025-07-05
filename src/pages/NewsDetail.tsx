@@ -194,7 +194,7 @@ export const NewsDetail: React.FC = () => {
         {/* Content */}
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="detail-content max-w-none">
-            <div dangerouslySetInnerHTML={{ __html: post.content }} />
+            <div style={{ whiteSpace: 'pre-line' }}>{post.content}</div>
           </div>
 
           {/* Tags */}

@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { supabase } from '../../../lib/supabase';
 import { Plus, Edit, Trash2 } from 'lucide-react';
 import { useAuth } from '../../../hooks/useAuth';
+import { CRICKET_COUNTRIES } from '../../../lib/countryFlags';
+import ReactCountryFlag from 'react-country-flag';
 
 interface Ranking {
   id: string;
@@ -95,11 +97,6 @@ export const RankingsManager: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto py-8 admin-panel">
       <h1 className="text-3xl font-bold mb-6">Manage ICC Rankings</h1>
-      <div className="mb-4 p-4 bg-blue-50 rounded-lg">
-        <p className="text-sm text-blue-800">
-          User: {user?.email || 'Not logged in'} | Admin: {isAdmin ? 'Yes' : 'No'}
-        </p>
-      </div>
       
       {/* Format Selection and Add Button Row */}
       <div className="mb-8 flex justify-between items-center">
@@ -133,16 +130,6 @@ export const RankingsManager: React.FC = () => {
             >
               <Plus className="h-5 w-5 mr-2"/>Add New Ranking
             </button>
-            <button 
-              className="px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-200 shadow-md" 
-              onClick={()=>{
-                console.log('Test modal button clicked');
-                alert('Test modal button clicked!');
-                setShowForm(true);
-              }}
-            >
-              Test Modal
-            </button>
           </div>
         ) : (
           <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
@@ -158,7 +145,7 @@ export const RankingsManager: React.FC = () => {
             <div className="p-6">
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-xl font-semibold text-gray-900">
-                  {editingId ? 'Edit Ranking' : 'Add New Ranking'} - MODAL IS WORKING!
+                  {editingId ? 'Edit Ranking' : 'Add New Ranking'}
                 </h3>
                 <button 
                   onClick={() => {setShowForm(false); setEditingId(null);}}
@@ -177,10 +164,6 @@ export const RankingsManager: React.FC = () => {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
-                    <input name="category" value="team" readOnly className="w-full border rounded-lg px-3 py-2 bg-gray-50 text-gray-700" />
-                  </div>
-                  <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Rank</label>
                     <input name="rank" type="number" min={1} value={form.rank||''} onChange={handleInput} placeholder="Rank" className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"/>
                   </div>
@@ -189,8 +172,21 @@ export const RankingsManager: React.FC = () => {
                     <input name="team_name" value={form.team_name||''} onChange={handleInput} placeholder="Team Name" className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"/>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Flag Emoji</label>
-                    <input name="flag_emoji" value={form.flag_emoji||''} onChange={handleInput} placeholder="Flag Emoji" className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"/>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Country Flag</label>
+                    <select
+                      name="flag_emoji"
+                      value={form.flag_emoji || ''}
+                      onChange={handleInput}
+                      className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                      required
+                    >
+                      <option value="">Select Country</option>
+                      {CRICKET_COUNTRIES.map((country) => (
+                        <option key={country.code} value={country.code}>
+                          {country.flag} {country.name}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Rating</label>
@@ -242,7 +238,12 @@ export const RankingsManager: React.FC = () => {
                       <span className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold">
                         {ranking.rank}
                       </span>
-                      <span className="text-2xl">{ranking.flag_emoji}</span>
+                      <ReactCountryFlag
+                        countryCode={ranking.flag_emoji}
+                        svg
+                        style={{ width: '2em', height: '2em', marginRight: '0.5em', borderRadius: '0.25em', verticalAlign: 'middle' }}
+                        title={ranking.team_name}
+                      />
                       <div className="flex-1 min-w-0">
                         <p className="font-medium text-gray-900 truncate">{getDisplayName(ranking)}</p>
                         <p className="text-sm text-gray-600">{ranking.rating}</p>

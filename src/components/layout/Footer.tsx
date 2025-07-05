@@ -37,6 +37,16 @@ export const Footer: React.FC = () => {
                   <span className="mr-2 transform group-hover:translate-x-1 transition-transform duration-300">&raquo;</span> Fixtures
                 </Link>
               </li>
+              <li>
+                <Link to="/about-us" className="text-gray-300 hover:text-blue-400 transition-colors duration-300 flex items-center group">
+                  <span className="mr-2 transform group-hover:translate-x-1 transition-transform duration-300">&raquo;</span> About Us
+                </Link>
+              </li>
+              <li>
+                <Link to="/privacy-policy" className="text-gray-300 hover:text-blue-400 transition-colors duration-300 flex items-center group">
+                  <span className="mr-2 transform group-hover:translate-x-1 transition-transform duration-300">&raquo;</span> Privacy Policy
+                </Link>
+              </li>
             </ul>
           </div>
 

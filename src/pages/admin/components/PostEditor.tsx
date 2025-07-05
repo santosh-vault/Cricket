@@ -4,6 +4,7 @@ import { ArrowLeft, Save, Eye, Image, Tag, Calendar } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { supabase } from '../../../lib/supabase';
 import { useAuth } from '../../../hooks/useAuth';
+import { v4 as uuidv4 } from 'uuid';
 
 interface PostFormData {
   title: string;
@@ -27,6 +28,7 @@ export const PostEditor: React.FC<PostEditorProps> = ({ type: initialType, onSav
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const isEditing = Boolean(id);
+  const [uploading, setUploading] = useState(false);
 
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<PostFormData>({
     defaultValues: {
@@ -146,6 +148,24 @@ export const PostEditor: React.FC<PostEditorProps> = ({ type: initialType, onSav
       alert('Failed to save post');
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${uuidv4()}.${fileExt}`;
+      const { data, error } = await supabase.storage.from('post-images').upload(fileName, file);
+      if (error) throw error;
+      const { publicURL } = supabase.storage.from('post-images').getPublicUrl(fileName).data;
+      setValue('thumbnail_url', publicURL);
+    } catch (error) {
+      alert('Image upload failed');
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -294,16 +314,12 @@ export const PostEditor: React.FC<PostEditorProps> = ({ type: initialType, onSav
 
               {/* Featured Image */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center">
-                  <Image className="h-4 w-4 mr-2" />
-                  Featured Image URL
-                </label>
-                <input
-                  type="url"
-                  {...register('thumbnail_url')}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                  placeholder="https://example.com/image.jpg"
-                />
+                <label className="block text-sm font-medium text-gray-700 mb-2">News Image</label>
+                <input type="file" accept="image/*" onChange={handleImageUpload} className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100" />
+                {uploading && <p className="text-green-600 text-sm mt-2">Uploading...</p>}
+                {watch('thumbnail_url') && (
+                  <img src={watch('thumbnail_url')} alt="Preview" className="mt-2 rounded-lg max-h-40 border" />
+                )}
               </div>
             </div>
           </div>

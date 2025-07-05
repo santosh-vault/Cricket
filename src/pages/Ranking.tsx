@@ -3,6 +3,7 @@ import { Trophy } from 'lucide-react';
 import { SEOHead } from '../components/seo/SEOHead';
 import { supabase } from '../lib/supabase';
 import { format } from 'date-fns';
+import ReactCountryFlag from 'react-country-flag';
 
 // Interface for Rank remains the same
 interface RankingItem {
@@ -17,6 +18,7 @@ interface RankingItem {
 }
 
 const categories = ['team'] as const;
+const formats = ['test', 'odi', 't20'] as const;
 
 export const Ranking: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<'team'>('team');
@@ -26,6 +28,7 @@ export const Ranking: React.FC = () => {
     t20: [],
   });
   const [loading, setLoading] = useState(true);
+  const [selectedFormat, setSelectedFormat] = useState<'test' | 'odi' | 't20'>('test');
 
   useEffect(() => {
     fetchAllRankings();
@@ -47,8 +50,7 @@ export const Ranking: React.FC = () => {
           .select('*')
           .eq('format', format)
           .eq('category', selectedCategory)
-          .order('rank', { ascending: true })
-          .limit(10); // Limit to top 10 for each column to keep it concise
+          .order('rank', { ascending: true });
 
         if (error) {
           console.error(`Error fetching ${format} rankings:`, error.message);
@@ -96,11 +98,23 @@ export const Ranking: React.FC = () => {
               ICC Cricket Rankings
             </h1>
 
-            {/* Team Rankings Header */}
-            <div className="text-center mb-12">
-              <h2 className="text-2xl font-bold text-blue-700">Team Rankings</h2>
-              <p className="text-gray-600 mt-2">Official ICC team rankings across all formats</p>
+            <div className="flex justify-center gap-4 mb-8">
+              {formats.map(f => (
+                <button
+                  key={f}
+                  onClick={() => setSelectedFormat(f)}
+                  className={`px-6 py-2 rounded-full text-base font-semibold transition-all duration-300 ease-in-out whitespace-nowrap
+                    ${selectedFormat === f
+                      ? 'bg-blue-600 text-white shadow-md'
+                      : 'bg-gray-100 text-blue-700 hover:bg-blue-200'}
+                  `}
+                >
+                  {f.toUpperCase()}
+                </button>
+              ))}
             </div>
+
+         
 
             {/* Three Columns for Formats */}
             {loading ? (
@@ -109,28 +123,33 @@ export const Ranking: React.FC = () => {
                 <p className="text-xl font-medium">Loading all formats for {selectedCategory} rankings...</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
-                {['test', 'odi', 't20'].map(format => (
-                  <div key={format} className="flex flex-col bg-gray-50 rounded-xl shadow-md p-6 border border-gray-200">
-                    <h2 className="text-2xl font-extrabold text-blue-700 mb-6 text-center border-b pb-3 border-blue-200">
-                      {format.toUpperCase()} Rankings
-                    </h2>
-                    <div className="flex-grow divide-y divide-gray-100 custom-scrollbar max-h-[500px] overflow-y-auto">
-                      {allRankings[format as 'test' | 'odi' | 't20'].length > 0 ? (
-                        allRankings[format as 'test' | 'odi' | 't20'].map((row: RankingItem) => (
-                          <div key={row.id} className="flex items-center py-3 text-base justify-between hover:bg-blue-100 rounded-md px-2 -mx-2 transition-colors duration-200">
-                            <span className="w-8 text-gray-700 font-bold text-lg">{row.rank}.</span>
-                            {row.flag_emoji && <span className="w-8 h-8 flex items-center justify-center text-xl mr-3 flex-shrink-0">{row.flag_emoji}</span>}
-                            <span className="flex-1 text-gray-900 font-semibold truncate mr-2">{row.team_name}</span>
-                            <span className="font-bold text-blue-700 text-lg">{row.rating}</span>
-                          </div>
-                        ))
-                      ) : (
-                        <div className="text-center text-gray-500 py-10 text-md">No {selectedCategory} rankings available for {format.toUpperCase()}.</div>
-                      )}
-                    </div>
-                  </div>
-                ))}
+              <div className="flex flex-col bg-gray-50 rounded-xl shadow-md p-6 border border-gray-200">
+                <h2 className="text-2xl font-extrabold text-blue-700 mb-6 text-center border-b pb-3 border-blue-200">
+                  {selectedFormat.toUpperCase()} Rankings
+                </h2>
+                <div className="flex-grow divide-y divide-gray-100">
+                  {allRankings[selectedFormat].length > 0 ? (
+                    allRankings[selectedFormat].map((row: RankingItem) => (
+                      <div key={row.id} className="flex items-center py-3 text-base justify-between hover:bg-blue-100 rounded-md px-2 -mx-2 transition-colors duration-200">
+                        <span className="w-8 text-gray-700 font-bold text-lg">{row.rank}.</span>
+                        {row.flag_emoji && typeof row.flag_emoji === 'string' && row.flag_emoji.length > 0 ? (
+                          <ReactCountryFlag
+                            countryCode={row.flag_emoji as string}
+                            svg
+                            style={{ width: '1.25em', height: '1.25em', marginRight: '0.5em', borderRadius: '0.25em', verticalAlign: 'middle' }}
+                            title={row.team_name}
+                          />
+                        ) : (
+                          <span style={{ width: '1.25em', height: '1.25em', marginRight: '0.5em', fontSize: '1.25em', display: 'inline-block', textAlign: 'center', verticalAlign: 'middle' }}>🏏</span>
+                        )}
+                        <span className="flex-1 text-gray-900 font-semibold truncate mr-2">{row.team_name}</span>
+                        <span className="font-bold text-blue-700 text-lg">{row.rating}</span>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-center text-gray-500 py-10 text-md">No rankings available for {selectedFormat.toUpperCase()}.</div>
+                  )}
+                </div>
               </div>
             )}
 

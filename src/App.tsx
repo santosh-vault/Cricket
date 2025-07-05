@@ -15,6 +15,8 @@ import { AdminRoute } from './components/auth/AdminRoute';
 import { Features } from './pages/Features';
 import { FeatureDetail } from './pages/FeatureDetail';
 import { Ranking } from './pages/Ranking';
+import { AboutUs } from './pages/AboutUs';
+import { PrivacyPolicy } from './pages/PrivacyPolicy';
 
 function App() {
   return (
@@ -49,6 +51,8 @@ function App() {
             <Route path="features" element={<Features />} />
             <Route path="features/:slug" element={<FeatureDetail />} />
             <Route path="ranking" element={<Ranking />} />
+            <Route path="about-us" element={<AboutUs />} />
+            <Route path="privacy-policy" element={<PrivacyPolicy />} />
           </Route>
         </Routes>
       </Router>

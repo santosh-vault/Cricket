@@ -22,9 +22,9 @@
   
   /* Specific targeting for register/login, show all rankings, and read more buttons */
       a[href*="/admin/login"], .read-more, .show-all-rankings, .register-login-btn {
-      @apply font-sansa font-normal;
+      @apply font-sansa font-semibold;
       font-family: 'Helvetica', 'Helvetica Neue', sans-serif;
-      font-weight: 400;
+      font-weight: 600;
     }
 
     /* Admin panel tables and components */
