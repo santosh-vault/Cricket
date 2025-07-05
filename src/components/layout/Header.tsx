@@ -17,37 +17,58 @@ export const Header: React.FC = () => {
   const navItems = [
     { name: 'Home', path: '/' },
     { name: 'News', path: '/news' },
-    { name: 'Blogs', path: '/blogs' },
+    { name: 'Features', path: '/blogs' },
+    { name: 'Analysis', path: '/features' },
     { name: 'Fixtures', path: '/fixtures' },
-    { name: 'Features', path: '/features' },
-    { name: 'Ranking', path: '/ranking' },
+    { name: 'Rankings', path: '/ranking' },
 
   ];
 
   return (
     <>
       {/* Top Contact & Social Bar */}
-      <div className="bg-gray-100 text-gray-700 text-xs py-2 px-4 flex justify-between items-center font-sans tracking-wide">
-        <div className="flex items-center gap-4">
-          <span className="flex items-center gap-1">
-            <Mail className="h-3 w-3 text-blue-600" /> contact@cricnews.com
+      {/* <div className="bg-gray-50 text-gray-600 text-sm py-1 px-6 flex justify-between items-center font-sans">
+        <div className="flex items-center gap-6">
+          <span className="flex items-center gap-2 hover:text-blue-600 transition-colors duration-200 cursor-pointer">
+            <Mail className="h-4 w-4 text-blue-500" />
+            <span className="font-medium" style={{ fontFamily: 'Helvetica, Helvetica Neue, sans-serif' }}>contact@cricnews.com</span>
           </span>
-          <span className="flex items-center gap-1">
-            <Phone className="h-3 w-3 text-blue-600" /> +1 234 567 890
+          <span className="flex items-center gap-2 hover:text-blue-600 transition-colors duration-200 cursor-pointer">
+            <Phone className="h-4 w-4 text-blue-500" />
+            <span className="font-medium" style={{ fontFamily: 'Helvetica, Helvetica Neue, sans-serif' }}>+1 234 567 890</span>
           </span>
         </div>
-        <div className="flex items-center gap-3">
-          <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-blue-500 transition-colors duration-200">
+        <div className="flex items-center gap-4">
+          <a 
+            href="https://facebook.com" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="text-gray-500 hover:text-blue-600 p-2 rounded-full hover:bg-blue-50 transition-all duration-200"
+            title="Follow us on Facebook"
+          >
             <Facebook className="h-4 w-4" />
           </a>
-          <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-blue-500 transition-colors duration-200">
+          <a 
+            href="https://twitter.com" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="text-gray-500 hover:text-blue-600 p-2 rounded-full hover:bg-blue-50 transition-all duration-200"
+            title="Follow us on Twitter"
+          >
             <Twitter className="h-4 w-4" />
           </a>
-          <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-blue-500 transition-colors duration-200">
+          <a 
+            href="https://instagram.com" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="text-gray-500 hover:text-blue-600 p-2 rounded-full hover:bg-blue-50 transition-all duration-200"
+            title="Follow us on Instagram"
+          >
             <Instagram className="h-4 w-4" />
           </a>
         </div>
-      </div>
+      </div> */}
+
       <header className="bg-gradient-to-r from-blue-800 to-blue-950 shadow-md sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
@@ -63,7 +84,7 @@ export const Header: React.FC = () => {
                 <Link
                   key={item.name}
                   to={item.path}
-                  className="text-blue-100 hover:text-white px-3 py-2 rounded-md text-sm font-semibold transition-all duration-300 ease-in-out hover:bg-blue-700"
+                  className="text-blue-100 hover:text-white px-3 py-2 rounded-md text-sm font-regular transition-all duration-300 ease-in-out hover:bg-blue-700"
                 >
                   {item.name}
                 </Link>

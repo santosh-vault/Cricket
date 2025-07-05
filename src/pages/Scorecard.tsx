@@ -41,16 +41,16 @@ export const Scorecard: React.FC = () => {
     }
   }, [matchId]);
 
-  // Auto-refresh for live matches
-  useEffect(() => {
-    if (matchData?.status === 'live') {
-      const interval = setInterval(() => {
-        fetchMatchData(false); // Don't show loading on auto-refresh
-      }, 15000); // Refresh every 15 seconds for live matches
+  // Auto-refresh for live matches - DISABLED for manual updates only
+  // useEffect(() => {
+  //   if (matchData?.status === 'live') {
+  //     const interval = setInterval(() => {
+  //       fetchMatchData(false); // Don't show loading on auto-refresh
+  //     }, 15000); // Refresh every 15 seconds for live matches
 
-      return () => clearInterval(interval);
-    }
-  }, [matchData?.status]);
+  //     return () => clearInterval(interval);
+  //   }
+  // }, [matchData?.status]);
 
   const fetchMatchData = async (showLoading = true) => {
     try {
@@ -246,6 +246,9 @@ export const Scorecard: React.FC = () => {
                     >
                       <RefreshCw className="h-4 w-4" />
                     </button>
+                    <span className="text-green-200 text-xs">
+                      (Manual refresh only)
+                    </span>
                   </div>
                 )}
               </div>

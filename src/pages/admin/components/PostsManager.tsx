@@ -110,7 +110,7 @@ export const PostsManager: React.FC<PostsManagerProps> = ({ type }) => {
   };
 
   const PostsList = () => (
-    <div className="space-y-6 font-sans">
+    <div className="space-y-6 font-sans admin-panel">
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>

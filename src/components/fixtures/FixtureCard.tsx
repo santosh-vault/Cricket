@@ -77,50 +77,64 @@ export const FixtureCard: React.FC<FixtureCardProps & { draggableProps?: any; dr
   const CardContent = () => {
     if (compact) {
       return (
-        <div {...draggableProps} {...dragHandleProps} className={`bg-white rounded-lg p-3 shadow-md hover:shadow-md transition-all duration-300 flex-shrink-0 cursor-pointer group transform hover:-translate-y-1 ${getCardBorder()} w-full`}> 
-          {/* Header with status and international badge */}
-          <div className="flex items-center justify-between mb-2">
+        <div {...draggableProps} {...dragHandleProps} className={`bg-white rounded-lg p-4 shadow-sm hover:shadow-md transition-all duration-300 flex-shrink-0 cursor-pointer group transform hover:-translate-y-1 ${getCardBorder()} w-80 h-48`}> 
+          {/* Status indicator - minimal */}
+          <div className="flex items-center justify-between mb-3">
             <div className="flex items-center space-x-2">
-              <span className={`px-2 py-0.5 rounded-full text-xs font-bold font-sans ${getStatusColor(fixture.status)}`}>{fixture.status === 'live' ? '🔵 LIVE' : fixture.status.toUpperCase()}</span>
+              <div className={`w-2 h-2 rounded-full ${fixture.status === 'live' ? 'bg-red-500 animate-pulse' : fixture.status === 'upcoming' ? 'bg-blue-500' : 'bg-gray-400'}`}></div>
+              <span className="text-xs font-medium text-gray-600 uppercase tracking-wide">{fixture.status}</span>
               {isInternational && (
-                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-gradient-to-r from-brand to-brand-dark text-white shadow-sm font-sans">
-                  <Globe className="h-3 w-3 mr-1" />INT'L
-                </span>
+                <span className="text-xs text-blue-600 font-medium">INT'L</span>
               )}
             </div>
-            <ExternalLink className="h-4 w-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-all duration-200" />
           </div>
-          {/* Tournament name */}
-          <div className="mb-1">
-            <span className="text-xs font-sans text-gray-700 line-clamp-1 max-w-[12rem] block truncate" title={fixture.name}>{fixture.name.length > 24 ? fixture.name.slice(0, 22) + '…' : fixture.name}</span>
-          </div>
-          {/* Teams */}
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex-1 text-center">
-              <span className="font-bold text-brand text-base block truncate font-serif max-w-[7.5rem]" title={fixture.teams[0] || 'Team 1'}>{(fixture.teams[0] || 'Team 1').length > 16 ? (fixture.teams[0] || 'Team 1').slice(0, 14) + '…' : fixture.teams[0] || 'Team 1'}</span>
+
+          {/* Teams with scores - side by side layout */}
+          <div className="mb-4">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="font-bold text-lg text-gray-900 truncate flex-1 pr-2" title={fixture.teams[0] || 'Team 1'}>
+                  {fixture.teams[0] || 'Team 1'}
+                </div>
+                {showScore && fixture.score && fixture.score[0] && (
+                  <div className="text-sm font-semibold text-gray-700 whitespace-nowrap">
+                    {fixture.score[0].r}/{fixture.score[0].w}
+                  </div>
+                )}
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="font-bold text-lg text-gray-900 truncate flex-1 pr-2" title={fixture.teams[1] || 'Team 2'}>
+                  {fixture.teams[1] || 'Team 2'}
+                </div>
+                {showScore && fixture.score && fixture.score[1] && (
+                  <div className="text-sm font-semibold text-gray-700 whitespace-nowrap">
+                    {fixture.score[1].r}/{fixture.score[1].w}
+                  </div>
+                )}
+              </div>
             </div>
-            <div className="px-2">
-              <span className="text-gray-500 font-bold text-lg font-sans">vs</span>
+          </div>
+
+          {/* Tournament name - subtle */}
+          <div className="mb-3">
+            <p className="text-xs text-gray-500 truncate" title={fixture.name}>
+              {fixture.name}
+            </p>
+          </div>
+
+          {/* Bottom row - venue and time */}
+          <div className="flex items-center justify-between text-xs text-gray-500">
+            <div className="flex items-center">
+              <MapPin className="h-3 w-3 mr-1" />
+              <span className="truncate max-w-24">{fixture.venue}</span>
             </div>
-            <div className="flex-1 text-center">
-              <span className="font-bold text-brand text-base block truncate font-serif max-w-[7.5rem]" title={fixture.teams[1] || 'Team 2'}>{(fixture.teams[1] || 'Team 2').length > 16 ? (fixture.teams[1] || 'Team 2').slice(0, 14) + '…' : fixture.teams[1] || 'Team 2'}</span>
+            <div className="flex items-center">
+              <Clock className="h-3 w-3 mr-1" />
+              <span>{time}</span>
             </div>
           </div>
-          {/* Venue */}
-          <div className="mb-1">
-            <p className="text-xs text-gray-600 truncate flex items-center font-sans"><MapPin className="h-3 w-3 mr-1 flex-shrink-0" />{fixture.venue}</p>
-          </div>
-          {/* Date and Time */}
-          <div className="flex items-center justify-between text-xs text-gray-600 mb-2 font-sans">
-            <span className="flex items-center"><Calendar className="h-3 w-3 mr-1" />{date}</span>
-            <span className="flex items-center"><Clock className="h-3 w-3 mr-1" />{time}</span>
-          </div>
-          {/* Score Display */}
-          {showScore && getScoreDisplay() && (
-            <div className="bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 rounded-lg px-2 py-1 mb-1">
-              <div className="text-blue-800 font-bold text-xs text-center font-sans">{getScoreDisplay()}</div>
-            </div>
-          )}
+
+
         </div>
       );
     }

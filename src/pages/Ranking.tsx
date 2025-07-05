@@ -9,18 +9,17 @@ interface RankingItem {
   id: string;
   rank: number;
   format: 'test' | 'odi' | 't20';
-  category: 'team' | 'batter' | 'bowler' | 'allrounder';
+  category: 'team';
   team_name: string | null;
-  player_name: string | null;
   flag_emoji: string | null;
   rating: number;
   // Add any other fields you might have in your icc_rankings table
 }
 
-const categories = ['team', 'batter', 'bowler', 'allrounder'] as const;
+const categories = ['team'] as const;
 
 export const Ranking: React.FC = () => {
-  const [selectedCategory, setSelectedCategory] = useState<'team' | 'batter' | 'bowler' | 'allrounder'>('team');
+  const [selectedCategory, setSelectedCategory] = useState<'team'>('team');
   const [allRankings, setAllRankings] = useState<Record<'test' | 'odi' | 't20', RankingItem[]>>({
     test: [],
     odi: [],
@@ -97,21 +96,10 @@ export const Ranking: React.FC = () => {
               ICC Cricket Rankings
             </h1>
 
-            {/* Category Selection Tabs (now the primary filter) */}
-            <div className="flex flex-wrap justify-center gap-x-8 sm:gap-x-10 mb-12 text-lg sm:text-xl border-b border-gray-200 pb-4 overflow-x-auto scrollbar-hide">
-              {categories.map(c => (
-                <span
-                  key={c}
-                  onClick={() => setSelectedCategory(c)}
-                  className={`cursor-pointer pb-2 font-semibold transition-colors duration-300 ease-in-out whitespace-nowrap px-2
-                    ${selectedCategory === c
-                      ? 'text-blue-700 border-b-2 border-blue-500 font-bold'
-                      : 'text-gray-500 hover:text-blue-600'
-                    }`}
-                >
-                  {c.charAt(0).toUpperCase() + c.slice(1)}
-                </span>
-              ))}
+            {/* Team Rankings Header */}
+            <div className="text-center mb-12">
+              <h2 className="text-2xl font-bold text-blue-700">Team Rankings</h2>
+              <p className="text-gray-600 mt-2">Official ICC team rankings across all formats</p>
             </div>
 
             {/* Three Columns for Formats */}
@@ -133,7 +121,7 @@ export const Ranking: React.FC = () => {
                           <div key={row.id} className="flex items-center py-3 text-base justify-between hover:bg-blue-100 rounded-md px-2 -mx-2 transition-colors duration-200">
                             <span className="w-8 text-gray-700 font-bold text-lg">{row.rank}.</span>
                             {row.flag_emoji && <span className="w-8 h-8 flex items-center justify-center text-xl mr-3 flex-shrink-0">{row.flag_emoji}</span>}
-                            <span className="flex-1 text-gray-900 font-semibold truncate mr-2">{row.team_name || row.player_name}</span>
+                            <span className="flex-1 text-gray-900 font-semibold truncate mr-2">{row.team_name}</span>
                             <span className="font-bold text-blue-700 text-lg">{row.rating}</span>
                           </div>
                         ))

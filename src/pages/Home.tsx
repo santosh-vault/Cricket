@@ -21,11 +21,11 @@ interface Post {
 
 // ICC Rankings Card Component - MASSIVE DESIGN CHANGE
 const formats = ['test', 'odi', 't20'] as const;
-const categories = ['team', 'batter', 'bowler', 'allrounder'] as const;
+const categories = ['team'] as const;
 
 function ICCRankingsCard() {
   const [selectedFormat, setSelectedFormat] = useState<'test' | 'odi' | 't20'>('test');
-  const [selectedCategory, setSelectedCategory] = useState<'team' | 'batter' | 'bowler' | 'allrounder'>('team');
+  const [selectedCategory, setSelectedCategory] = useState<'team'>('team');
   const [rankings, setRankings] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -65,21 +65,7 @@ function ICCRankingsCard() {
           </button>
         ))}
       </div>
-      <div className="flex space-x-5 mb-4 text-base border-b border-gray-200 pb-3 -mx-2 px-2 overflow-x-auto"> {/* Added overflow */}
-        {categories.map(c => (
-          <span
-            key={c}
-            onClick={() => setSelectedCategory(c)}
-            className={`cursor-pointer pb-2 font-medium transition-colors duration-300 ease-in-out whitespace-nowrap
-              ${selectedCategory === c
-                ? 'text-blue-700 border-b-2 border-blue-500'
-                : 'text-gray-500 hover:text-blue-600'
-              }`}
-          >
-            {c.charAt(0).toUpperCase() + c.slice(1)}
-          </span>
-        ))}
-      </div>
+
       <div className="divide-y divide-gray-100 mb-4 min-h-[250px] flex-grow overflow-y-auto"> {/* Increased min-height */}
         {loading ? (
           <div className="text-center py-12 text-gray-400">
@@ -88,15 +74,15 @@ function ICCRankingsCard() {
           </div>
         ) : rankings.length > 0 ? (
           <>
-            {rankings.slice(0, 6).map(row => (
+            {rankings.slice(0, 7).map(row => (
               <div key={row.id} className="flex items-center py-3 text-base justify-between">
                 <span className="w-8 text-gray-600 font-bold">{row.rank}.</span>
                 {row.flag_emoji && <span className="w-8 h-8 flex items-center justify-center text-xl mr-3">{row.flag_emoji}</span>}
-                <span className="flex-1 text-gray-800 font-medium">{row.team_name || row.player_name}</span>
+                <span className="flex-1 text-gray-800 font-medium text-lg">{row.team_name}</span>
                 <span className="font-bold text-blue-700 text-lg">{row.rating}</span>
               </div>
             ))}
-            {rankings.length > 6 && (
+            {rankings.length > 7 && (
               <Link to="/ranking" className="block w-full mt-2 py-2 text-center bg-blue-50 text-blue-700 font-semibold rounded-lg hover:bg-blue-100 transition-colors duration-200 show-all-rankings">
                 Show All Rankings
               </Link>
@@ -175,16 +161,13 @@ export const Home: React.FC = () => {
 
       {/* Live Fixtures Section */}
       {!fixturesLoading && !fixturesError && (
-        <section className="py-8 bg-gradient-to-r from-blue-50 to-indigo-100 border-b border-blue-200">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            {/* Added a subtle header to FixturesList or keep showHeader={false} */}
-            <FixturesList
-              limit={5}
-              compact={true}
-              showHeader={true} // Set to true to show the internal header of FixturesList if desired
-              className="bg-white rounded-xl p-4 md:p-6" // Apply styles to the FixturesList wrapper
-            />
-          </div>
+        <section className="py-2 bg-gray-50">
+          <FixturesList
+            limit={6}
+            compact={true}
+            showHeader={false}
+            className="px-4 py-4"
+          />
         </section>
       )}
 
@@ -196,13 +179,8 @@ export const Home: React.FC = () => {
             {/* Main News Content (75%) */}
             <div className="w-full lg:w-3/4">
               <div className="flex justify-between items-center mb-8">
-                <h2 className="text-3xl font-extrabold text-gray-900 relative pl-5 before:content-[''] before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-2 before:h-10 before:bg-blue-600 before:rounded-full">Latest Cricket News</h2>
-                <Link
-                  to="/news"
-                  className="text-blue-600 hover:text-blue-800 font-semibold transition-colors duration-300 flex items-center text-lg"
-                >
-                  View All News <ChevronRight className="h-5 w-5 ml-1" />
-                </Link>
+                <h2 className="text-3xl font-extrabold text-gray-900 relative pl-5 before:content-[''] before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-2 before:h-10 before:bg-blue-600 before:rounded-full">Latest</h2>
+               
               </div>
               {latestNews.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -238,7 +216,7 @@ export const Home: React.FC = () => {
                           <span className="flex items-center">
                             <Clock className="h-4 w-4 mr-1 text-gray-400" /> {format(new Date(latestNews[0].created_at), 'MMM dd, yyyy')}
                           </span>
-                          <span className="text-blue-600 font-semibold flex items-center read-more">
+                          <span className="text-blue-600 font-Regular text-sm flex items-center read-more">
                             Read More <ChevronRight className="h-4 w-4 ml-1 transform group-hover:translate-x-1 transition-transform duration-200" />
                           </span>
                         </div>
@@ -274,7 +252,7 @@ export const Home: React.FC = () => {
                             </h3>
                             <div className="flex items-center text-xs text-gray-500">
                               <Clock className="h-3 w-3 mr-1 text-gray-400" /> {format(new Date(article.created_at), 'MMM dd, yyyy')}
-                              <span className="ml-auto text-blue-600 font-semibold flex items-center read-more">
+                              <span className="ml-auto text-blue-600 font-Regular flex items-center read-more">
                                 Read More <ChevronRight className="h-3 w-3 ml-1 transform group-hover:translate-x-1 transition-transform duration-200" />
                               </span>
                             </div>
@@ -297,7 +275,7 @@ export const Home: React.FC = () => {
 
           {/* Featured Analysis (Blogs) Section */}
           <div className="my-16 mt-16">
-            <h2 className="text-3xl font-extrabold text-gray-900 relative pl-5 mb-10 before:content-[''] before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-2 before:h-10 before:bg-blue-600 before:rounded-full">Featured Analysis</h2>
+            <h2 className="text-3xl font-extrabold text-gray-900 relative pl-5 mb-10 before:content-[''] before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-2 before:h-10 before:bg-blue-600 before:rounded-full">Features</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {featuredBlogs.length > 0 ? featuredBlogs.map(blog => (
                 <Link key={blog.id} to={`/blogs/${blog.slug}`} className="group">
@@ -329,7 +307,7 @@ export const Home: React.FC = () => {
                       </div>
                       <div className="flex items-center text-sm text-gray-500 mt-auto">
                         <Clock className="h-4 w-4 mr-1 text-gray-400" /> {format(new Date(blog.created_at), 'MMM dd, yyyy')}
-                        <span className="ml-auto text-blue-600 font-semibold flex items-center">
+                        <span className="ml-auto text-blue-600 font-regular flex items-center read-more">
                           Read More <ChevronRight className="h-4 w-4 ml-1 transform group-hover:translate-x-1 transition-transform duration-200" />
                         </span>
                       </div>
@@ -347,7 +325,7 @@ export const Home: React.FC = () => {
       {/* Feature Section */}
       <section className="py-16 bg-blue-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-extrabold text-blue-900 mb-10 relative pl-5 before:content-[''] before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-2 before:h-10 before:bg-blue-600 before:rounded-full">Deep Dive Features</h2>
+          <h2 className="text-3xl font-extrabold text-blue-900 mb-10 relative pl-5 before:content-[''] before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-2 before:h-10 before:bg-blue-600 before:rounded-full">Analysis</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {featurePosts.length > 0 ? featurePosts.map(post => (
               <Link key={post.id} to={`/features/${post.slug}`} className="block group">
@@ -376,7 +354,7 @@ export const Home: React.FC = () => {
                     </div>
                     <div className="flex items-center text-xs text-gray-500 mt-auto">
                       <Clock className="h-3 w-3 mr-1 text-gray-400" /> {format(new Date(post.created_at), 'MMM dd, yyyy')}
-                      <span className="ml-auto text-blue-600 font-semibold flex items-center">
+                      <span className="ml-auto text-blue-600 font-regular flex items-center read-more">
                         Read More <ChevronRight className="h-3 w-3 ml-1 transform group-hover:translate-x-1 transition-transform duration-200" />
                       </span>
                     </div>

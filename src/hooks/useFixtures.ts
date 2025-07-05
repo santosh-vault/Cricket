@@ -244,20 +244,20 @@ export const useFixtures = (limit?: number, autoRefresh: boolean = true) => {
     fetchFixtures();
   }, [fetchFixtures]);
 
-  // Auto-refresh for live matches
-  useEffect(() => {
-    if (!autoRefresh) return;
+  // Auto-refresh for live matches - DISABLED for manual updates only
+  // useEffect(() => {
+  //   if (!autoRefresh) return;
 
-    const hasLiveMatches = fixtures.some(fixture => fixture.status === 'live');
+  //   const hasLiveMatches = fixtures.some(fixture => fixture.status === 'live');
     
-    if (hasLiveMatches) {
-      const interval = setInterval(() => {
-        fetchFixtures();
-      }, 30000); // Refresh every 30 seconds for live matches
+  //   if (hasLiveMatches) {
+  //     const interval = setInterval(() => {
+  //       fetchFixtures();
+  //     }, 30000); // Refresh every 30 seconds for live matches
 
-      return () => clearInterval(interval);
-    }
-  }, [fixtures, autoRefresh, fetchFixtures]);
+  //     return () => clearInterval(interval);
+  //   }
+  // }, [fixtures, autoRefresh, fetchFixtures]);
 
   const refreshFixtures = () => {
     fetchFixtures();

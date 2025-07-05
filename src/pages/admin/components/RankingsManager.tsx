@@ -6,25 +6,21 @@ import { useAuth } from '../../../hooks/useAuth';
 interface Ranking {
   id: string;
   format: 'test' | 'odi' | 't20';
-  category: 'team' | 'batter' | 'bowler' | 'allrounder';
+  category: 'team';
   rank: number;
   team_name: string;
-  player_name?: string;
   flag_emoji: string;
   rating: number;
   updated_at: string;
 }
 
 const formats = ['test', 'odi', 't20'] as const;
-const categories = ['team', 'batter', 'bowler', 'allrounder'] as const;
+const categories = ['team'] as const;
 
 export const RankingsManager: React.FC = () => {
   const [selectedFormat, setSelectedFormat] = useState<'test'|'odi'|'t20'>('test');
   const [rankings, setRankings] = useState<Record<string, Ranking[]>>({
-    team: [],
-    batter: [],
-    bowler: [],
-    allrounder: []
+    team: []
   });
   const [loading, setLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
@@ -37,27 +33,21 @@ export const RankingsManager: React.FC = () => {
   async function fetchAllRankings() {
     setLoading(true);
     const newRankings: Record<string, Ranking[]> = {
-      team: [],
-      batter: [],
-      bowler: [],
-      allrounder: []
+      team: []
     };
 
     try {
-      const promises = categories.map(async (category) => {
-        const { data, error } = await supabase
-          .from('icc_rankings')
-          .select('*')
-          .eq('format', selectedFormat)
-          .eq('category', category)
-          .order('rank', { ascending: true });
-        
-        if (!error) {
-          newRankings[category] = data || [];
-        }
-      });
+      const { data, error } = await supabase
+        .from('icc_rankings')
+        .select('*')
+        .eq('format', selectedFormat)
+        .eq('category', 'team')
+        .order('rank', { ascending: true });
+      
+      if (!error) {
+        newRankings.team = data || [];
+      }
 
-      await Promise.all(promises);
       setRankings(newRankings);
     } catch (error) {
       console.error('Error fetching rankings:', error);
@@ -98,12 +88,12 @@ export const RankingsManager: React.FC = () => {
   }
 
   function getDisplayName(ranking: Ranking) {
-    return ranking.team_name || ranking.player_name || 'Unknown';
+    return ranking.team_name || 'Unknown';
   }
 
   console.log('RankingsManager render - showForm:', showForm);
   return (
-    <div className="max-w-7xl mx-auto py-8">
+    <div className="max-w-7xl mx-auto py-8 admin-panel">
       <h1 className="text-3xl font-bold mb-6">Manage ICC Rankings</h1>
       <div className="mb-4 p-4 bg-blue-50 rounded-lg">
         <p className="text-sm text-blue-800">
@@ -188,17 +178,15 @@ export const RankingsManager: React.FC = () => {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
-                    <select name="category" value={form.category} onChange={handleInput} className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                      {categories.map(c=>(<option key={c} value={c}>{c.charAt(0).toUpperCase()+c.slice(1)}</option>))}
-                    </select>
+                    <input name="category" value="team" readOnly className="w-full border rounded-lg px-3 py-2 bg-gray-50 text-gray-700" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Rank</label>
                     <input name="rank" type="number" min={1} value={form.rank||''} onChange={handleInput} placeholder="Rank" className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"/>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Team/Player Name</label>
-                    <input name="team_name" value={form.team_name||''} onChange={handleInput} placeholder="Team/Player Name" className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"/>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Team Name</label>
+                    <input name="team_name" value={form.team_name||''} onChange={handleInput} placeholder="Team Name" className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"/>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Flag Emoji</label>
@@ -235,58 +223,54 @@ export const RankingsManager: React.FC = () => {
           <p className="text-gray-600">Loading rankings...</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-6">
-          {categories.map(category => (
-            <div key={category} className="bg-white rounded-lg shadow-md border border-gray-200">
-              <div className="bg-blue-50 px-4 py-3 border-b border-gray-200">
-                <h3 className="text-lg font-semibold text-blue-900 capitalize">
-                  {category.charAt(0).toUpperCase() + category.slice(1)} Rankings
-                </h3>
-                <p className="text-sm text-blue-700">{rankings[category]?.length || 0} entries</p>
-              </div>
-              
-              <div className="p-4">
-                {rankings[category]?.length === 0 ? (
-                  <p className="text-center text-gray-500 py-8">No {category} rankings found.</p>
-                ) : (
-                  <div className="space-y-3">
-                    {rankings[category]?.map(ranking => (
-                      <div key={ranking.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200">
-                        <div className="flex items-center space-x-3 flex-1">
-                          <span className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold">
-                            {ranking.rank}
-                          </span>
-                          <span className="text-2xl">{ranking.flag_emoji}</span>
-                          <div className="flex-1 min-w-0">
-                            <p className="font-medium text-gray-900 truncate">{getDisplayName(ranking)}</p>
-                            <p className="text-sm text-gray-600">{ranking.rating}</p>
-                          </div>
-                        </div>
-                        {isAdmin && (
-                          <div className="flex space-x-2">
-                            <button 
-                              className="text-blue-600 hover:text-blue-800 p-1 rounded transition-colors duration-200" 
-                              onClick={()=>handleEdit(ranking)}
-                              title="Edit"
-                            >
-                              <Edit className="h-4 w-4"/>
-                            </button>
-                            <button 
-                              className="text-red-600 hover:text-red-800 p-1 rounded transition-colors duration-200" 
-                              onClick={()=>handleDelete(ranking.id)}
-                              title="Delete"
-                            >
-                              <Trash2 className="h-4 w-4"/>
-                            </button>
-                          </div>
-                        )}
+        <div className="bg-white rounded-lg shadow-md border border-gray-200">
+          <div className="bg-blue-50 px-4 py-3 border-b border-gray-200">
+            <h3 className="text-lg font-semibold text-blue-900">
+              Team Rankings
+            </h3>
+            <p className="text-sm text-blue-700">{rankings.team?.length || 0} entries</p>
+          </div>
+          
+          <div className="p-4">
+            {rankings.team?.length === 0 ? (
+              <p className="text-center text-gray-500 py-8">No team rankings found.</p>
+            ) : (
+              <div className="space-y-3">
+                {rankings.team?.map(ranking => (
+                  <div key={ranking.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200">
+                    <div className="flex items-center space-x-3 flex-1">
+                      <span className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold">
+                        {ranking.rank}
+                      </span>
+                      <span className="text-2xl">{ranking.flag_emoji}</span>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-gray-900 truncate">{getDisplayName(ranking)}</p>
+                        <p className="text-sm text-gray-600">{ranking.rating}</p>
                       </div>
-                    ))}
+                    </div>
+                    {isAdmin && (
+                      <div className="flex space-x-2">
+                        <button 
+                          className="text-blue-600 hover:text-blue-800 p-1 rounded transition-colors duration-200" 
+                          onClick={()=>handleEdit(ranking)}
+                          title="Edit"
+                        >
+                          <Edit className="h-4 w-4"/>
+                        </button>
+                        <button 
+                          className="text-red-600 hover:text-red-800 p-1 rounded transition-colors duration-200" 
+                          onClick={()=>handleDelete(ranking.id)}
+                          title="Delete"
+                        >
+                          <Trash2 className="h-4 w-4"/>
+                        </button>
+                      </div>
+                    )}
                   </div>
-                )}
+                ))}
               </div>
-            </div>
-          ))}
+            )}
+          </div>
         </div>
       )}
     </div>

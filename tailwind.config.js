@@ -13,7 +13,8 @@ export default {
       fontFamily: {
         serif: ['Merriweather', 'Georgia', 'serif'],
         crimsonpro: ['Crimson Pro', 'serif'],
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        sans: ['Helvetica', 'Arial', 'sans-serif'],
+        sansa: ['Helvetica', 'Helvetica Neue', 'sans-serif'],
       },
     },
   },

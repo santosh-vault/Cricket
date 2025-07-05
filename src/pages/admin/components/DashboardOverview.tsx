@@ -108,7 +108,7 @@ export const DashboardOverview: React.FC = () => {
   }
 
   return (
-    <div className="space-y-4"> {/* Added padding-bottom for overall spacing */}
+    <div className="space-y-4 admin-panel"> {/* Added padding-bottom for overall spacing */}
       {/* Welcome Section */}
       <div className="bg-white rounded-xl shadow-md p-6 sm:p-8 border border-gray-100"> {/* Softer shadow, rounded-xl */}
         <h2 className="text-3xl font-extrabold text-gray-900 mb-2">Welcome Back, Admin!</h2>

@@ -39,7 +39,7 @@ export const AdminDashboard: React.FC = () => {
       />
 
       {/* Outer container: Sets min-height for the entire viewport and uses flex-col for stacking header, then content + sidebar */}
-      <div className="min-h-screen bg-gray-50 font-sans flex flex-col">
+      <div className="min-h-screen bg-gray-50 font-sans flex flex-col admin-panel">
 
         {/* --- MAIN LAYOUT CONTAINER (content below header) --- */}
         {/* This div starts below the fixed header (mt-16) and handles the sidebar + main content side-by-side layout */}

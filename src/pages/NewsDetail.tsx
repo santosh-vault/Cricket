@@ -156,7 +156,7 @@ export const NewsDetail: React.FC = () => {
               </span>
             </div>
             
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-loose">
+            <h1 className="text-3xl md:text-2xl font-bold text-gray-900 mb-6 leading-loose">
               {post.title}
             </h1>
             
