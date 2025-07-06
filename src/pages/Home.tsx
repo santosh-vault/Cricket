@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { TrendingUp, Clock, Users, Trophy, ChevronRight } from 'lucide-react'; // Added ChevronRight for 'Read More'
+import { TrendingUp, Clock, Users, Trophy, ChevronRight } from 'lucide-react';
 import { SEOHead } from '../components/seo/SEOHead';
 import { FixturesList } from '../components/fixtures/FixturesList';
 import { supabase } from '../lib/supabase';
@@ -20,13 +20,13 @@ interface Post {
   created_at: string;
 }
 
-// ICC Rankings Card Component - MASSIVE DESIGN CHANGE
+// ICC Rankings Card Component
 const formats = ['test', 'odi', 't20'] as const;
 const categories = ['team'] as const;
 
 function ICCRankingsCard() {
   const [selectedFormat, setSelectedFormat] = useState<'test' | 'odi' | 't20'>('test');
-  const [selectedCategory, setSelectedCategory] = useState<'team'>('team');
+  const [selectedCategory] = useState<'team'>('team'); // Removed setSelectedCategory as it's not used for player/bowler/all-rounder
   const [rankings, setRankings] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -36,29 +36,35 @@ function ICCRankingsCard() {
 
   async function fetchRankings() {
     setLoading(true);
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('icc_rankings')
       .select('*')
       .eq('format', selectedFormat)
       .eq('category', selectedCategory)
       .order('rank', { ascending: true });
-    setRankings(data || []);
+
+    if (error) {
+      console.error("Error fetching ICC rankings:", error.message);
+      setRankings([]);
+    } else {
+      setRankings(data || []);
+    }
     setLoading(false);
   }
 
   return (
-    <div className="bg-white rounded-2xl p-6 flex flex-col text-gray-900 border border-gray-100">
+    <div className="bg-white rounded-2xl px-6 pt-6 pb-0 flex flex-col text-gray-900 border border-gray-100">
       <h3 className="text-2xl font-extrabold text-gray-900 mb-5 flex items-center">
         <Trophy className="h-6 w-6 mr-3 text-yellow-500" /> ICC Rankings
       </h3>
-      <div className="flex space-x-2 mb-4 overflow-x-auto pb-2 -mx-2 px-2"> {/* Added overflow for small screens */}
+      <div className="flex space-x-2 mb-4 overflow-x-auto pb-2 -mx-2 px-2">
         {formats.map(f => (
           <button
             key={f}
             onClick={() => setSelectedFormat(f)}
             className={`px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300 ease-in-out whitespace-nowrap
               ${selectedFormat === f
-                ? 'bg-blue-600 text-white'
+                ? 'bg-blue-600 text-white shadow-sm'
                 : 'bg-gray-100 text-gray-700 hover:bg-blue-100 hover:text-blue-700'
               }`}
           >
@@ -67,7 +73,7 @@ function ICCRankingsCard() {
         ))}
       </div>
 
-      <div className="divide-y divide-gray-100 mb-4 min-h-[250px] flex-grow overflow-y-auto"> {/* Increased min-height */}
+      <div className="divide-y divide-gray-100 mb-4 min-h-[250px] flex-grow overflow-y-auto">
         {loading ? (
           <div className="text-center py-12 text-gray-400">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-400 mx-auto mb-3"></div>
@@ -76,25 +82,41 @@ function ICCRankingsCard() {
         ) : rankings.length > 0 ? (
           <>
             {rankings.slice(0, 7).map(row => (
-              <div key={row.id} className="flex items-center py-3 text-base justify-between">
+              <div key={row.id} className="flex items-center py-3 text-base justify-between group">
                 <span className="w-8 text-gray-600 font-bold">{row.rank}.</span>
-                {row.flag_emoji ? (
-                  <ReactCountryFlag
-                    countryCode={row.flag_emoji}
-                    svg
-                    style={{ width: '1.25em', height: '1.25em', marginRight: '0.5em', borderRadius: '0.25em', verticalAlign: 'middle' }}
-                    title={row.team_name}
-                  />
-                ) : (
-                  <span style={{ width: '1.25em', height: '1.25em', marginRight: '0.5em', fontSize: '1.25em', display: 'inline-block', textAlign: 'center', verticalAlign: 'middle' }}>🏏</span>
-                )}
-                <span className="flex-1 text-gray-800 font-medium text-lg">{row.team_name}</span>
+                {(() => {
+                  const name = row.team_name.toLowerCase();
+                  if (name.includes('england')) {
+                    return <img src="/flags/england.svg" alt="England flag" style={{ width: '1.5em', height: '1.5em', marginRight: '0.75em', borderRadius: '0.25em', verticalAlign: 'middle' }} className="flex-shrink-0" />;
+                  }
+                  if (name.includes('scotland')) {
+                    return <img src="/flags/scotland.svg" alt="Scotland flag" style={{ width: '1.5em', height: '1.5em', marginRight: '0.75em', borderRadius: '0.25em', verticalAlign: 'middle' }} className="flex-shrink-0" />;
+                  }
+                  if (name.includes('west indies')) {
+                    return <img src="/flags/westindies.svg" alt="West Indies flag" style={{ width: '1.5em', height: '1.5em', marginRight: '0.75em', borderRadius: '0.25em', verticalAlign: 'middle' }} className="flex-shrink-0" />;
+                  }
+                  if (row.flag_emoji) {
+                    return (
+                      <ReactCountryFlag
+                        countryCode={row.flag_emoji}
+                        svg
+                        style={{ width: '1.5em', height: '1.5em', marginRight: '0.75em', borderRadius: '0.25em', verticalAlign: 'middle' }}
+                        title={row.team_name}
+                        className="flex-shrink-0"
+                      />
+                    );
+                  }
+                  return (
+                    <span style={{ width: '1.5em', height: '1.5em', marginRight: '0.75em', fontSize: '1.5em', display: 'inline-block', textAlign: 'center', verticalAlign: 'middle' }} className="flex-shrink-0">🏏</span>
+                  );
+                })()}
+                <span className="flex-1 text-gray-800 font-medium text-lg group-hover:text-blue-700 transition-colors duration-200">{row.team_name}</span>
                 <span className="font-bold text-blue-700 text-lg">{row.rating}</span>
               </div>
             ))}
             {rankings.length > 7 && (
-              <Link to="/ranking" className="block w-full mt-2 py-2 text-center bg-blue-50 text-blue-700 font-semibold rounded-lg hover:bg-blue-100 transition-colors duration-200 show-all-rankings">
-                Show All Rankings
+              <Link to="/ranking" className="block w-full mt-2 py-2 text-center bg-blue-50 text-blue-700 font-semibold rounded-lg hover:bg-blue-100 transition-colors duration-200 show-all-rankings flex items-center justify-center">
+                Show All Rankings <ChevronRight className="h-4 w-4 ml-1" />
               </Link>
             )}
           </>
@@ -107,51 +129,39 @@ function ICCRankingsCard() {
 }
 
 export const Home: React.FC = () => {
-  const [latestNews, setLatestNews] = useState<Post[]>([]);
-  const [featuredBlogs, setFeaturedBlogs] = useState<Post[]>([]);
-  const [featurePosts, setFeaturePosts] = useState<Post[]>([]);
+  const [unifiedFeed, setUnifiedFeed] = useState<Post[]>([]);
   const { fixtures, loading: fixturesLoading, error: fixturesError } = useFixtures(5, true);
 
   useEffect(() => {
-    fetchHomeData();
+    fetchUnifiedFeed();
   }, []);
 
-  const fetchHomeData = async () => {
+  const fetchUnifiedFeed = async () => {
     try {
-      // Fetch latest news
-      const { data: newsData } = await supabase
+      const { data: allPosts, error } = await supabase
         .from('posts')
         .select('*')
-        .eq('type', 'news')
+        .in('type', ['news', 'blog', 'feature'])
         .eq('is_published', true)
         .order('created_at', { ascending: false })
-        .limit(6);
+        .limit(20);
 
-      // Fetch featured blogs
-      const { data: blogsData } = await supabase
-        .from('posts')
-        .select('*')
-        .eq('type', 'blog')
-        .eq('is_published', true)
-        .order('created_at', { ascending: false })
-        .limit(4);
-
-      // Fetch feature posts
-      const { data: featureData } = await supabase
-        .from('posts')
-        .select('*')
-        .eq('type', 'feature')
-        .eq('is_published', true)
-        .order('created_at', { ascending: false })
-        .limit(4);
-
-      setLatestNews(newsData || []);
-      setFeaturedBlogs(blogsData || []);
-      setFeaturePosts(featureData || []);
+      if (error) {
+        console.error('Error fetching unified feed:', error.message);
+        setUnifiedFeed([]);
+      } else {
+        setUnifiedFeed(allPosts || []);
+      }
     } catch (error) {
-      console.error('Error fetching home data:', error);
+      console.error('Unexpected error fetching unified feed:', error);
+      setUnifiedFeed([]);
     }
   };
+
+  // Split into sections
+  const section1 = unifiedFeed.slice(0, 3);
+  const section2 = unifiedFeed.slice(3, 7);
+  const section3 = unifiedFeed.slice(7, 15);
 
   if (fixturesLoading) {
     return (
@@ -160,6 +170,25 @@ export const Home: React.FC = () => {
       </div>
     );
   }
+
+  // Card height for big card and ICC Rankings (adjust as needed for your ICC card)
+  const bigCardMinH = 'min-h-[280px]';
+  const smallCardMinH = 'min-h-[140px]';
+
+  const renderImageOrPlaceholder = (thumbnail_url: string | null, title: string, placeholderClass: string, iconClass: string) => {
+    return thumbnail_url ? (
+      <img
+        src={thumbnail_url}
+        alt={title}
+        className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
+      />
+    ) : (
+      <div className={`${placeholderClass} bg-gray-100 flex flex-col items-center justify-center text-blue-400`}>
+        <TrendingUp className={`${iconClass} mx-auto mb-2 opacity-60`} />
+        <p className="text-sm font-semibold text-gray-500">No Image</p>
+      </div>
+    );
+  };
 
   return (
     <>
@@ -171,7 +200,7 @@ export const Home: React.FC = () => {
 
       {/* Live Fixtures Section */}
       {!fixturesLoading && !fixturesError && (
-        <section className="py-2 bg-gray-50">
+        <section className="py-2 bg-gray-50 border-b border-gray-100">
           <FixturesList
             limit={6}
             compact={true}
@@ -181,202 +210,176 @@ export const Home: React.FC = () => {
         </section>
       )}
 
-      {/* Main Content Area: Latest News & Featured Analysis Section */}
+      {/* Unified Feed Sections */}
       <section className="py-8 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-4 lg:pt-8">
-          {/* News Section - Main News (75%) & ICC Rankings (25%) */}
-          <div className="mb-32 flex flex-col lg:flex-row gap-10">
-            {/* Main News Content (75%) */}
+          <div className="mb-16 flex flex-col lg:flex-row gap-8">
+            {/* Main Content (Top Stories and More Highlights) */}
             <div className="w-full lg:w-3/4">
-              <div className="flex justify-between items-center mb-8">
-                <h2 className="text-3xl font-extrabold text-gray-900 relative pl-5 before:content-[''] before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-2 before:h-10 before:bg-blue-600 before:rounded-full">Latest</h2>
-               
-              </div>
-              {latestNews.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                  {/* Big main news card */}
-                  <Link key={latestNews[0].id} to={`/news/${latestNews[0].slug}`} className="block md:col-span-2 group">
-                    <article className="bg-white rounded-2xl transition-all duration-300 overflow-hidden flex flex-col h-full border border-gray-100 min-h-[320px]">
-                      <div className="h-80 bg-blue-100 flex items-center justify-center overflow-hidden relative">
-                        {latestNews[0].thumbnail_url ? (
-                          <img
-                            src={latestNews[0].thumbnail_url}
-                            alt={latestNews[0].title}
-                            className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
-                          />
-                        ) : (
-                          <div className="text-blue-400 text-center p-8">
-                            <TrendingUp className="h-16 w-16 mx-auto mb-4 opacity-70" />
-                            <p className="text-lg font-semibold">No Image Available</p>
-                          </div>
-                        )}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                        <span className="absolute bottom-4 left-6 bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-bold uppercase">
-                          {latestNews[0].category}
-                        </span>
-                      </div>
-                      <div className="p-6 flex-1 flex flex-col justify-between">
-                        <h3 className="text-2xl font-extrabold text-gray-900 mb-3 leading-tight line-clamp-2 group-hover:text-blue-700 transition-colors duration-300">
-                          {latestNews[0].title}
-                        </h3>
-                        <p className="text-gray-700 text-base mb-4 line-clamp-3 leading-relaxed">
-                          {latestNews[0].content.replace(/<[^>]*>/g, '').substring(0, 180)}...
-                        </p>
-                        <div className="flex justify-between items-center text-sm text-gray-500 mt-auto">
-                          <span className="flex items-center">
-                            <Clock className="h-4 w-4 mr-1 text-gray-400" /> {format(new Date(latestNews[0].created_at), 'MMM dd, yyyy')}
-                          </span>
-                          <span className="text-blue-600 font-Regular text-sm flex items-center read-more">
-                            Read More <ChevronRight className="h-4 w-4 ml-1 transform group-hover:translate-x-1 transition-transform duration-200" />
-                          </span>
-                        </div>
-                      </div>
-                    </article>
-                  </Link>
-                  {/* Small news cards column */}
-                  <div className="flex flex-col gap-4 h-full justify-between min-h-[320px]">
-                    {latestNews.slice(1, 3).map((article) => (
-                      <Link key={article.id} to={`/news/${article.slug}`} className="block group flex-1">
-                        <article className="bg-white rounded-2xl transition-shadow duration-300 overflow-hidden flex flex-col h-full border border-gray-100 min-h-[150px]">
-                          {/* Image on top, smaller height */}
-                          {article.thumbnail_url ? (
-                            <div className="w-full h-32 bg-blue-100 flex items-center justify-center overflow-hidden">
-                              <img
-                                src={article.thumbnail_url}
-                                alt={article.title}
-                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                              />
-                            </div>
-                          ) : (
-                            <div className="w-full h-24 bg-blue-100 flex items-center justify-center p-2">
-                              <TrendingUp className="h-8 w-8 text-blue-400 opacity-70" />
-                            </div>
-                          )}
-                          {/* Title and meta below image */}
-                          <div className="p-3">
-                            <span className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full text-xs font-semibold mb-1 inline-block">
-                              {article.category}
+              {/* Section 1: Top 3 (1 big, 2 small) */}
+              <div className="mb-12">
+                <div className="flex items-center mb-6">
+                  <div className="w-1 h-7 bg-blue-600 rounded mr-4"></div>
+                  <h2 className="text-3xl font-extrabold text-blue-900">Latest</h2>
+                </div>
+                {section1.length > 0 ? (
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {/* Big card */}
+                    <div className={`md:col-span-2 flex flex-col h-full`}>
+                      <Link to={`/${section1[0].type === 'news' ? 'news' : section1[0].type === 'blog' ? 'blogs' : 'features'}/${section1[0].slug}`} className="block group h-full">
+                        <article className={`bg-white rounded-2xl transition-all duration-300 overflow-hidden flex flex-col h-full border border-gray-100`}>
+                          <div className="h-[360px] bg-gray-50 flex items-center justify-center overflow-hidden relative">
+                            {renderImageOrPlaceholder(section1[0].thumbnail_url, section1[0].title, "h-[220px]", "h-16 w-16")}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                            <span className="absolute bottom-4 left-6 bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-bold uppercase">
+                              {section1[0].category}
                             </span>
-                            <h3 className="text-md font-bold text-gray-900 mb-1 line-clamp-2 group-hover:text-blue-700 transition-colors duration-300">
-                              {article.title}
+                            <span className="absolute top-4 right-4 bg-white/80 text-blue-700 px-2 py-0.5 rounded-full text-xs font-bold uppercase">
+                              {section1[0].type}
+                            </span>
+                          </div>
+                          <div className="p-6 flex flex-col">
+                            <h3 className="text-2xl font-extrabold text-gray-900 mb-3 leading-tight line-clamp-2 group-hover:text-blue-700 transition-colors duration-300">
+                              {section1[0].title}
                             </h3>
-                            <div className="flex items-center text-xs text-gray-500">
-                              <Clock className="h-3 w-3 mr-1 text-gray-400" /> {format(new Date(article.created_at), 'MMM dd, yyyy')}
-                              <span className="ml-auto text-blue-600 font-Regular flex items-center read-more">
-                                Read More <ChevronRight className="h-3 w-3 ml-1 transform group-hover:translate-x-1 transition-transform duration-200" />
+                            <p className="text-gray-700 text-base mb-3 line-clamp-3 leading-relaxed">
+                              {section1[0].content.replace(/<[^>]*>/g, '').substring(0, 150)}...
+                            </p>
+                            <div className="flex justify-between items-center text-base text-gray-500">
+                              <span className="flex items-center">
+                                <Clock className="h-4 w-4 mr-1 text-gray-400" /> {format(new Date(section1[0].created_at), 'MMM dd, yyyy')}
+                              </span>
+                              <span className="text-blue-600 font-semibold flex items-center read-more group-hover:text-blue-800">
+                                Read More <ChevronRight className="h-4 w-4 ml-1 transform group-hover:translate-x-1 transition-transform duration-200" />
                               </span>
                             </div>
                           </div>
                         </article>
                       </Link>
-                    ))}
+                    </div>
+                    {/* Two small cards stacked to match big card height */}
+                    <div className={`flex flex-col h-full gap-6`}>
+                      {section1.slice(1).map((item, idx) => (
+                        <Link key={item.id} to={`/${item.type === 'news' ? 'news' : item.type === 'blog' ? 'blogs' : 'features'}/${item.slug}`} className="block group h-1/2 flex-1">
+                          <article className={`bg-white rounded-2xl transition-all duration-300 overflow-hidden flex flex-col h-full border border-gray-100 ${smallCardMinH}`}>
+                            <div className="h-2/3 min-h-[80px] bg-gray-50 flex items-center justify-center overflow-hidden relative">
+                              {renderImageOrPlaceholder(item.thumbnail_url, item.title, "min-h-[80px]", "h-8 w-8")}
+                              <span className="absolute bottom-2 left-4 bg-blue-600 text-white px-2 py-0.5 rounded-full text-xs font-bold uppercase">
+                                {item.category}
+                              </span>
+                              <span className="absolute top-2 right-4 bg-white/80 text-blue-700 px-2 py-0.5 rounded-full text-xs font-bold uppercase">
+                                {item.type}
+                              </span>
+                            </div>
+                            <div className="p-4 flex-1 flex flex-col justify-between">
+                              <h3 className="text-lg font-bold text-gray-900 mb-2 line-clamp-2 group-hover:text-blue-700 transition-colors duration-300">
+                                {item.title}
+                              </h3>
+                              <div className="flex items-center text-xs text-gray-500 mt-auto">
+                                <Clock className="h-3 w-3 mr-1 text-gray-400" /> {format(new Date(item.created_at), 'MMM dd, yyyy')}
+                                <span className="ml-auto text-blue-600 font-semibold flex items-center read-more group-hover:text-blue-800">
+                                  Read More <ChevronRight className="h-3 w-3 ml-1 transform group-hover:translate-x-1 transition-transform duration-200" />
+                                </span>
+                              </div>
+                            </div>
+                          </article>
+                        </Link>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              ) : (
-                <div className="text-center py-10 text-gray-500 text-lg">No latest news available at the moment.</div>
-              )}
+                ) : (
+                  <div className="text-center py-10 text-gray-500 text-lg">No articles available at the moment.</div>
+                )}
+              </div>
             </div>
-
             {/* ICC Rankings Sidebar (right) */}
-            <aside className="w-full lg:w-1/4">
+            <aside className="w-full lg:w-1/4 mt-14 hidden sm:block">
               <ICCRankingsCard />
             </aside>
           </div>
 
-          {/* Featured Analysis (Blogs) Section */}
-          <div className="my-16 mt-16">
-            <h2 className="text-3xl font-extrabold text-gray-900 relative pl-5 mb-10 before:content-[''] before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-2 before:h-10 before:bg-blue-600 before:rounded-full">Features</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {featuredBlogs.length > 0 ? featuredBlogs.map(blog => (
-                <Link key={blog.id} to={`/blogs/${blog.slug}`} className="group">
-                  <article className="bg-white rounded-2xl transition-all duration-300 overflow-hidden flex flex-col md:flex-row h-full border border-gray-100">
-                    {blog.thumbnail_url ? (
-                      <div className="w-full h-48 md:w-64 md:h-auto flex-shrink-0 bg-gray-100 flex items-center justify-center overflow-hidden">
-                        <img
-                          src={blog.thumbnail_url}
-                          alt={blog.title}
-                          className="object-cover w-full h-full transform group-hover:scale-105 transition-transform duration-300"
-                        />
-                      </div>
-                    ) : (
-                      <div className="w-full h-48 md:w-64 md:h-auto flex-shrink-0 bg-blue-100 flex items-center justify-center p-8">
-                        <Users className="h-16 w-16 text-blue-400 opacity-70" />
-                      </div>
-                    )}
-                    <div className="flex-1 flex flex-col justify-between p-6">
-                      <div>
-                        <span className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-sm font-semibold mb-2 inline-block">
-                          {blog.category}
-                        </span>
-                        <h3 className="text-2xl font-bold text-gray-900 mb-2 line-clamp-2 group-hover:text-blue-700 transition-colors duration-300">
-                          {blog.title}
-                        </h3>
-                        <p className="text-gray-700 text-base mb-4 line-clamp-3 leading-relaxed">
-                          {blog.content.replace(/<[^>]*>/g, '').substring(0, 150)}...
-                        </p>
-                      </div>
-                      <div className="flex items-center text-sm text-gray-500 mt-auto">
-                        <Clock className="h-4 w-4 mr-1 text-gray-400" /> {format(new Date(blog.created_at), 'MMM dd, yyyy')}
-                        <span className="ml-auto text-blue-600 font-regular flex items-center read-more">
-                          Read More <ChevronRight className="h-4 w-4 ml-1 transform group-hover:translate-x-1 transition-transform duration-200" />
-                        </span>
-                      </div>
+       {/* Section 2: Next 4 (2x2 grid, horizontal cards) */}
+      <div className="mb-20 w-full">
+       <div className="flex items-center mb-6">
+         <div className="w-1 h-7 bg-blue-600 rounded mr-4"></div>
+         <h2 className="text-3xl font-extrabold text-blue-900">Featured</h2>
+       </div>
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    {section2.map((item) => (
+      <Link key={item.id} to={`/${item.type === 'news' ? 'news' : item.type === 'blog' ? 'blogs' : 'features'}/${item.slug}`} className="block group">
+        <article className="bg-white rounded-xl transition-all duration-300 overflow-hidden flex flex-col sm:flex-row h-full border border-gray-100 min-h-[160px] sm:h-48">
+          {/* Image on the left (on sm screens and up) / Top (on xs screens) */}
+          <div className="w-full sm:w-56 h-40 sm:h-48 bg-gray-50 flex items-center justify-center overflow-hidden relative flex-shrink-0">
+            {renderImageOrPlaceholder(item.thumbnail_url, item.title, "h-full w-full object-cover", "h-16 w-16")}
+            <span className="absolute bottom-3 left-3 bg-blue-600 text-white px-2.5 py-1 rounded-full text-xs font-bold uppercase z-10">
+              {item.category}
+            </span>
+            <span className="absolute top-3 right-3 bg-white/80 text-blue-700 px-2.5 py-1 rounded-full text-xs font-bold uppercase z-10">
+              {item.type}
+            </span>
+          </div>
+          {/* Content on the right (on sm screens and up) / Bottom (on xs screens) */}
+          <div className="flex-1 p-4 sm:p-5 flex flex-col justify-between">
+            <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 leading-tight line-clamp-2 group-hover:text-blue-700 transition-colors duration-300">
+              {item.title}
+            </h3>
+            <p className="text-gray-700 text-base mb-3 line-clamp-2 leading-relaxed">
+              {item.content.replace(/<[^>]*>/g, '').substring(0, 120)}...
+            </p>
+            <div className="flex items-center text-xs text-gray-500 mt-auto">
+              <Clock className="h-3 w-3 mr-1 text-gray-400" /> {format(new Date(item.created_at), 'MMM dd, yyyy')}
+              <span className="ml-auto text-blue-600 font-semibold flex items-center read-more group-hover:text-blue-800">
+                Read More <ChevronRight className="h-3 w-3 ml-1 transform group-hover:translate-x-1 transition-transform duration-200" />
+              </span>
+            </div>
+          </div>
+        </article>
+      </Link>
+    ))}
+  </div>
+</div>
+
+          {/* Section 3: Next 8 (2x4 grid, minimal cards) */}
+          <div className="mb-8 w-full">
+            <div className="flex items-center mb-6">
+              <div className="w-1 h-7 bg-blue-600 rounded mr-4"></div>
+              <h2 className="text-3xl font-extrabold text-blue-900">More stories</h2>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+              {section3.slice(0, 8).map((item) => (
+                <Link key={item.id} to={`/${item.type === 'news' ? 'news' : item.type === 'blog' ? 'blogs' : 'features'}/${item.slug}`} className="block group">
+                  <article className="bg-white rounded-lg border border-gray-200 transition-all duration-200 overflow-hidden flex flex-col h-full min-h-[180px] p-3">
+                    <div className="h-28 bg-gray-50 flex items-center justify-center overflow-hidden relative rounded-md mb-3">
+                      {renderImageOrPlaceholder(item.thumbnail_url, item.title, "h-full w-full object-cover", "h-10 w-10")}
+                      <span className="absolute bottom-2 left-2 bg-blue-600 text-white px-2 py-0.5 rounded-full text-xs font-bold uppercase">
+                        {item.category}
+                      </span>
+                      <span className="absolute top-2 right-2 bg-white/80 text-blue-700 px-2 py-0.5 rounded-full text-xs font-bold uppercase">
+                        {item.type}
+                      </span>
+                    </div>
+                    <h3 className="text-base font-bold text-gray-900 mb-1 line-clamp-2 group-hover:text-blue-700 transition-colors duration-200">
+                      {item.title}
+                    </h3>
+                    <p className="text-gray-700 text-sm mb-2 line-clamp-2 leading-relaxed">
+                      {item.content.replace(/<[^>]*>/g, '').substring(0, 80)}...
+                    </p>
+                    <div className="flex items-center text-xs text-gray-500 mt-auto">
+                      <Clock className="h-3 w-3 mr-1 text-gray-400" /> {format(new Date(item.created_at), 'MMM dd, yyyy')}
+                      <span className="ml-auto text-blue-600 font-semibold flex items-center read-more group-hover:text-blue-800">
+                        Read More <ChevronRight className="h-3 w-3 ml-1 transform group-hover:translate-x-1 transition-transform duration-200" />
+                      </span>
                     </div>
                   </article>
                 </Link>
-              )) : (
-                <div className="md:col-span-2 text-center py-10 text-gray-500 text-lg">No featured analysis available.</div>
-              )}
+              ))}
             </div>
           </div>
         </div>
       </section>
-
-      {/* Feature Section */}
-      <section className="py-16 bg-blue-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-extrabold text-blue-900 mb-10 relative pl-5 before:content-[''] before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-2 before:h-10 before:bg-blue-600 before:rounded-full">Analysis</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {featurePosts.length > 0 ? featurePosts.map(post => (
-              <Link key={post.id} to={`/features/${post.slug}`} className="block group">
-                <article className="bg-white rounded-2xl transition-all duration-300 overflow-hidden flex flex-col h-full border border-gray-100">
-                  {post.thumbnail_url ? (
-                    <div className="h-40 w-full bg-gray-100 flex items-center justify-center overflow-hidden">
-                      <img
-                        src={post.thumbnail_url}
-                        alt={post.title}
-                        className="object-cover w-full h-full transform group-hover:scale-105 transition-transform duration-300"
-                      />
-                    </div>
-                  ) : (
-                    <div className="h-40 w-full bg-blue-100 flex items-center justify-center">
-                      <span className="text-4xl text-blue-400">★</span>
-                    </div>
-                  )}
-                  <div className="flex-1 flex flex-col justify-between p-5">
-                    <div>
-                      <span className="bg-blue-50 text-blue-700 px-2.5 py-0.5 rounded-full text-xs font-semibold mb-2 inline-block">
-                        {post.category}
-                      </span>
-                      <h3 className="text-xl font-bold text-gray-900 mb-2 line-clamp-2 group-hover:text-blue-700 transition-colors duration-300">
-                        {post.title}
-                      </h3>
-                    </div>
-                    <div className="flex items-center text-xs text-gray-500 mt-auto">
-                      <Clock className="h-3 w-3 mr-1 text-gray-400" /> {format(new Date(post.created_at), 'MMM dd, yyyy')}
-                      <span className="ml-auto text-blue-600 font-regular flex items-center read-more">
-                        Read More <ChevronRight className="h-3 w-3 ml-1 transform group-hover:translate-x-1 transition-transform duration-200" />
-                      </span>
-                    </div>
-                  </div>
-                </article>
-              </Link>
-            )) : (
-              <div className="col-span-4 text-center py-10 text-gray-500 text-lg">No feature posts available.</div>
-            )}
-          </div>
-        </div>
-      </section>
+      <div className="block sm:hidden mt-8 px-2">
+        <ICCRankingsCard />
+      </div>
     </>
   );
 };

@@ -155,7 +155,7 @@ export const BlogDetail: React.FC = () => {
               </span>
             </div>
             
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
+            <h1 className="text-4xl md:text-3xl font-bold text-gray-900 mb-6 leading-tight">
               {post.title}
             </h1>
             

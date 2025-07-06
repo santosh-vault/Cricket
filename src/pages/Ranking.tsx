@@ -132,16 +132,31 @@ export const Ranking: React.FC = () => {
                     allRankings[selectedFormat].map((row: RankingItem) => (
                       <div key={row.id} className="flex items-center py-3 text-base justify-between hover:bg-blue-100 rounded-md px-2 -mx-2 transition-colors duration-200">
                         <span className="w-8 text-gray-700 font-bold text-lg">{row.rank}.</span>
-                        {row.flag_emoji && typeof row.flag_emoji === 'string' && row.flag_emoji.length > 0 ? (
-                          <ReactCountryFlag
-                            countryCode={row.flag_emoji as string}
-                            svg
-                            style={{ width: '1.25em', height: '1.25em', marginRight: '0.5em', borderRadius: '0.25em', verticalAlign: 'middle' }}
-                            title={row.team_name}
-                          />
-                        ) : (
-                          <span style={{ width: '1.25em', height: '1.25em', marginRight: '0.5em', fontSize: '1.25em', display: 'inline-block', textAlign: 'center', verticalAlign: 'middle' }}>🏏</span>
-                        )}
+                        {(() => {
+                          const name = row.team_name?.toLowerCase() || '';
+                          if (name.includes('england')) {
+                            return <img src="/flags/england.svg" alt="England flag" style={{ width: '1.25em', height: '1.25em', marginRight: '0.5em', borderRadius: '0.25em', verticalAlign: 'middle' }} />;
+                          }
+                          if (name.includes('scotland')) {
+                            return <img src="/flags/scotland.svg" alt="Scotland flag" style={{ width: '1.25em', height: '1.25em', marginRight: '0.5em', borderRadius: '0.25em', verticalAlign: 'middle' }} />;
+                          }
+                          if (name.includes('west indies')) {
+                            return <img src="/flags/westindies.svg" alt="West Indies flag" style={{ width: '1.25em', height: '1.25em', marginRight: '0.5em', borderRadius: '0.25em', verticalAlign: 'middle' }} />;
+                          }
+                          if (row.flag_emoji && typeof row.flag_emoji === 'string' && row.flag_emoji.length > 0) {
+                            return (
+                              <ReactCountryFlag
+                                countryCode={row.flag_emoji as string}
+                                svg
+                                style={{ width: '1.25em', height: '1.25em', marginRight: '0.5em', borderRadius: '0.25em', verticalAlign: 'middle' }}
+                                title={row.team_name || undefined}
+                              />
+                            );
+                          }
+                          return (
+                            <span style={{ width: '1.25em', height: '1.25em', marginRight: '0.5em', fontSize: '1.25em', display: 'inline-block', textAlign: 'center', verticalAlign: 'middle' }}>🏏</span>
+                          );
+                        })()}
                         <span className="flex-1 text-gray-900 font-semibold truncate mr-2">{row.team_name}</span>
                         <span className="font-bold text-blue-700 text-lg">{row.rating}</span>
                       </div>

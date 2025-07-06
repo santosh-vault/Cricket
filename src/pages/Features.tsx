@@ -104,54 +104,12 @@ export const Features: React.FC = () => {
 
       <div className="min-h-screen bg-gray-100 font-sans">
         {/* Header Section */}
-        <section className="bg-white py-6 border-b border-gray-200">
+        <section className="bg-gray-50 pt-6 pb-2 ">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-6 text-center">
-              Cricket <span className="text-blue-600">Features & Stories</span>
+            <h2 className="text-3xl md:text-3xl font-bold text-gray-900 mb-6 text-center">
+               Analysis
             </h2>
-            {/* Add Feature Button for Admins */}
-            {isAdmin && (
-              <div className="flex justify-end mb-4">
-                <Link 
-                  to="/admin/features/new" 
-                  className="bg-blue-700 text-white px-5 py-2 rounded-lg font-semibold hover:bg-blue-800 transition-colors duration-200"
-                  onClick={() => {
-                    console.log('Add Feature button clicked - navigating to /admin/features/new');
-                  }}
-                >
-                  + Add Feature
-                </Link>
-              </div>
-            )}
-            {/* Search and Filter Section */}
-            <div className="flex flex-col md:flex-row gap-4 items-center bg-gray-50 p-4 rounded-lg border border-gray-100">
-              <form onSubmit={handleSearch} className="flex-1 w-full relative">
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search cricket features and stories..."
-                  className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base text-gray-800 transition-all duration-200"
-                />
-              </form>
-              <div className="w-full md:w-auto flex-shrink-0 relative">
-                <Filter className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                <select
-                  value={selectedCategory}
-                  onChange={(e) => handleCategoryChange(e.target.value)}
-                  className="w-full md:w-auto appearance-none pr-10 pl-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base text-gray-800 bg-white cursor-pointer transition-all duration-200"
-                >
-                  <option value="">All Categories</option>
-                  {predefinedCategories.map((category) => (
-                    <option key={category} value={category}>
-                      {category}
-                    </option>
-                  ))}
-                </select>
-                <ChevronRight className="absolute right-4 top-1/2 transform -translate-y-1/2 rotate-90 h-5 w-5 text-gray-400 pointer-events-none" />
-              </div>
-            </div>
+        
           </div>
         </section>
 
