@@ -146,11 +146,19 @@ export const useFixtures = (limit?: number, autoRefresh: boolean = true) => {
       setLoading(true);
       setError(null);
       setIsManual(false);
+      console.log('Fetching fixtures from API...');
       const response = await fetch('/api/fixtures');
+      console.log('API response status:', response.status);
+      
       if (!response.ok) {
-        throw new Error('Failed to fetch fixtures');
+        const errorText = await response.text();
+        console.error('API error response:', errorText);
+        throw new Error(`Failed to fetch fixtures: ${response.status} ${errorText}`);
       }
+      
       const data = await response.json();
+      console.log('API response data:', data);
+      
       if ((data.status === 'success' || data.status === 'ok') && data.data) {
         let processedFixtures = data.data.map((match: Fixture) => ({
           ...match,
@@ -232,8 +240,45 @@ export const useFixtures = (limit?: number, autoRefresh: boolean = true) => {
     } catch (err) {
       console.error('Error fetching fixtures:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch fixtures');
+      
+      // If we have no fixtures and this is the first load, show some sample fixtures
       if (fixtures.length === 0) {
-        setFixtures([]);
+        console.log('Showing sample fixtures as fallback...');
+        const sampleFixtures: Fixture[] = [
+          {
+            id: 'sample-1',
+            name: 'Sample International Match',
+            matchType: 'T20I',
+            status: 'upcoming',
+            venue: 'Sample Stadium',
+            date: new Date(Date.now() + 86400000).toISOString(), // Tomorrow
+            dateTimeGMT: new Date(Date.now() + 86400000).toISOString(),
+            teams: ['India', 'Australia'],
+            series_id: 'sample-series',
+            fantasyEnabled: false,
+            bbbEnabled: false,
+            hasSquad: false,
+            matchStarted: false,
+            matchEnded: false,
+          },
+          {
+            id: 'sample-2',
+            name: 'Sample Domestic Match',
+            matchType: 'T20',
+            status: 'upcoming',
+            venue: 'Local Ground',
+            date: new Date(Date.now() + 172800000).toISOString(), // Day after tomorrow
+            dateTimeGMT: new Date(Date.now() + 172800000).toISOString(),
+            teams: ['Mumbai Indians', 'Chennai Super Kings'],
+            series_id: 'sample-domestic',
+            fantasyEnabled: false,
+            bbbEnabled: false,
+            hasSquad: false,
+            matchStarted: false,
+            matchEnded: false,
+          }
+        ];
+        setFixtures(sampleFixtures);
       }
     } finally {
       setLoading(false);

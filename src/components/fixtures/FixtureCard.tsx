@@ -68,18 +68,18 @@ export const FixtureCard: React.FC<FixtureCardProps & { draggableProps?: any; dr
   const getCardBorder = () => {
     if (isInternational) {
       return fixture.status === 'live' 
-        ? 'border-1 border-brand shadow-md ring-1 ring-brand-200' 
-        : 'border-1 border-brand-dark shadow-md';
+        ? 'shadow-md ring-1 ring-brand-200' 
+        : 'shadow-md';
     }
-    return 'border border-gray-200';
+    return '';
   };
 
   const CardContent = () => {
     if (compact) {
       return (
-        <div {...draggableProps} {...dragHandleProps} className={`bg-white rounded-lg p-4 shadow-sm hover:shadow-md transition-all duration-300 flex-shrink-0 cursor-pointer group transform hover:-translate-y-1 ${getCardBorder()} w-80 h-48`}> 
+        <div {...draggableProps} {...dragHandleProps} className={`bg-white rounded-lg p-3 shadow-sm hover:shadow-md transition-all duration-300 flex-shrink-0 cursor-grab active:cursor-grabbing group transform hover:-translate-y-1 ${getCardBorder()} w-72 h-40 select-none`}> 
           {/* Status indicator - minimal */}
-          <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center justify-between mb-2">
             <div className="flex items-center space-x-2">
               <div className={`w-2 h-2 rounded-full ${fixture.status === 'live' ? 'bg-red-500 animate-pulse' : fixture.status === 'upcoming' ? 'bg-blue-500' : 'bg-gray-400'}`}></div>
               <span className="text-xs font-medium text-gray-600 uppercase tracking-wide">{fixture.status}</span>
@@ -90,24 +90,24 @@ export const FixtureCard: React.FC<FixtureCardProps & { draggableProps?: any; dr
           </div>
 
           {/* Teams with scores - side by side layout */}
-          <div className="mb-4">
-            <div className="space-y-3">
+          <div className="mb-3">
+            <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <div className="font-bold text-lg text-gray-900 truncate flex-1 pr-2" title={fixture.teams[0] || 'Team 1'}>
+                <div className="font-bold text-base text-gray-900 truncate flex-1 pr-2" title={fixture.teams[0] || 'Team 1'}>
                   {fixture.teams[0] || 'Team 1'}
                 </div>
                 {showScore && fixture.score && fixture.score[0] && (
-                  <div className="text-sm font-semibold text-gray-700 whitespace-nowrap">
+                  <div className="text-xs font-semibold text-gray-700 whitespace-nowrap">
                     {fixture.score[0].r}/{fixture.score[0].w}
                   </div>
                 )}
               </div>
               <div className="flex items-center justify-between">
-                <div className="font-bold text-lg text-gray-900 truncate flex-1 pr-2" title={fixture.teams[1] || 'Team 2'}>
+                <div className="font-bold text-base text-gray-900 truncate flex-1 pr-2" title={fixture.teams[1] || 'Team 2'}>
                   {fixture.teams[1] || 'Team 2'}
                 </div>
                 {showScore && fixture.score && fixture.score[1] && (
-                  <div className="text-sm font-semibold text-gray-700 whitespace-nowrap">
+                  <div className="text-xs font-semibold text-gray-700 whitespace-nowrap">
                     {fixture.score[1].r}/{fixture.score[1].w}
                   </div>
                 )}
@@ -116,7 +116,7 @@ export const FixtureCard: React.FC<FixtureCardProps & { draggableProps?: any; dr
           </div>
 
           {/* Tournament name - subtle */}
-          <div className="mb-3">
+          <div className="mb-2">
             <p className="text-xs text-gray-500 truncate" title={fixture.name}>
               {fixture.name}
             </p>
@@ -126,7 +126,7 @@ export const FixtureCard: React.FC<FixtureCardProps & { draggableProps?: any; dr
           <div className="flex items-center justify-between text-xs text-gray-500">
             <div className="flex items-center">
               <MapPin className="h-3 w-3 mr-1" />
-              <span className="truncate max-w-24">{fixture.venue}</span>
+              <span className="truncate max-w-20">{fixture.venue}</span>
             </div>
             <div className="flex items-center">
               <Clock className="h-3 w-3 mr-1" />
@@ -139,7 +139,7 @@ export const FixtureCard: React.FC<FixtureCardProps & { draggableProps?: any; dr
       );
     }
     return (
-      <div {...draggableProps} {...dragHandleProps} className={`bg-white rounded-lg shadow-md hover:shadow-md transition-all duration-300 cursor-pointer group transform hover:-translate-y-1 ${getCardBorder()} p-4 mx-auto flex flex-col justify-between w-full`}> 
+      <div {...draggableProps} {...dragHandleProps} className={`bg-white rounded-lg shadow-md hover:shadow-md transition-all duration-300 cursor-grab active:cursor-grabbing group transform hover:-translate-y-1 ${getCardBorder()} p-4 mx-auto flex flex-col justify-between w-full select-none`}> 
         <div>
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center space-x-2">
@@ -187,6 +187,12 @@ export const FixtureCard: React.FC<FixtureCardProps & { draggableProps?: any; dr
     <Link 
       to={`/scorecard/${fixture.id}`}
       className="block hover:no-underline"
+      onClick={(e) => {
+        // Prevent navigation if dragging
+        if (e.defaultPrevented) {
+          e.preventDefault();
+        }
+      }}
     >
       <CardContent />
     </Link>

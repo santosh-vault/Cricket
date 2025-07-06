@@ -154,16 +154,51 @@ export const PostEditor: React.FC<PostEditorProps> = ({ type: initialType, onSav
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Image size must be less than 5MB');
+      return;
+    }
+    
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      alert('Please select a valid image file');
+      return;
+    }
+    
     setUploading(true);
     try {
       const fileExt = file.name.split('.').pop();
       const fileName = `${uuidv4()}.${fileExt}`;
+      
+      console.log('Uploading image to Supabase storage...');
       const { data, error } = await supabase.storage.from('post-images').upload(fileName, file);
-      if (error) throw error;
-      const { publicURL } = supabase.storage.from('post-images').getPublicUrl(fileName).data;
+      
+      if (error) {
+        console.error('Supabase storage error:', error);
+        
+        // If bucket doesn't exist, try to create it or use a different approach
+        if (error.message.includes('bucket') || error.message.includes('not found')) {
+          alert('Storage bucket not configured. Please contact administrator to set up image storage.');
+          return;
+        }
+        
+        throw error;
+      }
+      
+      console.log('Image uploaded successfully:', data);
+      
+      // Get the public URL
+      const { data: urlData } = supabase.storage.from('post-images').getPublicUrl(fileName);
+      const publicURL = urlData.publicUrl;
+      
+      console.log('Public URL:', publicURL);
       setValue('thumbnail_url', publicURL);
+      
     } catch (error) {
-      alert('Image upload failed');
+      console.error('Image upload error:', error);
+      alert(`Image upload failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setUploading(false);
     }
@@ -315,10 +350,57 @@ export const PostEditor: React.FC<PostEditorProps> = ({ type: initialType, onSav
               {/* Featured Image */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">News Image</label>
-                <input type="file" accept="image/*" onChange={handleImageUpload} className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100" />
-                {uploading && <p className="text-green-600 text-sm mt-2">Uploading...</p>}
+                
+                {/* File Upload */}
+                <div className="mb-3">
+                  <input 
+                    type="file" 
+                    accept="image/*" 
+                    onChange={handleImageUpload} 
+                    className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100" 
+                  />
+                  {uploading && <p className="text-green-600 text-sm mt-2">Uploading...</p>}
+                </div>
+                
+                {/* OR Divider */}
+                <div className="relative my-4">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-gray-300"></div>
+                  </div>
+                  <div className="relative flex justify-center text-sm">
+                    <span className="px-2 bg-white text-gray-500">OR</span>
+                  </div>
+                </div>
+                
+                {/* External URL Input */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Image URL</label>
+                  <input
+                    type="url"
+                    placeholder="https://example.com/image.jpg"
+                    value={watch('thumbnail_url') || ''}
+                    onChange={(e) => setValue('thumbnail_url', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm"
+                  />
+                  <p className="mt-1 text-xs text-gray-500">
+                    Enter a direct link to an image (optional)
+                  </p>
+                </div>
+                
+                {/* Image Preview */}
                 {watch('thumbnail_url') && (
-                  <img src={watch('thumbnail_url')} alt="Preview" className="mt-2 rounded-lg max-h-40 border" />
+                  <div className="mt-3">
+                    <p className="text-sm font-medium text-gray-700 mb-2">Preview:</p>
+                    <img 
+                      src={watch('thumbnail_url')} 
+                      alt="Preview" 
+                      className="rounded-lg max-h-40 border object-cover w-full"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                        alert('Failed to load image preview. Please check the URL.');
+                      }}
+                    />
+                  </div>
                 )}
               </div>
             </div>

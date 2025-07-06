@@ -88,7 +88,7 @@ export const FixturesList: React.FC<FixturesListProps> = ({
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="fixtures-droppable" direction="horizontal">
             {(provided: DroppableProvided) => (
-              <div className="flex space-x-4 overflow-x-auto cursor-grab active:cursor-grabbing scrollbar-hide" ref={provided.innerRef} {...provided.droppableProps}>
+              <div className="flex space-x-3 overflow-x-auto scrollbar-hide" ref={provided.innerRef} {...provided.droppableProps}>
                 {fixtureOrder.map((id, idx) => {
                   const fixture = fixtures.find(f => f.id === id);
                   if (!fixture) return null;

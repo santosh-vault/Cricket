@@ -94,7 +94,7 @@ export const Footer: React.FC = () => {
 
         <div className="border-t border-blue-800 mt-10 pt-8 text-center">
           <p className="text-gray-400 text-sm">
-            &copy; 2025 CricNews. All rights reserved. <span className="font-semibold text-blue-300">Passionately built for cricket fans worldwide.</span>
+            &copy; 2025 CricNews. All rights reserved. <span className="font-regular text-blue-300">Passionately built for cricket fans worldwide.</span>
           </p>
         </div>
       </div>
