@@ -25,8 +25,8 @@ export const AdminDashboard: React.FC = () => {
   const navigation = [
     { name: 'Dashboard', href: '/admin', icon: LayoutDashboard, current: location.pathname === '/admin' },
     { name: 'News Articles', href: '/admin/news', icon: FileText, current: location.pathname.includes('/admin/news') },
-    { name: 'Blog Posts', href: '/admin/blogs', icon: BookOpen, current: location.pathname.includes('/admin/blogs') },
-    { name: 'Features', href: '/admin/features', icon: BookOpen, current: location.pathname.includes('/admin/features') },
+    { name: 'Features', href: '/admin/blogs', icon: BookOpen, current: location.pathname.includes('/admin/blogs') },
+    { name: 'Analysis', href: '/admin/features', icon: BookOpen, current: location.pathname.includes('/admin/features') },
     { name: 'Fixtures', href: '/admin/fixtures', icon: Calendar, current: location.pathname.includes('/admin/fixtures') },
     { name: 'ICC Rankings', href: '/admin/rankings', icon: Trophy, current: location.pathname.includes('/admin/rankings') },
   ];
@@ -79,8 +79,8 @@ export const AdminDashboard: React.FC = () => {
               <Routes>
                 <Route index element={<DashboardOverview />} />
                 <Route path="news/*" element={<PostsManager type="news" />} />
-                <Route path="blogs/*" element={<PostsManager type="blog" />} />
-                <Route path="features/*" element={<PostsManager type="feature" />} />
+                <Route path="blogs/*" element={<PostsManager type="Features" />} />
+                <Route path="features/*" element={<PostsManager type="Analysis" />} />
                 <Route path="fixtures/*" element={<FixturesManager />} />
                 <Route path="rankings/*" element={<RankingsManager />} />
               </Routes>

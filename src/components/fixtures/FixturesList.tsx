@@ -141,7 +141,7 @@ export const FixturesList: React.FC<FixturesListProps> = ({
       
       {/* Manual refresh notice - only show in non-compact mode */}
       {!compact && (
-        <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+        <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
           <div className="flex items-center">
             <RefreshCw className="h-5 w-5 text-yellow-600 mr-2" />
             <span className="text-yellow-800 font-semibold">
@@ -153,7 +153,7 @@ export const FixturesList: React.FC<FixturesListProps> = ({
 
       {/* Priority notice for international matches - only show in non-compact mode */}
       {!compact && internationalMatchesCount > 0 && (
-        <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+        <div className="mb-3 p-4 bg-blue-50 border border-blue-200 rounded-lg">
           <div className="flex items-center">
             <Star className="h-5 w-5 text-blue-600 mr-2" />
             <span className="text-blue-800 font-semibold">

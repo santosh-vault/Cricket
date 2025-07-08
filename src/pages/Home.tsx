@@ -205,14 +205,14 @@ export const Home: React.FC = () => {
             limit={6}
             compact={true}
             showHeader={false}
-            className="px-4 py-4"
+            className="px-4 pt-2"
           />
         </section>
       )}
 
       {/* Unified Feed Sections */}
-      <section className="py-8 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-4 lg:pt-8">
+      <section className="pb-12 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-4 lg:pt-4">
           <div className="mb-16 flex flex-col lg:flex-row gap-8">
             {/* Main Content (Top Stories and More Highlights) */}
             <div className="w-full lg:w-3/4">
@@ -238,14 +238,14 @@ export const Home: React.FC = () => {
                               {section1[0].type}
                             </span>
                           </div>
-                          <div className="p-6 flex flex-col">
+                          <div className="p-6 flex flex-col flex-1 justify-between">
                             <h3 className="text-2xl font-extrabold text-gray-900 mb-3 leading-tight line-clamp-2 group-hover:text-blue-700 transition-colors duration-300">
                               {section1[0].title}
                             </h3>
                             <p className="text-gray-700 text-base mb-3 line-clamp-3 leading-relaxed">
                               {section1[0].content.replace(/<[^>]*>/g, '').substring(0, 150)}...
                             </p>
-                            <div className="flex justify-between items-center text-base text-gray-500">
+                            <div className="flex justify-between items-center text-base text-gray-500 mt-auto">
                               <span className="flex items-center">
                                 <Clock className="h-4 w-4 mr-1 text-gray-400" /> {format(new Date(section1[0].created_at), 'MMM dd, yyyy')}
                               </span>
@@ -257,13 +257,13 @@ export const Home: React.FC = () => {
                         </article>
                       </Link>
                     </div>
-                    {/* Two small cards stacked to match big card height */}
+
                     <div className={`flex flex-col h-full gap-6`}>
                       {section1.slice(1).map((item, idx) => (
                         <Link key={item.id} to={`/${item.type === 'news' ? 'news' : item.type === 'blog' ? 'blogs' : 'features'}/${item.slug}`} className="block group h-1/2 flex-1">
-                          <article className={`bg-white rounded-2xl transition-all duration-300 overflow-hidden flex flex-col h-full border border-gray-100 ${smallCardMinH}`}>
-                            <div className="h-2/3 min-h-[80px] bg-gray-50 flex items-center justify-center overflow-hidden relative">
-                              {renderImageOrPlaceholder(item.thumbnail_url, item.title, "min-h-[80px]", "h-8 w-8")}
+                          <article className={`bg-white rounded-2xl transition-all duration-300 overflow-hidden flex flex-col h-full border border-gray-100 ${smallCardMinH}`}> 
+                            <div className="h-40 bg-gray-50 flex items-center justify-center overflow-hidden relative">
+                              {renderImageOrPlaceholder(item.thumbnail_url, item.title, "h-32", "h-8 w-8")}
                               <span className="absolute bottom-2 left-4 bg-blue-600 text-white px-2 py-0.5 rounded-full text-xs font-bold uppercase">
                                 {item.category}
                               </span>

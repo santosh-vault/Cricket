@@ -18,12 +18,15 @@ export const DashboardOverview: React.FC = () => {
     liveMatches: 0,
   });
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchStats();
   }, []);
 
   const fetchStats = async () => {
+    setLoading(true);
+    setError(null);
     try {
       // Using Promise.allSettled to ensure all promises resolve before setting state,
       // even if one fails. This prevents an unhandled promise rejection.
@@ -42,7 +45,7 @@ export const DashboardOverview: React.FC = () => {
       });
     } catch (error) {
       console.error('Error fetching stats:', error);
-      // Potentially set an error state here to show a message to the user
+      setError('Failed to load admin stats. Please try again later.');
     } finally {
       setLoading(false);
     }
@@ -107,6 +110,15 @@ export const DashboardOverview: React.FC = () => {
     );
   }
 
+  if (error) {
+    return (
+      <div className="bg-red-100 border border-red-300 text-red-800 rounded-lg p-6 text-center mt-8">
+        <h2 className="text-2xl font-bold mb-2">Error</h2>
+        <p>{error}</p>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-4 admin-panel"> {/* Added padding-bottom for overall spacing */}
       {/* Welcome Section */}
@@ -165,7 +177,7 @@ export const DashboardOverview: React.FC = () => {
             </Link>
             <Link to="/admin/blogs/new" className="bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg p-5 text-center transition-all duration-200 block group flex flex-col items-center justify-center">
               <BookOpen className="h-10 w-10 text-blue-600 mb-3 group-hover:scale-110 transition-transform" />
-              <h4 className="text-base font-semibold text-blue-900 group-hover:text-blue-700">Write Blog Post</h4>
+              <h4 className="text-base font-semibold text-blue-900 group-hover:text-blue-700">Write Features Post</h4>
               <p className="text-sm text-blue-700 mt-1">Create analysis content</p>
             </Link>
             <Link to="/admin/fixtures/new" className="bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg p-5 text-center transition-all duration-200 block group flex flex-col items-center justify-center">
