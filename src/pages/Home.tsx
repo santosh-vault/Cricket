@@ -21,7 +21,7 @@ interface Post {
 }
 
 // ICC Rankings Card Component
-const formats = ['test', 'odi', 't20'] as const;
+const formats = ['test', 'odi', 't20I'] as const;
 const categories = ['team'] as const;
 
 function ICCRankingsCard() {

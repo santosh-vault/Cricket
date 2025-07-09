@@ -87,7 +87,7 @@ export const Ranking: React.FC = () => {
     <>
       <SEOHead
         title="ICC Cricket Rankings - CricNews"
-        description="Explore the latest official ICC cricket rankings for teams, batters, bowlers, and allrounders across Test, ODI, and T20 formats. Stay updated with the best in international cricket."
+        description="Explore the latest official ICC cricket rankings for teams, batters, bowlers, and allrounders across Test, ODI, and T20I formats. Stay updated with the best in international cricket."
         keywords="ICC rankings, cricket rankings, team rankings, player rankings, test, odi, t20, batters, bowlers, allrounders, live rankings"
       />
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 font-sans py-20 px-4 sm:px-6 lg:px-4">
@@ -95,7 +95,7 @@ export const Ranking: React.FC = () => {
           <div className="bg-white rounded-3xl p-8 sm:p-10 shadow-md flex flex-col text-gray-900 border border-gray-100">
             <h1 className="text-4xl sm:text-5xl font-extrabold text-blue-800 mb-10 flex flex-col sm:flex-row items-center justify-center text-center">
               <Trophy className="h-10 w-10 sm:h-12 sm:w-12 mr-0 sm:mr-4 text-yellow-500 animate-bounce-slow mb-4 sm:mb-0" />
-              ICC Cricket Rankings
+              ICC World Rankings
             </h1>
 
             <div className="flex justify-center gap-4 mb-8">
@@ -109,7 +109,7 @@ export const Ranking: React.FC = () => {
                       : 'bg-gray-100 text-blue-700 hover:bg-blue-200'}
                   `}
                 >
-                  {f.toUpperCase()}
+                  {f === 't20' ? 'T20I' : f === 'test' ? 'Test' : f.toUpperCase()}
                 </button>
               ))}
             </div>
@@ -125,7 +125,7 @@ export const Ranking: React.FC = () => {
             ) : (
               <div className="flex flex-col bg-gray-50 rounded-xl shadow-md p-6 border border-gray-200">
                 <h2 className="text-2xl font-extrabold text-blue-700 mb-6 text-center border-b pb-3 border-blue-200">
-                  {selectedFormat.toUpperCase()} Rankings
+                  {selectedFormat === 't20' ? 'T20I' : selectedFormat === 'test' ? 'Test' : selectedFormat.toUpperCase()} Rankings
                 </h2>
                 <div className="flex-grow divide-y divide-gray-100">
                   {allRankings[selectedFormat].length > 0 ? (
@@ -162,7 +162,7 @@ export const Ranking: React.FC = () => {
                       </div>
                     ))
                   ) : (
-                    <div className="text-center text-gray-500 py-10 text-md">No rankings available for {selectedFormat.toUpperCase()}.</div>
+                    <div className="text-center text-gray-500 py-10 text-md">No rankings available for {selectedFormat === 't20' ? 'T20I' : selectedFormat === 'test' ? 'Test' : selectedFormat.toUpperCase()}.</div>
                   )}
                 </div>
               </div>

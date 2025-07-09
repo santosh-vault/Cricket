@@ -253,7 +253,7 @@ export const BlogDetail: React.FC = () => {
                     {relatedPosts.map((relatedPost) => (
                       <article
                         key={relatedPost.id}
-                        className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-md transition-shadow duration-200"
+                        className="bg-white rounded-lg overflow-hidden border border-blue-100"
                       >
                         <div className="h-32 bg-gray-200 flex items-center justify-center">
                           {relatedPost.thumbnail_url ? (
@@ -315,7 +315,7 @@ export const BlogDetail: React.FC = () => {
                       </div>
                       <div className="p-2 flex-1 min-w-0">
                         <div className="text-xs text-gray-500 mb-1 truncate">
-                          <span className="bg-gray-100 text-gray-800 px-2 py-0.5 rounded-full font-semibold">
+                          <span className="bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full font-semibold">
                             {item.category}
                           </span>
                         </div>

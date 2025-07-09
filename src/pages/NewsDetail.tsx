@@ -141,7 +141,7 @@ export const NewsDetail: React.FC = () => {
           <p className="text-gray-600 mb-8">The article you're looking for doesn't exist or has been removed.</p>
           <Link
             to="/news"
-            className="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors duration-200"
+            className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors duration-200"
           >
             Back to News
           </Link>
@@ -297,10 +297,10 @@ export const NewsDetail: React.FC = () => {
                 <h2 className="text-2xl font-bold text-gray-900 mb-4">Recommended News</h2>
                 <div className="flex flex-col gap-4">
                   {recommended.map((item) => (
-                    <article key={item.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-md transition-shadow duration-200 flex flex-row items-center min-h-[72px]">
-                      <div className="h-16 w-16 bg-gray-200 flex items-center justify-center flex-shrink-0">
+                    <article key={item.id} className="bg-white rounded-lg overflow-hidden flex flex-row items-center min-h-[72px] border border-blue-100">
+                      <div className="h-16 w-16 bg-gray-200 flex items-center justify-center flex-shrink-0 overflow-hidden">
                         {item.thumbnail_url ? (
-                          <img src={item.thumbnail_url} alt={item.title} className="w-full h-full object-cover rounded-l-lg" />
+                          <img src={item.thumbnail_url} alt={item.title} className="w-full h-full object-cover" style={{objectPosition: 'center', borderRadius: 0}} />
                         ) : (
                           <div className="text-gray-400 text-center">
                             <BookOpen className="h-6 w-6 mx-auto mb-1" />
@@ -310,7 +310,7 @@ export const NewsDetail: React.FC = () => {
                       </div>
                       <div className="p-2 flex-1 min-w-0">
                         <div className="text-xs text-gray-500 mb-1 truncate">
-                          <span className="bg-gray-100 text-gray-800 px-2 py-0.5 rounded-full font-semibold">
+                          <span className="bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full font-semibold">
                             {item.category}
                           </span>
                         </div>
@@ -322,7 +322,7 @@ export const NewsDetail: React.FC = () => {
                         </p>
                         <Link
                           to={`/${item.type === 'feature' ? 'features' : item.type === 'blog' ? 'blogs' : 'news'}/${item.slug}`}
-                          className="text-green-600 hover:text-green-700 text-xs font-semibold transition-colors duration-200 read-more"
+                          className="text-blue-600 hover:text-blue-700 text-xs font-semibold transition-colors duration-200 read-more"
                         >
                           Read More →
                         </Link>

@@ -254,7 +254,7 @@ export const FeatureDetail: React.FC = () => {
                     {relatedPosts.map((relatedPost) => (
                       <article
                         key={relatedPost.id}
-                        className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-md transition-shadow duration-200"
+                        className="bg-white rounded-lg overflow-hidden border border-blue-100"
                       >
                         <div className="h-32 bg-gray-200 flex items-center justify-center">
                           {relatedPost.thumbnail_url ? (
@@ -271,7 +271,7 @@ export const FeatureDetail: React.FC = () => {
                           )}
                         </div>
                         <div className="p-4">
-                          <div className="text-xs text-gray-500 mb-2">
+                          <div className="text-xs text-blue-500 mb-2">
                             <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full font-semibold">
                               {relatedPost.category}
                             </span>
@@ -304,9 +304,9 @@ export const FeatureDetail: React.FC = () => {
                 <div className="flex flex-col gap-4">
                   {recommended.map((item) => (
                     <article key={item.id} className="bg-white rounded-lg overflow-hidden flex flex-row items-center min-h-[72px] border border-blue-100">
-                      <div className="h-16 w-16 bg-gray-200 flex items-center justify-center flex-shrink-0 rounded-l-lg overflow-hidden">
+                      <div className="h-16 w-16 bg-gray-200 flex items-center justify-center flex-shrink-0 overflow-hidden">
                         {item.thumbnail_url ? (
-                          <img src={item.thumbnail_url} alt={item.title} className="w-full h-full object-cover rounded-l-lg" />
+                          <img src={item.thumbnail_url} alt={item.title} className="w-full h-full object-cover" style={{objectPosition: 'center', borderRadius: 0}} />
                         ) : (
                           <div className="text-gray-400 text-center">
                             <BookOpen className="h-6 w-6 mx-auto mb-1" />
@@ -315,8 +315,8 @@ export const FeatureDetail: React.FC = () => {
                         )}
                       </div>
                       <div className="p-2 flex-1 min-w-0">
-                        <div className="text-xs text-gray-500 mb-1 truncate">
-                          <span className="bg-gray-100 text-gray-800 px-2 py-0.5 rounded-full font-semibold">
+                        <div className="text-xs text-blue-500 mb-1 truncate">
+                          <span className="bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full font-semibold">
                             {item.category}
                           </span>
                         </div>
