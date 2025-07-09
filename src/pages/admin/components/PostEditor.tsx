@@ -220,10 +220,10 @@ export const PostEditor: React.FC<PostEditorProps> = ({ type: initialType, onSav
           className="inline-flex items-center text-green-600 hover:text-green-700 mb-4"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to {type === 'news' ? 'News' : type === 'blog' ? 'Blogs' : 'Features'}
+          Back to {type === 'news' ? 'News' : type === 'blog' ? 'Features' : 'Analysis'}
         </Link>
         <h1 className="text-3xl font-bold text-gray-900">
-          {isEditing ? 'Edit' : 'Create'} {type === 'news' ? 'News Article' : type === 'blog' ? 'Blog Post' : 'Feature'}
+          {isEditing ? 'Edit' : 'Create'} {type === 'news' ? 'News Article' : type === 'blog' ? 'Feature' : 'Analysis'}
         </h1>
       </div>
 
@@ -243,8 +243,8 @@ export const PostEditor: React.FC<PostEditorProps> = ({ type: initialType, onSav
                 >
                   <option value="">Select type</option>
                   <option value="news">News</option>
-                  <option value="blog">Blog</option>
-                  <option value="feature">Feature</option>
+                  <option value="blog">Feature</option>
+                  <option value="feature">Analysis</option>
                 </select>
                 {errors.type && (
                   <p className="mt-1 text-sm text-red-600">{errors.type.message}</p>

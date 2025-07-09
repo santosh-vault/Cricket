@@ -21,7 +21,7 @@ interface Post {
 }
 
 // ICC Rankings Card Component
-const formats = ['test', 'odi', 't20I'] as const;
+const formats = ['test', 'odi', 't20'] as const;
 const categories = ['team'] as const;
 
 function ICCRankingsCard() {
@@ -68,7 +68,7 @@ function ICCRankingsCard() {
                 : 'bg-gray-100 text-gray-700 hover:bg-blue-100 hover:text-blue-700'
               }`}
           >
-            {f.toUpperCase()}
+            {f === 't20' ? 'T20I' : f === 'test' ? 'Test' : f.toUpperCase()}
           </button>
         ))}
       </div>

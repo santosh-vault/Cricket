@@ -196,7 +196,7 @@ export const Features: React.FC = () => {
             <aside className="w-full md:w-1/4">
               <div className="bg-white rounded-xl p-6 sticky top-28 border border-gray-200">
                 <h3 className="text-lg font-bold text-gray-900 mb-5 flex items-center">
-                  <TrendingUp className="h-6 w-6 mr-2 text-red-500" /> Most Read Features
+                  <TrendingUp className="h-6 w-6 mr-2 text-red-500" /> Most Read
                 </h3>
                 <div className="flex flex-col divide-y divide-gray-100">
                   {features.slice(0, 5).map((feature, index) => (
