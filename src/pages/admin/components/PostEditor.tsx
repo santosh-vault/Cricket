@@ -48,8 +48,10 @@ export const PostEditor: React.FC<PostEditorProps> = ({ type: initialType, onSav
   const categories = type === 'news' 
     ? ['International', 'Domestic', 'IPL', 'T20 World Cup', 'ODI World Cup', 'Test Cricket', 'Women\'s Cricket', 'U19 Cricket']
     : type === 'blog'
-    ? ['Analysis', 'Opinion', 'Player Profiles', 'Match Analysis', 'Statistics', 'History', 'Coaching Tips', 'Fantasy Cricket']
-    : ['Exclusive', 'Spotlight', 'Interviews', 'Behind the Scenes', 'Special Reports', 'Features', 'Stories', 'Editorial'];
+    ? 
+  ['Exclusive', 'Spotlight', 'Interviews', 'Behind the Scenes', 'Special Reports', 'Features', 'Stories', 'Editorial']
+    :['Analysis', 'Opinion', 'Player Profiles', 'Match Analysis', 'Statistics', 'History', 'Coaching Tips', 'Fantasy Cricket']
+    ;
 
   useEffect(() => {
     if (isEditing) {
