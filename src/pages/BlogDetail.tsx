@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { Calendar, User, Tag, ArrowLeft, Share2, BookOpen } from 'lucide-react';
-import { SEOHead } from '../components/seo/SEOHead';
-import { supabase } from '../lib/supabase';
-import { format } from 'date-fns';
+import React, { useState, useEffect } from "react";
+import { useParams, Link } from "react-router-dom";
+import { Calendar, User, Tag, ArrowLeft, Share2, BookOpen } from "lucide-react";
+import { SEOHead } from "../components/seo/SEOHead";
+import { supabase } from "../lib/supabase";
+import { format } from "date-fns";
 
 interface Post {
   id: string;
@@ -33,7 +33,17 @@ export const BlogDetail: React.FC = () => {
   const [relatedPosts, setRelatedPosts] = useState<RelatedPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [recommended, setRecommended] = useState<{type: string, id: string, title: string, slug: string, category: string, thumbnail_url: string | null, created_at: string}[]>([]);
+  const [recommended, setRecommended] = useState<
+    {
+      type: string;
+      id: string;
+      title: string;
+      slug: string;
+      category: string;
+      thumbnail_url: string | null;
+      created_at: string;
+    }[]
+  >([]);
 
   useEffect(() => {
     if (slug) {
@@ -49,15 +59,15 @@ export const BlogDetail: React.FC = () => {
 
       // Fetch the post
       const { data: postData, error: postError } = await supabase
-        .from('posts')
-        .select('*')
-        .eq('slug', slug)
-        .eq('type', 'blog')
-        .eq('is_published', true)
+        .from("posts")
+        .select("*")
+        .eq("slug", slug)
+        .eq("type", "blog")
+        .eq("is_published", true)
         .single();
 
       if (postError) {
-        setError('Blog post not found');
+        setError("Blog post not found");
         return;
       }
 
@@ -65,18 +75,18 @@ export const BlogDetail: React.FC = () => {
 
       // Fetch related posts
       const { data: relatedData } = await supabase
-        .from('posts')
-        .select('id, title, slug, category, thumbnail_url, created_at')
-        .eq('type', 'blog')
-        .eq('is_published', true)
-        .eq('category', postData.category)
-        .neq('id', postData.id)
+        .from("posts")
+        .select("id, title, slug, category, thumbnail_url, created_at")
+        .eq("type", "blog")
+        .eq("is_published", true)
+        .eq("category", postData.category)
+        .neq("id", postData.id)
         .limit(3);
 
       setRelatedPosts(relatedData || []);
     } catch (error) {
-      console.error('Error fetching post:', error);
-      setError('Failed to load blog post');
+      console.error("Error fetching post:", error);
+      setError("Failed to load blog post");
     } finally {
       setLoading(false);
     }
@@ -84,20 +94,24 @@ export const BlogDetail: React.FC = () => {
 
   const fetchRecommended = async () => {
     try {
-      const types = ['news', 'blog', 'feature'];
+      const types = ["news", "blog", "feature"];
       let all: any[] = [];
       for (const type of types) {
         const { data } = await supabase
-          .from('posts')
-          .select('id, title, slug, category, thumbnail_url, created_at, type')
-          .eq('type', type)
-          .eq('is_published', true)
-          .neq('slug', slug)
-          .order('created_at', { ascending: false })
+          .from("posts")
+          .select("id, title, slug, category, thumbnail_url, created_at, type")
+          .eq("type", type)
+          .eq("is_published", true)
+          .neq("slug", slug)
+          .order("created_at", { ascending: false })
           .limit(2);
-        if (data) all = all.concat(data.map((item: any) => ({ ...item, type })));
+        if (data)
+          all = all.concat(data.map((item: any) => ({ ...item, type })));
       }
-      all.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+      all.sort(
+        (a, b) =>
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      );
       setRecommended(all);
     } catch (e) {
       // fail silently
@@ -109,16 +123,16 @@ export const BlogDetail: React.FC = () => {
       try {
         await navigator.share({
           title: post.title,
-          text: post.content.replace(/<[^>]*>/g, '').substring(0, 200),
+          text: post.content.replace(/<[^>]*>/g, "").substring(0, 200),
           url: window.location.href,
         });
       } catch (error) {
         navigator.clipboard.writeText(window.location.href);
-        alert('Link copied to clipboard!');
+        alert("Link copied to clipboard!");
       }
     } else {
       navigator.clipboard.writeText(window.location.href);
-      alert('Link copied to clipboard!');
+      alert("Link copied to clipboard!");
     }
   };
 
@@ -135,8 +149,12 @@ export const BlogDetail: React.FC = () => {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <BookOpen className="h-16 w-16 mx-auto mb-4 text-gray-400" />
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Blog Post Not Found</h1>
-          <p className="text-gray-600 mb-8">The blog post you're looking for doesn't exist or has been removed.</p>
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">
+            Blog Post Not Found
+          </h1>
+          <p className="text-gray-600 mb-8">
+            The blog post you're looking for doesn't exist or has been removed.
+          </p>
           <Link
             to="/blogs"
             className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors duration-200"
@@ -152,8 +170,8 @@ export const BlogDetail: React.FC = () => {
     <>
       <SEOHead
         title={post.title}
-        description={post.content.replace(/<[^>]*>/g, '').substring(0, 160)}
-        keywords={post.tags.join(', ')}
+        description={post.content.replace(/<[^>]*>/g, "").substring(0, 160)}
+        keywords={post.tags.join(", ")}
         image={post.thumbnail_url || undefined}
         type="article"
         publishedTime={post.created_at}
@@ -175,21 +193,23 @@ export const BlogDetail: React.FC = () => {
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   Back to Blogs
                 </Link>
-                
+
                 <div className="mb-6">
                   <span className="bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-semibold">
                     {post.category}
                   </span>
                 </div>
-                
+
                 <h1 className="text-4xl md:text-3xl font-bold text-gray-900 mb-6 leading-tight">
                   {post.title}
                 </h1>
-                
+
                 <div className="flex flex-wrap items-center gap-6 text-gray-600">
                   <div className="flex items-center">
                     <Calendar className="h-5 w-5 mr-2" />
-                    <span>{format(new Date(post.created_at), 'MMMM dd, yyyy')}</span>
+                    <span>
+                      {format(new Date(post.created_at), "MMMM dd, yyyy")}
+                    </span>
                   </div>
                   <div className="flex items-center">
                     <User className="h-5 w-5 mr-2" />
@@ -248,7 +268,9 @@ export const BlogDetail: React.FC = () => {
             {relatedPosts.length > 0 && (
               <section className="bg-gray-50 py-16 mt-8 rounded-xl">
                 <div className="">
-                  <h2 className="text-3xl font-bold text-gray-900 mb-8">Related Analysis</h2>
+                  <h2 className="text-3xl font-bold text-gray-900 mb-8">
+                    Related Analysis
+                  </h2>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {relatedPosts.map((relatedPost) => (
                       <article
@@ -279,7 +301,10 @@ export const BlogDetail: React.FC = () => {
                             {relatedPost.title}
                           </h3>
                           <p className="text-xs text-gray-500 mb-3">
-                            {format(new Date(relatedPost.created_at), 'MMM dd, yyyy')}
+                            {format(
+                              new Date(relatedPost.created_at),
+                              "MMM dd, yyyy"
+                            )}
                           </p>
                           <Link
                             to={`/blogs/${relatedPost.slug}`}
@@ -299,17 +324,32 @@ export const BlogDetail: React.FC = () => {
           {recommended.length > 0 && (
             <aside className="w-full lg:w-1/3 flex-shrink-0 mt-10 lg:mt-[40px]">
               <div className="bg-gray-50 rounded-xl p-4 sticky top-28 border border-gray-200">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">Recommended Articles</h2>
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                  Recommended Articles
+                </h2>
                 <div className="flex flex-col gap-4">
                   {recommended.map((item) => (
-                    <article key={item.id} className="bg-white rounded-lg overflow-hidden flex flex-row items-center min-h-[72px] border border-blue-100">
+                    <article
+                      key={item.id}
+                      className="bg-white rounded-lg overflow-hidden flex flex-row items-center min-h-[72px] border border-blue-100"
+                    >
                       <div className="h-16 w-16 bg-gray-200 flex items-center justify-center flex-shrink-0 rounded-l-lg overflow-hidden">
                         {item.thumbnail_url ? (
-                          <img src={item.thumbnail_url} alt={item.title} className="w-full h-full object-cover rounded-l-lg" />
+                          <img
+                            src={item.thumbnail_url}
+                            alt={item.title}
+                            className="w-full h-full object-cover rounded-l-lg"
+                          />
                         ) : (
                           <div className="text-gray-400 text-center">
                             <BookOpen className="h-6 w-6 mx-auto mb-1" />
-                            <p className="text-xs capitalize">{item.type}</p>
+                            <p className="text-xs capitalize">
+                              {item.type === "news"
+                                ? "News"
+                                : item.type === "blog"
+                                ? "Feature"
+                                : "Analysis"}
+                            </p>
                           </div>
                         )}
                       </div>
@@ -323,10 +363,16 @@ export const BlogDetail: React.FC = () => {
                           {item.title}
                         </h3>
                         <p className="text-xs text-gray-500 mb-1 truncate">
-                          {format(new Date(item.created_at), 'MMM dd, yyyy')}
+                          {format(new Date(item.created_at), "MMM dd, yyyy")}
                         </p>
                         <Link
-                          to={`/${item.type === 'feature' ? 'features' : item.type === 'blog' ? 'blogs' : 'news'}/${item.slug}`}
+                          to={`/${
+                            item.type === "feature"
+                              ? "features"
+                              : item.type === "blog"
+                              ? "blogs"
+                              : "news"
+                          }/${item.slug}`}
                           className="text-blue-600 hover:text-blue-700 text-xs font-semibold transition-colors duration-200 read-more"
                         >
                           Read More →

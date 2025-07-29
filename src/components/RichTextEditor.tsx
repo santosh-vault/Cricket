@@ -38,6 +38,10 @@ const RichTextEditor = forwardRef<ReactQuill, RichTextEditorProps>(
         ["link", "image", "video"],
         ["clean"],
       ],
+      clipboard: {
+        // Toggle to add extra line breaks when pasting HTML:
+        matchVisual: false,
+      },
     };
 
     const formats = [
@@ -53,6 +57,7 @@ const RichTextEditor = forwardRef<ReactQuill, RichTextEditorProps>(
       "script",
       "list",
       "bullet",
+      "ordered",
       "indent",
       "direction",
       "align",
@@ -61,6 +66,7 @@ const RichTextEditor = forwardRef<ReactQuill, RichTextEditorProps>(
       "link",
       "image",
       "video",
+      "paragraph",
     ];
 
     // Custom styles for the editor
@@ -169,6 +175,15 @@ const RichTextEditor = forwardRef<ReactQuill, RichTextEditorProps>(
           
           .ql-editor p {
             margin: 1em 0;
+            line-height: 1.6;
+          }
+          
+          .ql-editor br {
+            line-height: 1.6;
+          }
+          
+          .ql-editor div {
+            line-height: 1.6;
           }
           
           .ql-editor blockquote {

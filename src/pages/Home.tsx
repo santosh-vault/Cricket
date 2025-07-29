@@ -360,7 +360,11 @@ export const Home: React.FC = () => {
                               {section1[0].category}
                             </span>
                             <span className="absolute top-4 right-4 bg-white/80 text-blue-700 px-2 py-0.5 rounded-full text-xs font-bold uppercase">
-                              {section1[0].type}
+                              {section1[0].type === "news"
+                                ? "News"
+                                : section1[0].type === "blog"
+                                ? "Feature"
+                                : "Analysis"}
                             </span>
                           </div>
                           <div className="p-6 flex flex-col flex-1 justify-between">
@@ -418,7 +422,11 @@ export const Home: React.FC = () => {
                                 {item.category}
                               </span>
                               <span className="absolute top-2 right-4 bg-white/80 text-blue-700 px-2 py-0.5 rounded-full text-xs font-bold uppercase">
-                                {item.type}
+                                {item.type === "news"
+                                  ? "News"
+                                  : item.type === "blog"
+                                  ? "Feature"
+                                  : "Analysis"}
                               </span>
                             </div>
                             <div className="p-4 flex-1 flex flex-col justify-between">
@@ -489,7 +497,11 @@ export const Home: React.FC = () => {
                         {item.category}
                       </span>
                       <span className="absolute top-3 right-3 bg-white/80 text-blue-700 px-2.5 py-1 rounded-full text-xs font-bold uppercase z-10">
-                        {item.type}
+                        {item.type === "news"
+                          ? "News"
+                          : item.type === "blog"
+                          ? "Feature"
+                          : "Analysis"}
                       </span>
                     </div>
                     {/* Content on the right (on sm screens and up) / Bottom (on xs screens) */}
@@ -549,7 +561,11 @@ export const Home: React.FC = () => {
                         {item.category}
                       </span>
                       <span className="absolute top-2 right-2 bg-white/80 text-blue-700 px-2 py-0.5 rounded-full text-xs font-bold uppercase">
-                        {item.type}
+                        {item.type === "news"
+                          ? "News"
+                          : item.type === "blog"
+                          ? "Feature"
+                          : "Analysis"}
                       </span>
                     </div>
                     <h3 className="text-base font-bold text-gray-900 mb-1 line-clamp-2 group-hover:text-blue-700 transition-colors duration-200">
