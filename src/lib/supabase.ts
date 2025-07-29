@@ -79,58 +79,41 @@ export type Database = {
           is_published?: boolean;
         };
       };
-      fixtures: {
+      icc_rankings: {
         Row: {
           id: string;
-          match_id: string;
-          team1: string;
-          team2: string;
-          venue: string;
-          match_date: string;
-          status: 'upcoming' | 'live' | 'completed';
-          tournament: string;
+          category: 'team' | 'batting' | 'bowling' | 'allrounder';
+          rank: number;
+          team: string;
+          player_name?: string | null;
+          rating: number;
+          points?: number | null;
+          matches?: number | null;
           created_at: string;
-        };
-        Insert: {
-          id?: string;
-          match_id: string;
-          team1: string;
-          team2: string;
-          venue: string;
-          match_date: string;
-          status?: 'upcoming' | 'live' | 'completed';
-          tournament: string;
-          created_at?: string;
-        };
-        Update: {
-          id?: string;
-          match_id?: string;
-          team1?: string;
-          team2?: string;
-          venue?: string;
-          match_date?: string;
-          status?: 'upcoming' | 'live' | 'completed';
-          tournament?: string;
-          created_at?: string;
-        };
-      };
-      scorecards: {
-        Row: {
-          id: string;
-          match_id: string;
-          json_data: any;
           updated_at: string;
         };
         Insert: {
           id?: string;
-          match_id: string;
-          json_data: any;
+          category: 'team' | 'batting' | 'bowling' | 'allrounder';
+          rank: number;
+          team: string;
+          player_name?: string | null;
+          rating: number;
+          points?: number | null;
+          matches?: number | null;
+          created_at?: string;
           updated_at?: string;
         };
         Update: {
           id?: string;
-          match_id?: string;
-          json_data?: any;
+          category?: 'team' | 'batting' | 'bowling' | 'allrounder';
+          rank?: number;
+          team?: string;
+          player_name?: string | null;
+          rating?: number;
+          points?: number | null;
+          matches?: number | null;
+          created_at?: string;
           updated_at?: string;
         };
       };

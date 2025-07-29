@@ -10,7 +10,6 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { SEOHead } from "../components/seo/SEOHead";
-import { FixturesList } from "../components/fixtures/FixturesList";
 import { supabase } from "../lib/supabase";
 import { format } from "date-fns";
 import { useAuth } from "../hooks/useAuth";

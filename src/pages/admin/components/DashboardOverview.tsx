@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FileText, BookOpen, Calendar, Trophy, TrendingUp } from "lucide-react";
+import { FileText, BookOpen, Trophy, TrendingUp } from "lucide-react";
 import { supabase } from "../../../lib/supabase";
 import { Link } from "react-router-dom";
 
@@ -7,8 +7,6 @@ interface Stats {
   totalNews: number;
   totalFeatures: number;
   totalAnalysis: number;
-  totalFixtures: number;
-  liveMatches: number;
 }
 
 export const DashboardOverview: React.FC = () => {
@@ -16,8 +14,6 @@ export const DashboardOverview: React.FC = () => {
     totalNews: 0,
     totalFeatures: 0,
     totalAnalysis: 0,
-    totalFixtures: 0,
-    liveMatches: 0,
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -32,13 +28,7 @@ export const DashboardOverview: React.FC = () => {
     try {
       // Using Promise.allSettled to ensure all promises resolve before setting state,
       // even if one fails. This prevents an unhandled promise rejection.
-      const [
-        newsResult,
-        featuresResult,
-        analysisResult,
-        fixturesResult,
-        liveResult,
-      ] = await Promise.all([
+      const [newsResult, featuresResult, analysisResult] = await Promise.all([
         supabase
           .from("posts")
           .select("id", { count: "exact" })
@@ -51,19 +41,12 @@ export const DashboardOverview: React.FC = () => {
           .from("posts")
           .select("id", { count: "exact" })
           .eq("type", "feature"),
-        supabase.from("fixtures").select("id", { count: "exact" }),
-        supabase
-          .from("fixtures")
-          .select("id", { count: "exact" })
-          .eq("status", "live"),
       ]);
 
       setStats({
         totalNews: newsResult.count || 0,
         totalFeatures: featuresResult.count || 0,
         totalAnalysis: analysisResult.count || 0,
-        totalFixtures: fixturesResult.count || 0,
-        liveMatches: liveResult.count || 0,
       });
     } catch (error) {
       console.error("Error fetching stats:", error);
@@ -100,24 +83,6 @@ export const DashboardOverview: React.FC = () => {
       textClass: "text-indigo-500",
       change: "+5%",
       changeType: "increase",
-    },
-    {
-      name: "Total Fixtures",
-      value: stats.totalFixtures,
-      icon: Calendar,
-      colorClass: "bg-gradient-to-br from-green-500 to-green-600",
-      textClass: "text-green-500",
-      change: "+3%",
-      changeType: "increase",
-    },
-    {
-      name: "Live Matches",
-      value: stats.liveMatches,
-      icon: Trophy,
-      colorClass: "bg-gradient-to-br from-red-500 to-red-600",
-      textClass: "text-red-500",
-      change: "0",
-      changeType: "neutral",
     },
   ];
 
@@ -156,7 +121,7 @@ export const DashboardOverview: React.FC = () => {
   return (
     <div className="space-y-8 font-sans admin-panel">
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-5">
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {statCards.map((card, index) => (
           <div
             key={index}
@@ -215,16 +180,6 @@ export const DashboardOverview: React.FC = () => {
               Create Feature
             </h4>
             <p className="text-sm text-blue-700 mt-1">Write in-depth stories</p>
-          </Link>
-          <Link
-            to="/admin/fixtures/new"
-            className="bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg p-5 text-center transition-all duration-200 flex flex-col items-center justify-center"
-          >
-            <Calendar className="h-10 w-10 text-blue-600 mb-3 group-hover:scale-110 transition-transform" />
-            <h4 className="text-base font-semibold text-blue-900 group-hover:text-blue-700">
-              Add Match Fixture
-            </h4>
-            <p className="text-sm text-blue-700 mt-1">Schedule new match</p>
           </Link>
           <Link
             to="/admin/rankings"

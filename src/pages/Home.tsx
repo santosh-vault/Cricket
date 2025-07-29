@@ -2,10 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { TrendingUp, Clock, Users, Trophy, ChevronRight } from "lucide-react";
 import { SEOHead } from "../components/seo/SEOHead";
-import { FixturesList } from "../components/fixtures/FixturesList";
 import { supabase } from "../lib/supabase";
 import { format } from "date-fns";
-import { useFixtures } from "../hooks/useFixtures";
 import ReactCountryFlag from "react-country-flag";
 
 // Interface for Post remains the same
@@ -224,11 +222,6 @@ function ICCRankingsCard() {
 
 export const Home: React.FC = () => {
   const [unifiedFeed, setUnifiedFeed] = useState<Post[]>([]);
-  const {
-    fixtures,
-    loading: fixturesLoading,
-    error: fixturesError,
-  } = useFixtures(5, true);
 
   useEffect(() => {
     fetchUnifiedFeed();
@@ -261,16 +254,6 @@ export const Home: React.FC = () => {
   const section2 = unifiedFeed.slice(3, 7);
   const section3 = unifiedFeed.slice(7, 15);
 
-  if (fixturesLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="animate-bounce text-blue-600 text-xl font-semibold">
-          Loading Cricket Data...
-        </div>
-      </div>
-    );
-  }
-
   // Card height for big card and ICC Rankings (adjust as needed for your ICC card)
   const bigCardMinH = "min-h-[280px]";
   const smallCardMinH = "min-h-[140px]";
@@ -301,21 +284,9 @@ export const Home: React.FC = () => {
     <>
       <SEOHead
         title="Home - CricNews: Your Ultimate Cricket Companion"
-        description="Stay updated with the latest cricket news, live scores, match fixtures, and expert analysis. Your one-stop destination for comprehensive cricket coverage from around the world."
-        keywords="cricket news, live scores, cricket fixtures, cricket updates, IPL, international cricket, T20, ODI, Test, cricket analysis, player rankings"
+        description="Stay updated with the latest cricket news, expert analysis, and comprehensive coverage. Your one-stop destination for cricket news, features, and ICC rankings from around the world."
+        keywords="cricket news, cricket analysis, cricket updates, IPL, international cricket, T20, ODI, Test, cricket features, player rankings, ICC rankings"
       />
-
-      {/* Live Fixtures Section */}
-      {!fixturesLoading && !fixturesError && (
-        <section className="py-2 bg-gray-50 border-b border-gray-100">
-          <FixturesList
-            limit={6}
-            compact={true}
-            showHeader={false}
-            className="px-4 pt-2"
-          />
-        </section>
-      )}
 
       {/* Unified Feed Sections */}
       <section className="pb-12 bg-gray-50">

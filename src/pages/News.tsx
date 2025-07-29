@@ -1,10 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
-import { Search, Filter, Calendar, Tag, Trophy, ChevronRight, Newspaper, TrendingUp } from 'lucide-react';
-import { SEOHead } from '../components/seo/SEOHead';
-import { FixturesList } from '../components/fixtures/FixturesList';
-import { supabase } from '../lib/supabase';
-import { format } from 'date-fns';
+import React, { useState, useEffect } from "react";
+import { Link, useSearchParams } from "react-router-dom";
+import {
+  Search,
+  Filter,
+  Calendar,
+  Tag,
+  Trophy,
+  ChevronRight,
+  Newspaper,
+  TrendingUp,
+} from "lucide-react";
+import { SEOHead } from "../components/seo/SEOHead";
+import { supabase } from "../lib/supabase";
+import { format } from "date-fns";
 
 interface Post {
   id: string;
@@ -21,19 +29,23 @@ export const News: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [news, setNews] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
-  const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || '');
+  const [searchQuery, setSearchQuery] = useState(
+    searchParams.get("search") || ""
+  );
+  const [selectedCategory, setSelectedCategory] = useState(
+    searchParams.get("category") || ""
+  );
   const [categories, setCategories] = useState<string[]>([]);
 
   const predefinedCategories = [
-    'International',
-    'Domestic',
-    'IPL',
-    'T20 World Cup',
-    'ODI World Cup',
-    'Test Cricket',
-    'Women\'s Cricket',
-    'U19 Cricket'
+    "International",
+    "Domestic",
+    "IPL",
+    "T20 World Cup",
+    "ODI World Cup",
+    "Test Cricket",
+    "Women's Cricket",
+    "U19 Cricket",
   ];
 
   useEffect(() => {
@@ -45,21 +57,21 @@ export const News: React.FC = () => {
     setLoading(true);
     try {
       let query = supabase
-        .from('posts')
-        .select('*')
-        .eq('type', 'news')
-        .eq('is_published', true)
-        .order('created_at', { ascending: false });
+        .from("posts")
+        .select("*")
+        .eq("type", "news")
+        .eq("is_published", true)
+        .order("created_at", { ascending: false });
 
-      const search = searchParams.get('search');
-      const category = searchParams.get('category');
+      const search = searchParams.get("search");
+      const category = searchParams.get("category");
 
       if (search) {
-        query = query.ilike('title', `%${search}%`);
+        query = query.ilike("title", `%${search}%`);
       }
 
       if (category) {
-        query = query.eq('category', category);
+        query = query.eq("category", category);
       }
 
       const { data, error } = await query;
@@ -67,7 +79,7 @@ export const News: React.FC = () => {
       if (error) throw error;
       setNews(data || []);
     } catch (error) {
-      console.error('Error fetching news:', error);
+      console.error("Error fetching news:", error);
     } finally {
       setLoading(false);
     }
@@ -76,15 +88,17 @@ export const News: React.FC = () => {
   const fetchCategories = async () => {
     try {
       const { data } = await supabase
-        .from('posts')
-        .select('category')
-        .eq('type', 'news')
-        .eq('is_published', true);
+        .from("posts")
+        .select("category")
+        .eq("type", "news")
+        .eq("is_published", true);
 
-      const uniqueCategories = [...new Set(data?.map(item => item.category) || [])];
+      const uniqueCategories = [
+        ...new Set(data?.map((item) => item.category) || []),
+      ];
       setCategories(uniqueCategories);
     } catch (error) {
-      console.error('Error fetching categories:', error);
+      console.error("Error fetching categories:", error);
     }
   };
 
@@ -92,9 +106,9 @@ export const News: React.FC = () => {
     e.preventDefault();
     const params = new URLSearchParams(searchParams);
     if (searchQuery) {
-      params.set('search', searchQuery);
+      params.set("search", searchQuery);
     } else {
-      params.delete('search');
+      params.delete("search");
     }
     setSearchParams(params);
   };
@@ -102,9 +116,9 @@ export const News: React.FC = () => {
   const handleCategoryChange = (category: string) => {
     const params = new URLSearchParams(searchParams);
     if (category) {
-      params.set('category', category);
+      params.set("category", category);
     } else {
-      params.delete('category');
+      params.delete("category");
     }
     setSearchParams(params);
     setSelectedCategory(category);
@@ -125,7 +139,6 @@ export const News: React.FC = () => {
             <h2 className="text-3xl md:text-3xl font-bold text-gray-900 mb-6 text-center">
               News & Updates
             </h2>
-        
           </div>
         </section>
 
@@ -137,20 +150,26 @@ export const News: React.FC = () => {
               {loading ? (
                 <div className="flex flex-col justify-center items-center py-20 bg-white rounded-xl">
                   <div className="animate-spin rounded-full h-24 w-24 border-t-4 border-b-4 border-blue-600"></div>
-                  <p className="ml-4 text-xl text-blue-700 font-semibold mt-4">Loading the latest cricket headlines...</p>
+                  <p className="ml-4 text-xl text-blue-700 font-semibold mt-4">
+                    Loading the latest cricket headlines...
+                  </p>
                 </div>
               ) : news.length === 0 ? (
                 <div className="text-center py-20 bg-white rounded-xl p-8">
                   <Trophy className="h-20 w-20 text-blue-400 mx-auto mb-6 opacity-70" />
-                  <h3 className="text-2xl font-bold text-gray-900 mb-3">No News Found!</h3>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-3">
+                    No News Found!
+                  </h3>
                   <p className="text-gray-600 text-lg max-w-md mx-auto">
-                    It seems your search or filter criteria didn't match any articles. Try broadening your search or selecting a different category.
+                    It seems your search or filter criteria didn't match any
+                    articles. Try broadening your search or selecting a
+                    different category.
                   </p>
                   {searchQuery || selectedCategory ? (
                     <button
                       onClick={() => {
-                        setSearchQuery('');
-                        setSelectedCategory('');
+                        setSearchQuery("");
+                        setSelectedCategory("");
                         setSearchParams({});
                       }}
                       className="mt-6 px-6 py-3 bg-blue-600 text-white rounded-full font-semibold hover:bg-blue-700 transition-colors duration-300 shadow-md"
@@ -167,9 +186,7 @@ export const News: React.FC = () => {
                       to={`/news/${article.slug}`}
                       className="block group"
                     >
-                      <article
-                        className="bg-white rounded-2xl transition-all duration-300 overflow-hidden flex flex-col h-full border border-gray-100"
-                      >
+                      <article className="bg-white rounded-2xl transition-all duration-300 overflow-hidden flex flex-col h-full border border-gray-100">
                         {/* Image */}
                         <div className="h-56 bg-gray-100 flex items-center justify-center overflow-hidden relative">
                           {article.thumbnail_url ? (
@@ -196,15 +213,23 @@ export const News: React.FC = () => {
                               {article.title}
                             </h3>
                             <p className="text-gray-700 text-base mb-4 line-clamp-3 leading-relaxed">
-                              {article.content.replace(/<[^>]*>/g, '').substring(0, 180)}...
+                              {article.content
+                                .replace(/<[^>]*>/g, "")
+                                .substring(0, 180)}
+                              ...
                             </p>
                           </div>
                           <div className="flex justify-between items-center text-sm text-gray-500 mt-auto pt-3 border-t border-gray-100">
                             <span className="flex items-center">
-                              <Calendar className="h-4 w-4 mr-1.5 text-gray-400" /> {format(new Date(article.created_at), 'MMM dd, yyyy')}
+                              <Calendar className="h-4 w-4 mr-1.5 text-gray-400" />{" "}
+                              {format(
+                                new Date(article.created_at),
+                                "MMM dd, yyyy"
+                              )}
                             </span>
                             <span className="text-blue-600 font-semibold flex items-center group-hover:text-blue-800 read-more">
-                              Read More <ChevronRight className="h-4 w-4 ml-1.5 transform group-hover:translate-x-1 transition-transform duration-200" />
+                              Read More{" "}
+                              <ChevronRight className="h-4 w-4 ml-1.5 transform group-hover:translate-x-1 transition-transform duration-200" />
                             </span>
                           </div>
                         </div>
@@ -227,17 +252,29 @@ export const News: React.FC = () => {
                     from your backend here.
                   */}
                   {news.slice(0, 5).map((article, index) => (
-                    <Link key={article.id} to={`/news/${article.slug}`} className="block py-3 group">
+                    <Link
+                      key={article.id}
+                      to={`/news/${article.slug}`}
+                      className="block py-3 group"
+                    >
                       <h4 className="font-semibold text-base text-gray-800 mb-1 leading-snug line-clamp-3 group-hover:text-blue-700 transition-colors duration-200">
-                        <span className="text-blue-500 mr-2 font-bold">{index + 1}.</span> {article.title}
+                        <span className="text-blue-500 mr-2 font-bold">
+                          {index + 1}.
+                        </span>{" "}
+                        {article.title}
                       </h4>
                       <div className="flex items-center text-xs text-gray-500">
                         <Calendar className="h-3.5 w-3.5 mr-1 text-gray-400" />
-                        <span>{format(new Date(article.created_at), 'MMM dd, yyyy')}</span>
+                        <span>
+                          {format(new Date(article.created_at), "MMM dd, yyyy")}
+                        </span>
                       </div>
                     </Link>
                   ))}
-                  <Link to="/most-read" className="mt-4 block text-blue-600 text-sm font-semibold hover:underline flex items-center justify-center pt-3">
+                  <Link
+                    to="/most-read"
+                    className="mt-4 block text-blue-600 text-sm font-semibold hover:underline flex items-center justify-center pt-3"
+                  >
                     View More <ChevronRight className="h-4 w-4 ml-1" />
                   </Link>
                 </div>

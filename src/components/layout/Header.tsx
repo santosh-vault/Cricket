@@ -1,7 +1,20 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Menu, X, Ticket as Cricket, User, LogOut, Mail, Phone, Facebook, Twitter, Instagram, Sun, Moon } from 'lucide-react';
-import { useAuth } from '../../hooks/useAuth';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  Menu,
+  X,
+  Ticket as Cricket,
+  User,
+  LogOut,
+  Mail,
+  Phone,
+  Facebook,
+  Twitter,
+  Instagram,
+  Sun,
+  Moon,
+} from "lucide-react";
+import { useAuth } from "../../hooks/useAuth";
 
 export const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -9,19 +22,17 @@ export const Header: React.FC = () => {
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
-    if (!window.confirm('Are you sure you want to log out?')) return;
+    if (!window.confirm("Are you sure you want to log out?")) return;
     await signOut();
-    navigate('/');
+    navigate("/");
   };
 
   const navItems = [
-    { name: 'Home', path: '/' },
-    { name: 'News', path: '/news' },
-    { name: 'Features', path: '/blogs' },
-    { name: 'Analysis', path: '/features' },
-    { name: 'Fixtures', path: '/fixtures' },
-    { name: 'Rankings', path: '/ranking' },
-
+    { name: "Home", path: "/" },
+    { name: "News", path: "/news" },
+    { name: "Features", path: "/blogs" },
+    { name: "Analysis", path: "/features" },
+    { name: "Rankings", path: "/ranking" },
   ];
 
   return (
@@ -75,7 +86,9 @@ export const Header: React.FC = () => {
             {/* Logo */}
             <Link to="/" className="flex items-center space-x-2">
               <Cricket className="h-9 w-9 text-blue-300 transform rotate-[-15deg]" />
-              <span className="text-3xl font-extrabold text-white tracking-tight">CricNews</span>
+              <span className="text-3xl font-extrabold text-white tracking-tight">
+                CricNews
+              </span>
             </Link>
 
             {/* Desktop Navigation */}
@@ -105,7 +118,9 @@ export const Header: React.FC = () => {
                   )}
                   <div className="flex items-center space-x-2 cursor-pointer group">
                     <User className="h-5 w-5 text-blue-200 group-hover:text-white transition-colors duration-200" />
-                    <span className="text-sm text-blue-200 group-hover:text-white transition-colors duration-200">{user.email}</span>
+                    <span className="text-sm text-blue-200 group-hover:text-white transition-colors duration-200">
+                      {user.email}
+                    </span>
                   </div>
                   <button
                     onClick={handleSignOut}
@@ -124,7 +139,10 @@ export const Header: React.FC = () => {
                 </Link>
               )}
               {/* Dark Theme Toggle Icon */}
-              <button className="ml-2 text-blue-200 hover:text-white p-2 rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500" title="Toggle Dark Mode">
+              <button
+                className="ml-2 text-blue-200 hover:text-white p-2 rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                title="Toggle Dark Mode"
+              >
                 <Moon className="h-5 w-5" />
               </button>
             </div>
@@ -135,7 +153,11 @@ export const Header: React.FC = () => {
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 className="text-white hover:text-blue-200 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                {isMenuOpen ? <X className="h-7 w-7" /> : <Menu className="h-7 w-7" />}
+                {isMenuOpen ? (
+                  <X className="h-7 w-7" />
+                ) : (
+                  <Menu className="h-7 w-7" />
+                )}
               </button>
             </div>
           </div>
@@ -155,7 +177,10 @@ export const Header: React.FC = () => {
                   </Link>
                 ))}
                 {/* Dark Theme Toggle Icon for mobile */}
-                <button className="text-blue-100 hover:text-white px-3 py-2 rounded-md text-base font-medium text-left transition-colors duration-200 flex items-center hover:bg-blue-700" title="Toggle Dark Mode">
+                <button
+                  className="text-blue-100 hover:text-white px-3 py-2 rounded-md text-base font-medium text-left transition-colors duration-200 flex items-center hover:bg-blue-700"
+                  title="Toggle Dark Mode"
+                >
                   <Moon className="h-5 w-5 mr-3" /> Dark Mode
                 </button>
                 {user ? (

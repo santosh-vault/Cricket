@@ -4,7 +4,6 @@ import {
   LayoutDashboard,
   FileText,
   BookOpen,
-  Calendar,
   Trophy,
   Settings,
   Users,
@@ -14,7 +13,6 @@ import {
 } from "lucide-react";
 import { SEOHead } from "../../components/seo/SEOHead";
 import { PostsManager } from "./components/PostsManager";
-import { FixturesManager } from "./components/FixturesManager";
 import { DashboardOverview } from "./components/DashboardOverview";
 import { RankingsManager } from "./components/RankingsManager";
 
@@ -48,12 +46,6 @@ export const AdminDashboard: React.FC = () => {
       current: location.pathname.includes("/admin/features"),
     },
     {
-      name: "Fixtures",
-      href: "/admin/fixtures",
-      icon: Calendar,
-      current: location.pathname.includes("/admin/fixtures"),
-    },
-    {
       name: "ICC Rankings",
       href: "/admin/rankings",
       icon: Trophy,
@@ -65,7 +57,7 @@ export const AdminDashboard: React.FC = () => {
     <>
       <SEOHead
         title="Admin Dashboard - CricNews CMS"
-        description="Admin dashboard for managing cricket news, blogs, fixtures, and scorecards for CricNews."
+        description="Admin dashboard for managing cricket news, blogs, features, analysis, and ICC rankings for CricNews."
       />
       {/* Outer container: Sets min-height for the entire viewport and uses flex-col for stacking header, then content + sidebar */}
       <div className="min-h-screen bg-gray-50 font-sans flex flex-col admin-panel">
@@ -118,7 +110,6 @@ export const AdminDashboard: React.FC = () => {
                   path="features/*"
                   element={<PostsManager type="feature" />}
                 />
-                <Route path="fixtures/*" element={<FixturesManager />} />
                 <Route path="rankings/*" element={<RankingsManager />} />
               </Routes>
             </div>

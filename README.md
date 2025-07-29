@@ -5,6 +5,7 @@ A full-stack cricket news and live score application built with React.js and Sup
 ## Features
 
 ### Frontend
+
 - **React.js** with TypeScript for type safety
 - **React Router DOM** for client-side routing
 - **React Helmet Async** for SEO optimization
@@ -13,22 +14,24 @@ A full-stack cricket news and live score application built with React.js and Sup
 - **Progressive Web App** capabilities
 
 ### Pages
-- **Home** - Featured news, upcoming matches, and stats
+
+- **Home** - Featured news, analysis pieces, and stats
 - **News** - Cricket news with search and category filters
-- **Blogs** - In-depth analysis and opinion pieces
-- **Fixtures** - Match schedules with live updates
-- **Scorecard** - Live match scorecards and statistics
+- **Blogs** - Features and in-depth stories
+- **Features** - Expert analysis and opinion pieces
 - **Admin Dashboard** - Content management system
 
 ### Admin Features
+
 - **Authentication** using Supabase Auth
-- **Content Management** - Create, edit, delete news and blogs
-- **Fixture Management** - Add and manage cricket fixtures
+- **Content Management** - Create, edit, delete news, blogs, features, and analysis
+- **ICC Rankings Management** - Update team and player rankings
 - **Media Upload** - Image management for posts
 - **Publishing Control** - Draft and publish content
 - **User Management** - Admin role assignment
 
 ### Backend (Supabase)
+
 - **PostgreSQL Database** with Row Level Security
 - **Real-time subscriptions** for live updates
 - **Authentication & Authorization**
@@ -36,6 +39,7 @@ A full-stack cricket news and live score application built with React.js and Sup
 - **Edge Functions** for serverless operations
 
 ### SEO & Performance
+
 - **Server-side rendering** ready
 - **Meta tags optimization** with React Helmet
 - **Open Graph tags** for social sharing
@@ -46,42 +50,48 @@ A full-stack cricket news and live score application built with React.js and Sup
 ## Database Schema
 
 ### Tables
+
 - `users` - User accounts with role-based access
-- `posts` - News articles and blog posts
-- `fixtures` - Cricket match schedules
-- `scorecards` - Match statistics and live data
+- `posts` - News articles, blog posts, features, and analysis
+- `icc_rankings` - ICC team and player rankings data
 
 ## Getting Started
 
 ### Prerequisites
+
 - Node.js 18+ and npm
 - Supabase account
 
 ### Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone <repository-url>
    cd cricket-news-app
    ```
 
 2. **Install dependencies**
+
    ```bash
    npm install
    ```
 
 3. **Set up environment variables**
+
    ```bash
    cp .env.example .env
    ```
-   
+
    Update `.env` with your Supabase credentials:
+
    ```
    VITE_SUPABASE_URL=your_supabase_project_url
    VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
    ```
 
 4. **Set up Supabase**
+
    - Create a new project in Supabase
    - Run the SQL migrations in order:
      1. `supabase/migrations/20250701082255_fragrant_coast.sql`
@@ -96,10 +106,12 @@ A full-stack cricket news and live score application built with React.js and Sup
 ## Admin Access
 
 ### Default Admin Credentials
+
 - **Email**: `admin@cricnews.com`
 - **Password**: `CricNews2024!`
 
 ### Setup Instructions
+
 1. **Run the database migrations** in your Supabase SQL editor
 2. **Create the admin user** in Supabase Auth:
    - Go to your Supabase project dashboard
@@ -114,8 +126,9 @@ A full-stack cricket news and live score application built with React.js and Sup
 The migrations will automatically create the user record in the database with admin privileges. You just need to create the authentication record through the Supabase dashboard.
 
 ### Admin Dashboard Features
-- **Content Management**: Create, edit, and delete news articles and blog posts
-- **Fixture Management**: Add and manage cricket match fixtures
+
+- **Content Management**: Create, edit, and delete news articles, blogs, features, and analysis
+- **Rankings Management**: Update ICC team and player rankings
 - **Publishing Control**: Draft and publish content with scheduling
 - **Analytics Overview**: View content statistics and engagement metrics
 - **User Management**: Manage user roles and permissions
@@ -123,12 +136,14 @@ The migrations will automatically create the user record in the database with ad
 ## Usage
 
 ### Content Management
+
 - **News Articles**: Create breaking news and match reports
-- **Blog Posts**: Write analysis and opinion pieces
-- **Fixtures**: Add upcoming matches and tournaments
-- **Live Scores**: Update match scorecards in real-time
+- **Blog Posts**: Write features and in-depth stories
+- **Analysis**: Create expert analysis and opinion pieces
+- **Rankings**: Update ICC team and player rankings
 
 ### SEO Optimization
+
 - Each page includes proper meta tags and structured data
 - Images are optimized for web delivery
 - Content is indexed by search engines
@@ -137,19 +152,23 @@ The migrations will automatically create the user record in the database with ad
 ## Sample Data
 
 The application comes with sample data including:
+
 - **News Articles**: Recent cricket news and match reports
 - **Blog Posts**: Analysis and opinion pieces
-- **Fixtures**: Upcoming and completed matches
-- **Live Scorecard**: Sample live match data
+- **News**: Breaking news and match reports
+- **Blogs**: Features and analysis articles
+- **Rankings**: ICC team and player rankings data
 
 ## Deployment
 
 ### Frontend (Vercel/Netlify)
+
 1. Connect your repository to Vercel or Netlify
 2. Set environment variables in the hosting platform
 3. Deploy with automatic builds on push
 
 ### Backend (Supabase)
+
 - Supabase handles all backend infrastructure
 - Database migrations are applied automatically
 - Real-time features work out of the box
@@ -157,10 +176,11 @@ The application comes with sample data including:
 ## API Integration
 
 The app supports integration with cricket APIs for live data:
+
 - Match fixtures and results
-- Live scorecard updates
-- Player statistics
-- Tournament information
+- Player and team rankings
+- Tournament coverage
+- Expert analysis and features
 
 ## Contributing
 
