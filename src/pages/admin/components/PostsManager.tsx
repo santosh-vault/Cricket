@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { Routes, Route, Link, useNavigate } from 'react-router-dom';
-import { Plus, Edit, Trash2, Eye, Calendar, Tag } from 'lucide-react';
-import { supabase } from '../../../lib/supabase';
-import { format } from 'date-fns';
-import { PostEditor } from './PostEditor';
+import React, { useState, useEffect } from "react";
+import { Routes, Route, Link, useNavigate } from "react-router-dom";
+import { Plus, Edit, Trash2, Eye, Calendar, Tag } from "lucide-react";
+import { supabase } from "../../../lib/supabase";
+import { format } from "date-fns";
+import { PostEditor } from "./PostEditor";
 
 interface Post {
   id: string;
@@ -11,7 +11,7 @@ interface Post {
   slug: string;
   content: string;
   category: string;
-  type: 'news' | 'blog' | 'feature';
+  type: "news" | "blog" | "feature";
   tags: string[];
   thumbnail_url: string | null;
   is_published: boolean;
@@ -20,7 +20,7 @@ interface Post {
 }
 
 interface PostsManagerProps {
-  type: 'news' | 'blog' | 'feature';
+  type: "news" | "blog" | "feature";
 }
 
 export const PostsManager: React.FC<PostsManagerProps> = ({ type }) => {
@@ -36,76 +36,76 @@ export const PostsManager: React.FC<PostsManagerProps> = ({ type }) => {
   const fetchPosts = async () => {
     try {
       const { data, error } = await supabase
-        .from('posts')
-        .select('*')
-        .eq('type', type)
-        .order('created_at', { ascending: false });
+        .from("posts")
+        .select("*")
+        .eq("type", type)
+        .order("created_at", { ascending: false });
 
       if (error) throw error;
       setPosts(data || []);
     } catch (error) {
-      console.error('Error fetching posts:', error);
+      console.error("Error fetching posts:", error);
     } finally {
       setLoading(false);
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this post?')) return;
+    if (!confirm("Are you sure you want to delete this post?")) return;
 
     try {
-      const { error } = await supabase
-        .from('posts')
-        .delete()
-        .eq('id', id);
+      const { error } = await supabase.from("posts").delete().eq("id", id);
 
       if (error) throw error;
-      setPosts(posts.filter(post => post.id !== id));
+      setPosts(posts.filter((post) => post.id !== id));
     } catch (error) {
-      console.error('Error deleting post:', error);
-      alert('Failed to delete post');
+      console.error("Error deleting post:", error);
+      alert("Failed to delete post");
     }
   };
 
   const handleBulkDelete = async () => {
     if (selectedPosts.length === 0) return;
-    if (!confirm(`Are you sure you want to delete ${selectedPosts.length} posts?`)) return;
+    if (
+      !confirm(`Are you sure you want to delete ${selectedPosts.length} posts?`)
+    )
+      return;
 
     try {
       const { error } = await supabase
-        .from('posts')
+        .from("posts")
         .delete()
-        .in('id', selectedPosts);
+        .in("id", selectedPosts);
 
       if (error) throw error;
-      setPosts(posts.filter(post => !selectedPosts.includes(post.id)));
+      setPosts(posts.filter((post) => !selectedPosts.includes(post.id)));
       setSelectedPosts([]);
     } catch (error) {
-      console.error('Error deleting posts:', error);
-      alert('Failed to delete posts');
+      console.error("Error deleting posts:", error);
+      alert("Failed to delete posts");
     }
   };
 
   const togglePublish = async (id: string, currentStatus: boolean) => {
     try {
       const { error } = await supabase
-        .from('posts')
-        .update({ 
+        .from("posts")
+        .update({
           is_published: !currentStatus,
-          published_at: !currentStatus ? new Date().toISOString() : null
+          published_at: !currentStatus ? new Date().toISOString() : null,
         })
-        .eq('id', id);
+        .eq("id", id);
 
       if (error) throw error;
-      
-      setPosts(posts.map(post => 
-        post.id === id 
-          ? { ...post, is_published: !currentStatus }
-          : post
-      ));
+
+      setPosts(
+        posts.map((post) =>
+          post.id === id ? { ...post, is_published: !currentStatus } : post
+        )
+      );
     } catch (error) {
-      console.error('Error updating post status:', error);
-      alert('Failed to update post status');
+      console.error("Error updating post status:", error);
+      alert("Failed to update post status");
     }
   };
 
@@ -115,10 +115,19 @@ export const PostsManager: React.FC<PostsManagerProps> = ({ type }) => {
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-2xl font-bold text-blue-900 font-sans">
-            {type === 'news' ? 'News Articles' : type === 'blog' ? 'Blog Posts' : 'Features'}
+            {type === "news"
+              ? "News Articles"
+              : type === "blog"
+              ? "Features"
+              : "Analysis"}
           </h2>
           <p className="text-blue-700 font-sans">
-            Manage your {type === 'news' ? 'news articles' : type === 'blog' ? 'blog posts' : 'features'}
+            Manage your{" "}
+            {type === "news"
+              ? "news articles"
+              : type === "blog"
+              ? "features"
+              : "analysis"}
           </p>
         </div>
         <Link
@@ -126,7 +135,8 @@ export const PostsManager: React.FC<PostsManagerProps> = ({ type }) => {
           className="bg-blue-900 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-800 transition-colors duration-200 flex items-center font-sans"
         >
           <Plus className="h-4 w-4 mr-2" />
-          Add {type === 'news' ? 'News' : type === 'blog' ? 'Blog Post' : 'Feature'}
+          Add{" "}
+          {type === "news" ? "News" : type === "blog" ? "Feature" : "Analysis"}
         </Link>
       </div>
 
@@ -155,12 +165,26 @@ export const PostsManager: React.FC<PostsManagerProps> = ({ type }) => {
         </div>
       ) : posts.length === 0 ? (
         <div className="bg-white shadow rounded-lg p-8 text-center font-sans">
-          <p className="text-blue-700 font-sans">No {type} posts found.</p>
+          <p className="text-blue-700 font-sans">
+            No{" "}
+            {type === "news"
+              ? "news"
+              : type === "blog"
+              ? "feature"
+              : "analysis"}{" "}
+            posts found.
+          </p>
           <Link
             to={`/admin/${type}/new`}
             className="mt-4 inline-block bg-blue-900 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-800 transition-colors duration-200 font-sans"
           >
-            Create your first {type} post
+            Create your first{" "}
+            {type === "news"
+              ? "news"
+              : type === "blog"
+              ? "feature"
+              : "analysis"}{" "}
+            post
           </Link>
         </div>
       ) : (
@@ -174,12 +198,14 @@ export const PostsManager: React.FC<PostsManagerProps> = ({ type }) => {
                     className="rounded border-blue-300 text-blue-900 focus:ring-blue-500 font-sans"
                     onChange={(e) => {
                       if (e.target.checked) {
-                        setSelectedPosts(posts.map(post => post.id));
+                        setSelectedPosts(posts.map((post) => post.id));
                       } else {
                         setSelectedPosts([]);
                       }
                     }}
-                    checked={selectedPosts.length === posts.length && posts.length > 0}
+                    checked={
+                      selectedPosts.length === posts.length && posts.length > 0
+                    }
                   />
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-blue-700 uppercase tracking-wider font-sans">
@@ -211,7 +237,9 @@ export const PostsManager: React.FC<PostsManagerProps> = ({ type }) => {
                         if (e.target.checked) {
                           setSelectedPosts([...selectedPosts, post.id]);
                         } else {
-                          setSelectedPosts(selectedPosts.filter(id => id !== post.id));
+                          setSelectedPosts(
+                            selectedPosts.filter((id) => id !== post.id)
+                          );
                         }
                       }}
                     />
@@ -235,9 +263,7 @@ export const PostsManager: React.FC<PostsManagerProps> = ({ type }) => {
                         <div className="text-sm font-medium text-gray-900 line-clamp-1">
                           {post.title}
                         </div>
-                        <div className="text-sm text-gray-500">
-                          {post.slug}
-                        </div>
+                        <div className="text-sm text-gray-500">{post.slug}</div>
                       </div>
                     </div>
                   </td>
@@ -251,15 +277,15 @@ export const PostsManager: React.FC<PostsManagerProps> = ({ type }) => {
                       onClick={() => togglePublish(post.id, post.is_published)}
                       className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                         post.is_published
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-yellow-100 text-yellow-800'
+                          ? "bg-green-100 text-green-800"
+                          : "bg-yellow-100 text-yellow-800"
                       }`}
                     >
-                      {post.is_published ? 'Published' : 'Draft'}
+                      {post.is_published ? "Published" : "Draft"}
                     </button>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {format(new Date(post.created_at), 'MMM dd, yyyy')}
+                    {format(new Date(post.created_at), "MMM dd, yyyy")}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <div className="flex items-center justify-end space-x-2">
@@ -297,8 +323,14 @@ export const PostsManager: React.FC<PostsManagerProps> = ({ type }) => {
   return (
     <Routes>
       <Route index element={<PostsList />} />
-      <Route path="new" element={<PostEditor type={type} onSave={fetchPosts} />} />
-      <Route path=":id/edit" element={<PostEditor type={type} onSave={fetchPosts} />} />
+      <Route
+        path="new"
+        element={<PostEditor type={type} onSave={fetchPosts} />}
+      />
+      <Route
+        path=":id/edit"
+        element={<PostEditor type={type} onSave={fetchPosts} />}
+      />
     </Routes>
   );
 };
