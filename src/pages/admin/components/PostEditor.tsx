@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { ArrowLeft, Save, Eye, Image, Tag, Calendar } from "lucide-react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { supabase } from "../../../lib/supabase";
 import { useAuth } from "../../../hooks/useAuth";
 import { v4 as uuidv4 } from "uuid";
+import RichTextEditor from "../../../components/RichTextEditor";
 
 interface PostFormData {
   title: string;
@@ -38,6 +39,7 @@ export const PostEditor: React.FC<PostEditorProps> = ({
     handleSubmit,
     setValue,
     watch,
+    control,
     formState: { errors },
   } = useForm<PostFormData>({
     defaultValues: {
@@ -125,7 +127,15 @@ export const PostEditor: React.FC<PostEditorProps> = ({
     } catch (error) {
       console.error("Error fetching post:", error);
       alert("Failed to load post");
-      navigate(`/admin/${type}`);
+      navigate(
+        `/admin/${
+          initialType === "blog"
+            ? "blogs"
+            : initialType === "feature"
+            ? "features"
+            : "news"
+        }`
+      );
     } finally {
       setLoading(false);
     }
@@ -265,7 +275,9 @@ export const PostEditor: React.FC<PostEditorProps> = ({
     <div className="max-w-4xl mx-auto">
       <div className="mb-6">
         <Link
-          to={`/admin/${type}`}
+          to={`/admin/${
+            type === "blog" ? "blogs" : type === "feature" ? "features" : "news"
+          }`}
           className="inline-flex items-center text-green-600 hover:text-green-700 mb-4"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
@@ -336,11 +348,18 @@ export const PostEditor: React.FC<PostEditorProps> = ({
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Content *
                 </label>
-                <textarea
-                  {...register("content", { required: "Content is required" })}
-                  rows={20}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                  placeholder="Write your content here..."
+                <Controller
+                  name="content"
+                  control={control}
+                  rules={{ required: "Content is required" }}
+                  render={({ field: { onChange, value } }) => (
+                    <RichTextEditor
+                      value={value || ""}
+                      onChange={onChange}
+                      placeholder="Write your content here..."
+                      className="w-full"
+                    />
+                  )}
                 />
                 {errors.content && (
                   <p className="mt-1 text-sm text-red-600">
@@ -399,7 +418,7 @@ export const PostEditor: React.FC<PostEditorProps> = ({
 
               {/* Tags */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center">
+                <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
                   <Tag className="h-4 w-4 mr-2" />
                   Tags
                 </label>

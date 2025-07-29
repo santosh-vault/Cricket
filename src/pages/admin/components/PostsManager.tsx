@@ -131,7 +131,9 @@ export const PostsManager: React.FC<PostsManagerProps> = ({ type }) => {
           </p>
         </div>
         <Link
-          to={`/admin/${type}/new`}
+          to={`/admin/${
+            type === "blog" ? "blogs" : type === "feature" ? "features" : "news"
+          }/new`}
           className="bg-blue-900 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-800 transition-colors duration-200 flex items-center font-sans"
         >
           <Plus className="h-4 w-4 mr-2" />
@@ -175,7 +177,13 @@ export const PostsManager: React.FC<PostsManagerProps> = ({ type }) => {
             posts found.
           </p>
           <Link
-            to={`/admin/${type}/new`}
+            to={`/admin/${
+              type === "blog"
+                ? "blogs"
+                : type === "feature"
+                ? "features"
+                : "news"
+            }/new`}
             className="mt-4 inline-block bg-blue-900 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-800 transition-colors duration-200 font-sans"
           >
             Create your first{" "}
@@ -298,7 +306,13 @@ export const PostsManager: React.FC<PostsManagerProps> = ({ type }) => {
                         <Eye className="h-4 w-4" />
                       </Link>
                       <Link
-                        to={`/admin/${type}/${post.id}/edit`}
+                        to={`/admin/${
+                          type === "blog"
+                            ? "blogs"
+                            : type === "feature"
+                            ? "features"
+                            : "news"
+                        }/${post.id}/edit`}
                         className="text-green-600 hover:text-green-900"
                       >
                         <Edit className="h-4 w-4" />
