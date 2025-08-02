@@ -32,6 +32,38 @@ export type Database = {
           created_at?: string;
         };
       };
+      support_inquiries: {
+        Row: {
+          id: string;
+          name: string;
+          email: string;
+          company: string;
+          message: string;
+          budget: string | null;
+          created_at: string;
+          status: 'pending' | 'contacted' | 'closed';
+        };
+        Insert: {
+          id?: string;
+          name: string;
+          email: string;
+          company: string;
+          message: string;
+          budget?: string | null;
+          created_at?: string;
+          status?: 'pending' | 'contacted' | 'closed';
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          email?: string;
+          company?: string;
+          message?: string;
+          budget?: string | null;
+          created_at?: string;
+          status?: 'pending' | 'contacted' | 'closed';
+        };
+      };
       posts: {
         Row: {
           id: string;

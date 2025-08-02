@@ -10,11 +10,13 @@ import {
   Plus,
   Menu, // Mobile menu icon
   X, // Mobile close icon
+  MessageSquare,
 } from "lucide-react";
 import { SEOHead } from "../../components/seo/SEOHead";
 import { PostsManager } from "./components/PostsManager";
 import { DashboardOverview } from "./components/DashboardOverview";
 import { RankingsManager } from "./components/RankingsManager";
+import { SupportInquiriesManager } from "./components/SupportInquiriesManager";
 
 export const AdminDashboard: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -50,6 +52,12 @@ export const AdminDashboard: React.FC = () => {
       href: "/admin/rankings",
       icon: Trophy,
       current: location.pathname.includes("/admin/rankings"),
+    },
+    {
+      name: "Support Inquiries",
+      href: "/admin/support",
+      icon: MessageSquare,
+      current: location.pathname.includes("/admin/support"),
     },
   ];
 
@@ -111,6 +119,7 @@ export const AdminDashboard: React.FC = () => {
                   element={<PostsManager type="feature" />}
                 />
                 <Route path="rankings/*" element={<RankingsManager />} />
+                <Route path="support/*" element={<SupportInquiriesManager />} />
               </Routes>
             </div>
           </main>

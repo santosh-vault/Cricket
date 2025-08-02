@@ -1,12 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import {
-  Ticket as Cricket,
-  Facebook,
-  Twitter,
-  Instagram,
-  Youtube,
-} from "lucide-react";
+import { Facebook, Twitter, Instagram, Youtube } from "lucide-react";
 
 export const Footer: React.FC = () => {
   return (
@@ -14,12 +8,13 @@ export const Footer: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
           {/* Brand */}
-          <div className="space-y-4">
-            <Link to="/" className="flex items-center space-x-2">
-              <Cricket className="h-9 w-9 text-blue-400 transform rotate-[-15deg]" />
-              <span className="text-3xl font-extrabold text-white tracking-tight">
-                CricNews
-              </span>
+          <div className="">
+            <Link to="/" className="flex items-center justify-start">
+              <img
+                src="/cricket fantom-01.png"
+                alt="Cricket Fantom Logo"
+                className="h-36 w-36 object-contain"
+              />
             </Link>
             <p className="text-gray-400 text-sm leading-relaxed">
               Your ultimate destination for up-to-the-minute cricket news, live
@@ -65,6 +60,17 @@ export const Footer: React.FC = () => {
                     &raquo;
                   </span>{" "}
                   About Us
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/support"
+                  className="text-gray-300 hover:text-blue-400 transition-colors duration-300 flex items-center group"
+                >
+                  <span className="mr-2 transform group-hover:translate-x-1 transition-transform duration-300">
+                    &raquo;
+                  </span>{" "}
+                  Support Us
                 </Link>
               </li>
               <li>

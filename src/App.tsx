@@ -16,6 +16,7 @@ import { FeatureDetail } from "./pages/FeatureDetail";
 import { Ranking } from "./pages/Ranking";
 import { AboutUs } from "./pages/AboutUs";
 import { PrivacyPolicy } from "./pages/PrivacyPolicy";
+import { Support } from "./pages/Support";
 
 function App() {
   return (
@@ -48,6 +49,7 @@ function App() {
             <Route path="features" element={<Features />} />
             <Route path="features/:slug" element={<FeatureDetail />} />
             <Route path="ranking" element={<Ranking />} />
+            <Route path="support" element={<Support />} />
             <Route path="about-us" element={<AboutUs />} />
             <Route path="privacy-policy" element={<PrivacyPolicy />} />
           </Route>

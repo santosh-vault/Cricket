@@ -1,19 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import {
-  Menu,
-  X,
-  Ticket as Cricket,
-  User,
-  LogOut,
-  Mail,
-  Phone,
-  Facebook,
-  Twitter,
-  Instagram,
-  Sun,
-  Moon,
-} from "lucide-react";
+import { Menu, X, User, LogOut } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth";
 
 export const Header: React.FC = () => {
@@ -42,11 +29,7 @@ export const Header: React.FC = () => {
         <div className="flex items-center gap-6">
           <span className="flex items-center gap-2 hover:text-blue-600 transition-colors duration-200 cursor-pointer">
             <Mail className="h-4 w-4 text-blue-500" />
-            <span className="font-medium" style={{ fontFamily: 'Helvetica, Helvetica Neue, sans-serif' }}>contact@cricnews.com</span>
-          </span>
-          <span className="flex items-center gap-2 hover:text-blue-600 transition-colors duration-200 cursor-pointer">
-            <Phone className="h-4 w-4 text-blue-500" />
-            <span className="font-medium" style={{ fontFamily: 'Helvetica, Helvetica Neue, sans-serif' }}>+1 234 567 890</span>
+            <span className="font-medium" style={{ fontFamily: 'Helvetica, Helvetica Neue, sans-serif' }}>superfreundnp@gmail.com</span>
           </span>
         </div>
         <div className="flex items-center gap-4">
@@ -82,13 +65,14 @@ export const Header: React.FC = () => {
 
       <header className="bg-gradient-to-r from-blue-800 to-blue-950 shadow-md sticky top-0 z-50 font-sans">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
+          <div className="flex justify-between items-center h-20">
             {/* Logo */}
-            <Link to="/" className="flex items-center space-x-2">
-              <Cricket className="h-9 w-9 text-blue-300 transform rotate-[-15deg]" />
-              <span className="text-3xl font-extrabold text-white tracking-tight">
-                CricNews
-              </span>
+            <Link to="/" className="flex items-center">
+              <img
+                src="/cricket fantom-01.png"
+                alt="Cricket Logo"
+                className="h-32 w-32 object-contain py-6"
+              />
             </Link>
 
             {/* Desktop Navigation */}
@@ -132,19 +116,12 @@ export const Header: React.FC = () => {
                 </div>
               ) : (
                 <Link
-                  to="/admin/login"
-                  className="bg-white text-blue-800 px-4 py-2 rounded-full text-sm font-semibold hover:bg-blue-100 shadow-md transition-all duration-300 ease-in-out register-login-btn"
+                  to="/support"
+                  className="bg-pink-600 text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-pink-700 shadow-md transition-all duration-300 ease-in-out"
                 >
-                  Register / Login
+                  Support Us
                 </Link>
               )}
-              {/* Dark Theme Toggle Icon */}
-              <button
-                className="ml-2 text-blue-200 hover:text-white p-2 rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                title="Toggle Dark Mode"
-              >
-                <Moon className="h-5 w-5" />
-              </button>
             </div>
 
             {/* Mobile menu button */}
@@ -176,13 +153,6 @@ export const Header: React.FC = () => {
                     {item.name}
                   </Link>
                 ))}
-                {/* Dark Theme Toggle Icon for mobile */}
-                <button
-                  className="text-blue-100 hover:text-white px-3 py-2 rounded-md text-base font-medium text-left transition-colors duration-200 flex items-center hover:bg-blue-700"
-                  title="Toggle Dark Mode"
-                >
-                  <Moon className="h-5 w-5 mr-3" /> Dark Mode
-                </button>
                 {user ? (
                   <>
                     {isAdmin && (
@@ -203,11 +173,11 @@ export const Header: React.FC = () => {
                   </>
                 ) : (
                   <Link
-                    to="/admin/login"
-                    className="bg-white text-blue-900 px-3 py-2 rounded-md text-base font-semibold block hover:bg-blue-100 transition-colors duration-200 register-login-btn"
+                    to="/support"
+                    className="bg-pink-600 text-white px-3 py-2 rounded-md text-base font-semibold block hover:bg-pink-700 transition-colors duration-200"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    Register / Login
+                    Support Us
                   </Link>
                 )}
               </div>
