@@ -6,8 +6,8 @@ export const AboutUs: React.FC = () => {
   return (
     <>
       <SEOHead
-        title="About Us - CricNews"
-        description="Learn about CricNews, your premier destination for cricket news, analysis, and insights. Discover our mission to bring you the latest cricket updates from around the world."
+        title="About Us - Cricket Fantom"
+        description="Learn about Cricket Fantom, your premier destination for cricket news, analysis, and insights. Discover our mission to bring you the latest cricket updates from around the world."
         keywords="about us, cricket news, cricket analysis, cricket website, cricket coverage"
         type="website"
         url="/about-us"
@@ -18,7 +18,7 @@ export const AboutUs: React.FC = () => {
         <section className="bg-gradient-to-br from-blue-600 to-blue-800 text-white py-20">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
-              About CricNews
+              About Cricket Fantom
             </h1>
             <p className="text-xl md:text-2xl text-blue-100 leading-relaxed">
               Your premier destination for comprehensive cricket coverage,

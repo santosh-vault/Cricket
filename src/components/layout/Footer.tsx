@@ -123,10 +123,10 @@ export const Footer: React.FC = () => {
               <div className="flex items-center space-x-3">
                 <Mail className="h-5 w-5 text-blue-400 flex-shrink-0" />
                 <a
-                  href="mailto:info@cricnews.com"
+                  href="mailto:info@cricketfantom.com"
                   className="text-gray-400 hover:text-blue-400 transition-colors duration-200"
                 >
-                  info@cricnews.com
+                  info@cricketfantom.com
                 </a>
               </div>
               <div className="flex items-center space-x-3">
@@ -163,7 +163,7 @@ export const Footer: React.FC = () => {
             ))}
           </div>
           <p className="text-gray-500">
-            &copy; 2025 CricNews. All rights reserved.
+            &copy; 2025 Cricket Fantom. All rights reserved.
           </p>
         </div>
       </div>

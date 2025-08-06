@@ -6,8 +6,8 @@ export const PrivacyPolicy: React.FC = () => {
   return (
     <>
       <SEOHead
-        title="Privacy Policy - CricNews"
-        description="Read our privacy policy to understand how CricNews collects, uses, and protects your personal information."
+        title="Privacy Policy - Cricket Fantom"
+        description="Read our privacy policy to understand how Cricket Fantom collects, uses, and protects your personal information."
         keywords="privacy policy, data protection, personal information, cookies, user privacy"
         type="website"
         url="/privacy-policy"
@@ -46,10 +46,10 @@ export const PrivacyPolicy: React.FC = () => {
                   Introduction
                 </h2>
                 <p className="text-gray-600 leading-relaxed mb-4">
-                  CricNews ("we," "our," or "us") is committed to protecting
-                  your privacy. This Privacy Policy explains how we collect,
-                  use, disclose, and safeguard your information when you visit
-                  our website and use our services.
+                  Cricket Fantom ("we," "our," or "us") is committed to
+                  protecting your privacy. This Privacy Policy explains how we
+                  collect, use, disclose, and safeguard your information when
+                  you visit our website and use our services.
                 </p>
                 <p className="text-gray-600 leading-relaxed">
                   By using our website, you consent to the data practices
@@ -276,7 +276,7 @@ export const PrivacyPolicy: React.FC = () => {
                     </a>
                   </p>
                   <p className="text-gray-700 mb-2">
-                    <strong>Address:</strong> CricNews Privacy Team
+                    <strong>Address:</strong> Cricket Fantom Privacy Team
                   </p>
                   <p className="text-gray-700">
                     <strong>Response Time:</strong> We will respond to your

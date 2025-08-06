@@ -212,7 +212,7 @@ export const NewsDetail: React.FC = () => {
                   </div>
                   <div className="flex items-center">
                     <User className="h-5 w-5 mr-2" />
-                    <span>CricNews Editorial Team</span>
+                    <span>Cricket Fantom Editorial Team</span>
                   </div>
                   <button
                     onClick={handleShare}

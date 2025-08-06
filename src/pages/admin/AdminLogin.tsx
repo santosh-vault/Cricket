@@ -49,8 +49,8 @@ export const AdminLogin: React.FC = () => {
   return (
     <>
       <SEOHead
-        title="Admin Login - CricNews CMS"
-        description="Admin login page for CricNews content management system."
+        title="Admin Login - Cricket Fantom CMS"
+        description="Admin login page for Cricket Fantom content management system."
       />
 
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 font-sans">

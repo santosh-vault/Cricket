@@ -1,5 +1,5 @@
-import React from 'react';
-import { Helmet } from 'react-helmet-async';
+import React from "react";
+import { Helmet } from "react-helmet-async";
 
 interface SEOHeadProps {
   title: string;
@@ -7,7 +7,7 @@ interface SEOHeadProps {
   keywords?: string;
   image?: string;
   url?: string;
-  type?: 'website' | 'article';
+  type?: "website" | "article";
   publishedTime?: string;
   modifiedTime?: string;
   author?: string;
@@ -17,15 +17,17 @@ export const SEOHead: React.FC<SEOHeadProps> = ({
   title,
   description,
   keywords,
-  image = '/og-image.jpg',
+  image = "/og-image.jpg",
   url,
-  type = 'website',
+  type = "website",
   publishedTime,
   modifiedTime,
   author,
 }) => {
-  const fullTitle = `${title} | CricNews - Live Cricket Scores & News`;
-  const canonicalUrl = url ? `${window.location.origin}${url}` : window.location.href;
+  const fullTitle = `${title} | Cricket Fantom - Passionately built for cricket fans worldwide`;
+  const canonicalUrl = url
+    ? `${window.location.origin}${url}`
+    : window.location.href;
 
   return (
     <Helmet>
@@ -41,7 +43,7 @@ export const SEOHead: React.FC<SEOHeadProps> = ({
       <meta property="og:type" content={type} />
       <meta property="og:url" content={canonicalUrl} />
       <meta property="og:image" content={image} />
-      <meta property="og:site_name" content="CricNews" />
+      <meta property="og:site_name" content="Cricket Fantom" />
 
       {/* Twitter Card Tags */}
       <meta name="twitter:card" content="summary_large_image" />
@@ -50,10 +52,14 @@ export const SEOHead: React.FC<SEOHeadProps> = ({
       <meta name="twitter:image" content={image} />
 
       {/* Article Specific Tags */}
-      {type === 'article' && (
+      {type === "article" && (
         <>
-          {publishedTime && <meta property="article:published_time" content={publishedTime} />}
-          {modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
+          {publishedTime && (
+            <meta property="article:published_time" content={publishedTime} />
+          )}
+          {modifiedTime && (
+            <meta property="article:modified_time" content={modifiedTime} />
+          )}
           {author && <meta property="article:author" content={author} />}
           <meta property="article:section" content="Cricket" />
         </>
@@ -62,13 +68,13 @@ export const SEOHead: React.FC<SEOHeadProps> = ({
       {/* Additional SEO Tags */}
       <meta name="robots" content="index, follow" />
       <meta name="googlebot" content="index, follow" />
-      <meta name="author" content={author || 'CricNews Editorial Team'} />
-      
+      <meta name="author" content={author || "Cricket Fantom Editorial Team"} />
+
       {/* Structured Data for Cricket Content */}
       <script type="application/ld+json">
         {JSON.stringify({
           "@context": "https://schema.org",
-          "@type": type === 'article' ? 'NewsArticle' : 'WebSite',
+          "@type": type === "article" ? "NewsArticle" : "WebSite",
           headline: title,
           description: description,
           image: image,
@@ -77,16 +83,16 @@ export const SEOHead: React.FC<SEOHeadProps> = ({
           dateModified: modifiedTime || publishedTime,
           author: {
             "@type": "Organization",
-            name: author || "CricNews Editorial Team"
+            name: author || "Cricket Fantom Editorial Team",
           },
           publisher: {
             "@type": "Organization",
-            name: "CricNews",
+            name: "Cricket Fantom",
             logo: {
               "@type": "ImageObject",
-              url: `${window.location.origin}/logo.png`
-            }
-          }
+              url: `${window.location.origin}/logo.png`,
+            },
+          },
         })}
       </script>
     </Helmet>

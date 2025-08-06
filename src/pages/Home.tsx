@@ -283,8 +283,8 @@ export const Home: React.FC = () => {
   return (
     <>
       <SEOHead
-        title="Home - CricNews: Your Ultimate Cricket Companion"
-        description="Stay updated with the latest cricket news, expert analysis, and comprehensive coverage. Your one-stop destination for cricket news, features, and ICC rankings from around the world."
+        title="Home - Cricket Fantom: Passionately built for cricket fans worldwide"
+        description="Stay updated with the latest cricket news, expert analysis, and comprehensive coverage. Your ultimate destination for cricket news, features, and ICC rankings from around the world."
         keywords="cricket news, cricket analysis, cricket updates, IPL, international cricket, T20, ODI, Test, cricket features, player rankings, ICC rankings"
       />
 

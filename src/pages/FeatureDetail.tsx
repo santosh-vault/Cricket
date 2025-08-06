@@ -214,7 +214,7 @@ export const FeatureDetail: React.FC = () => {
                   </div>
                   <div className="flex items-center">
                     <User className="h-5 w-5 mr-2" />
-                    <span>CricNews Feature Team</span>
+                    <span>Cricket Fantom Feature Team</span>
                   </div>
                   <button
                     onClick={handleShare}

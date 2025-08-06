@@ -102,7 +102,7 @@ export const PostEditor: React.FC<PostEditorProps> = ({
       .replace(/\s+/g, "-")
       .replace(/-+/g, "-")
       .trim();
-    
+
     // Add timestamp to ensure uniqueness
     const timestamp = Date.now();
     return `${baseSlug}-${timestamp}`;
@@ -121,7 +121,7 @@ export const PostEditor: React.FC<PostEditorProps> = ({
         const timestamp = Date.now();
         return `${slug}-${timestamp}`;
       }
-      
+
       return slug;
     } catch (error) {
       // If error (no match found), slug is unique

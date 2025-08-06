@@ -85,7 +85,7 @@ export const News: React.FC = () => {
   return (
     <>
       <SEOHead
-        title="Cricket News - Latest Updates & Breaking Stories | CricNews"
+        title="Cricket News - Latest Updates & Breaking Stories | Cricket Fantom"
         description="Stay updated with the latest cricket news, breaking stories, and match updates from around the world. Your trusted source for international cricket, IPL, and domestic cricket news."
         keywords="cricket news, breaking cricket news, IPL news, international cricket, Test cricket, ODI news, T20 news, cricket updates"
       />

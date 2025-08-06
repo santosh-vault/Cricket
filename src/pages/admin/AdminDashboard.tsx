@@ -64,8 +64,8 @@ export const AdminDashboard: React.FC = () => {
   return (
     <>
       <SEOHead
-        title="Admin Dashboard - CricNews CMS"
-        description="Admin dashboard for managing cricket news, blogs, features, analysis, and ICC rankings for CricNews."
+        title="Admin Dashboard - Cricket Fantom CMS"
+        description="Admin dashboard for managing cricket news, blogs, features, analysis, and ICC rankings for Cricket Fantom."
       />
       {/* Outer container: Sets min-height for the entire viewport and uses flex-col for stacking header, then content + sidebar */}
       <div className="min-h-screen bg-gray-50 font-sans flex flex-col admin-panel">
