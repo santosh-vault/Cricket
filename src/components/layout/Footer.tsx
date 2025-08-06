@@ -1,186 +1,169 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Facebook, Twitter, Instagram, Youtube } from "lucide-react";
+import {
+  Facebook,
+  Twitter,
+  Instagram,
+  Youtube,
+  Mail,
+  Phone,
+  Heart,
+} from "lucide-react";
 
 export const Footer: React.FC = () => {
   return (
-    <footer className="bg-gradient-to-r from-gray-900 to-blue-950 text-gray-200 font-sans border-t border-blue-800">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
-          {/* Brand */}
-          <div className="">
-            <Link to="/" className="flex items-center justify-start">
+    <footer className="bg-gradient-to-br from-gray-950 to-black text-gray-300">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12">
+          {/* Logo & Brand Column */}
+          <div className="space-y-4">
+            <Link to="/" className="inline-block">
               <img
                 src="/cricket fantom-01.png"
                 alt="Cricket Fantom Logo"
-                className="h-36 w-36 object-contain"
+                className="h-20 object-contain"
               />
             </Link>
-            <p className="text-gray-400 text-sm leading-relaxed">
-              Your ultimate destination for up-to-the-minute cricket news, live
-              scores, insightful analysis, and comprehensive match coverage from
-              around the globe.
+            <p className="text-sm leading-relaxed">
+              Your ultimate destination for cricket news, live scores, and
+              comprehensive match coverage from around the globe.
             </p>
+            <div className="flex space-x-4 pt-2">
+              {[
+                {
+                  Icon: Facebook,
+                  href: "https://facebook.com",
+                  color: "hover:text-blue-500",
+                },
+                {
+                  Icon: Twitter,
+                  href: "https://twitter.com",
+                  color: "hover:text-sky-400",
+                },
+                {
+                  Icon: Instagram,
+                  href: "https://instagram.com",
+                  color: "hover:text-pink-500",
+                },
+                {
+                  Icon: Youtube,
+                  href: "https://youtube.com",
+                  color: "hover:text-red-500",
+                },
+              ].map(({ Icon, href, color }, index) => (
+                <a
+                  key={index}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`text-gray-400 ${color} transition-colors duration-300 transform hover:scale-110`}
+                >
+                  <Icon className="h-6 w-6" />
+                </a>
+              ))}
+            </div>
           </div>
 
-          {/* Quick Links */}
-          <div>
-            <h3 className="text-xl font-bold mb-5 text-white border-b-2 border-blue-500 pb-2 inline-block">
-              Quick Links
+          {/* Navigation Links */}
+          <div className="space-y-6">
+            <h3 className="text-lg font-semibold text-white border-b-2 border-green-500 pb-2">
+              Quick Access
             </h3>
-            <ul className="space-y-3">
-              <li>
-                <Link
-                  to="/news"
-                  className="text-gray-300 hover:text-blue-400 transition-colors duration-300 flex items-center group"
-                >
-                  <span className="mr-2 transform group-hover:translate-x-1 transition-transform duration-300">
-                    &raquo;
-                  </span>{" "}
-                  Latest News
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/blogs"
-                  className="text-gray-300 hover:text-blue-400 transition-colors duration-300 flex items-center group"
-                >
-                  <span className="mr-2 transform group-hover:translate-x-1 transition-transform duration-300">
-                    &raquo;
-                  </span>{" "}
-                  Blogs
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/about-us"
-                  className="text-gray-300 hover:text-blue-400 transition-colors duration-300 flex items-center group"
-                >
-                  <span className="mr-2 transform group-hover:translate-x-1 transition-transform duration-300">
-                    &raquo;
-                  </span>{" "}
-                  About Us
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/support"
-                  className="text-gray-300 hover:text-blue-400 transition-colors duration-300 flex items-center group"
-                >
-                  <span className="mr-2 transform group-hover:translate-x-1 transition-transform duration-300">
-                    &raquo;
-                  </span>{" "}
-                  Support Us
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/privacy-policy"
-                  className="text-gray-300 hover:text-blue-400 transition-colors duration-300 flex items-center group"
-                >
-                  <span className="mr-2 transform group-hover:translate-x-1 transition-transform duration-300">
-                    &raquo;
-                  </span>{" "}
-                  Privacy Policy
-                </Link>
-              </li>
+            <ul className="space-y-2">
+              {[
+                { name: "Latest News", path: "/news" },
+                { name: "Features", path: "/blogs" },
+                { name: "Analysis", path: "/features" },
+                { name: "Rankings", path: "/ranking" },
+                { name: "About Us", path: "/about-us" },
+              ].map((item) => (
+                <li key={item.name}>
+                  <Link
+                    to={item.path}
+                    className="text-gray-400 hover:text-green-500 transition-colors duration-200"
+                  >
+                    {item.name}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Categories */}
-          <div>
-            <h3 className="text-xl font-bold mb-5 text-white border-b-2 border-blue-500 pb-2 inline-block">
-              Categories
+          {/* Cricket Categories */}
+          <div className="space-y-6">
+            <h3 className="text-lg font-semibold text-white border-b-2 border-yellow-400 pb-2">
+              Cricket World
             </h3>
-            <ul className="space-y-3">
-              <li>
-                <Link
-                  to="/news?category=international"
-                  className="text-gray-300 hover:text-blue-400 transition-colors duration-300 flex items-center group"
-                >
-                  <span className="mr-2 transform group-hover:translate-x-1 transition-transform duration-300">
-                    &raquo;
-                  </span>{" "}
-                  International
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/news?category=domestic"
-                  className="text-gray-300 hover:text-blue-400 transition-colors duration-300 flex items-center group"
-                >
-                  <span className="mr-2 transform group-hover:translate-x-1 transition-transform duration-300">
-                    &raquo;
-                  </span>{" "}
-                  Domestic
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/news?category=ipl"
-                  className="text-gray-300 hover:text-blue-400 transition-colors duration-300 flex items-center group"
-                >
-                  <span className="mr-2 transform group-hover:translate-x-1 transition-transform duration-300">
-                    &raquo;
-                  </span>{" "}
-                  IPL
-                </Link>
-              </li>
+            <ul className="space-y-2">
+              {[
+                { name: "International", category: "international" },
+                { name: "IPL", category: "ipl" },
+                { name: "Domestic", category: "domestic" },
+                { name: "T20 Leagues", category: "t20" },
+                { name: "Women's Cricket", category: "womens" },
+              ].map((item) => (
+                <li key={item.name}>
+                  <Link
+                    to={`/news?category=${item.category}`}
+                    className="text-gray-400 hover:text-yellow-400 transition-colors duration-200"
+                  >
+                    {item.name}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Social Media */}
-          <div>
-            <h3 className="text-xl font-bold mb-5 text-white border-b-2 border-blue-500 pb-2 inline-block">
-              Connect With Us
+          {/* Contact Information */}
+          <div className="space-y-6">
+            <h3 className="text-lg font-semibold text-white border-b-2 border-pink-500 pb-2">
+              Contact
             </h3>
-            <div className="flex space-x-5 mt-4">
-              <a
-                href="https://facebook.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-300 hover:text-blue-500 transform hover:scale-110 transition-transform duration-300"
-                title="Facebook"
-              >
-                <Facebook className="h-7 w-7" />
-              </a>
-              <a
-                href="https://twitter.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-300 hover:text-blue-400 transform hover:scale-110 transition-transform duration-300"
-                title="Twitter"
-              >
-                <Twitter className="h-7 w-7" />
-              </a>
-              <a
-                href="https://instagram.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-300 hover:text-pink-500 transform hover:scale-110 transition-transform duration-300"
-                title="Instagram"
-              >
-                <Instagram className="h-7 w-7" />
-              </a>
-              <a
-                href="https://youtube.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-300 hover:text-red-600 transform hover:scale-110 transition-transform duration-300"
-                title="YouTube"
-              >
-                <Youtube className="h-7 w-7" />
-              </a>
+            <div className="space-y-4">
+              <div className="flex items-center space-x-3">
+                <Mail className="h-5 w-5 text-blue-400 flex-shrink-0" />
+                <a
+                  href="mailto:info@cricnews.com"
+                  className="text-gray-400 hover:text-blue-400 transition-colors duration-200"
+                >
+                  info@cricnews.com
+                </a>
+              </div>
+              <div className="flex items-center space-x-3">
+                <Phone className="h-5 w-5 text-green-400 flex-shrink-0" />
+                <a
+                  href="tel:+1234567890"
+                  className="text-gray-400 hover:text-green-400 transition-colors duration-200"
+                >
+                  +1 (234) 567-890
+                </a>
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="border-t border-blue-800 mt-10 pt-8 text-center">
-          <p className="text-gray-400 text-sm">
-            &copy; 2025 CricNews. All rights reserved.{" "}
-            <span className="font-regular text-blue-300">
-              Passionately built for cricket fans worldwide.
-            </span>
+        {/* Separator Line */}
+        <hr className="my-12 border-gray-700" />
+
+        {/* Legal & Copyright Section */}
+        <div className="flex flex-col md:flex-row justify-between items-center text-sm space-y-4 md:space-y-0">
+          <div className="flex space-x-4">
+            {[
+              { name: "Privacy Policy", path: "/privacy-policy" },
+              { name: "Terms of Service", path: "/terms" },
+              { name: "Sitemap", path: "/sitemap" },
+            ].map((item) => (
+              <Link
+                key={item.name}
+                to={item.path}
+                className="text-gray-500 hover:text-white transition-colors duration-200"
+              >
+                {item.name}
+              </Link>
+            ))}
+          </div>
+          <p className="text-gray-500">
+            &copy; 2025 CricNews. All rights reserved.
           </p>
         </div>
       </div>

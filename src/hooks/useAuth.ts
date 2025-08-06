@@ -41,7 +41,9 @@ export function useAuth() {
     
     // For now, let's use a simple approach based on email
     // This bypasses the database issue temporarily
-    if (user.email === 'superfreundnp@gmail.com') {
+    const adminEmails = ['superfreundnp@gmail.com', 'admin@cricnews.com'];
+    
+    if (adminEmails.includes(user.email || '')) {
       console.log('checkAdminStatus - User is admin (by email), setting isAdmin to true');
       setIsAdmin(true);
       

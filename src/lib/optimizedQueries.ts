@@ -82,11 +82,14 @@ export async function fetchOptimizedPosts(
   }
 
   try {
-    // Try to use materialized view first, fallback to main posts table
+    // For now, always use the main posts table to avoid materialized view issues
+    // TODO: Re-enable materialized view after fixing the concurrent refresh issue
     let data: any[] = [];
     let error: any = null;
-    let useView = true;
+    let useView = false; // Temporarily disabled
     
+    // Temporarily commenting out materialized view usage due to concurrent refresh issues
+    /*
     try {
       let viewQuery = supabase
         .from('post_summaries')
@@ -112,7 +115,9 @@ export async function fetchOptimizedPosts(
     } catch (viewError) {
       console.log('Materialized view not available, using main table');
       useView = false;
+    */
       
+      // Use main posts table directly
       let tableQuery = supabase
         .from('posts')
         .select('id, title, slug, content, category, type, thumbnail_url, created_at, is_published')
@@ -135,7 +140,7 @@ export async function fetchOptimizedPosts(
       const tableResult = await tableQuery;
       data = tableResult.data || [];
       error = tableResult.error;
-    }
+    // }
 
     if (error) throw error;
 
@@ -301,34 +306,21 @@ export async function fetchHomeFeed(): Promise<OptimizedPost[]> {
   }
 
   try {
-    // Try to use materialized view first, fallback to main posts table
+    // Temporarily disable materialized view usage due to concurrent refresh issues
     let data: any[] = [];
     let error: any = null;
-    let useView = true;
+    let useView = false; // Temporarily disabled
     
-    try {
-      const viewResult = await supabase
-        .from('post_summaries')
-        .select('id, title, slug, excerpt, category, type, thumbnail_url, created_at')
-        .order('created_at', { ascending: false })
-        .limit(20);
-      
-      data = viewResult.data || [];
-      error = viewResult.error;
-    } catch (viewError) {
-      console.log('Materialized view not available for home feed, using main table');
-      useView = false;
-      
-      const tableResult = await supabase
-        .from('posts')
-        .select('id, title, slug, content, category, type, thumbnail_url, created_at, is_published')
-        .eq('is_published', true)
-        .order('created_at', { ascending: false })
-        .limit(20);
-      
-      data = tableResult.data || [];
-      error = tableResult.error;
-    }
+    // Use main posts table directly
+    const tableResult = await supabase
+      .from('posts')
+      .select('id, title, slug, content, category, type, thumbnail_url, created_at, is_published')
+      .eq('is_published', true)
+      .order('created_at', { ascending: false })
+      .limit(20);
+    
+    data = tableResult.data || [];
+    error = tableResult.error;
 
     if (error) throw error;
 

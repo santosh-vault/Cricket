@@ -96,12 +96,37 @@ export const PostEditor: React.FC<PostEditorProps> = ({
   }, [id]);
 
   const generateSlug = (title: string): string => {
-    return title
+    const baseSlug = title
       .toLowerCase()
       .replace(/[^a-z0-9\s-]/g, "")
       .replace(/\s+/g, "-")
       .replace(/-+/g, "-")
       .trim();
+    
+    // Add timestamp to ensure uniqueness
+    const timestamp = Date.now();
+    return `${baseSlug}-${timestamp}`;
+  };
+
+  const checkSlugUniqueness = async (slug: string): Promise<string> => {
+    try {
+      const { data, error } = await supabase
+        .from("posts")
+        .select("id")
+        .eq("slug", slug)
+        .single();
+
+      // If no error, slug exists, so make it unique
+      if (data && !error) {
+        const timestamp = Date.now();
+        return `${slug}-${timestamp}`;
+      }
+      
+      return slug;
+    } catch (error) {
+      // If error (no match found), slug is unique
+      return slug;
+    }
   };
 
   const fetchPost = async () => {
@@ -163,7 +188,6 @@ export const PostEditor: React.FC<PostEditorProps> = ({
         thumbnail_url: data.thumbnail_url || null,
         is_published: data.is_published,
         author_id: user.id,
-        updated_at: new Date().toISOString(),
         ...(data.is_published && { published_at: new Date().toISOString() }),
       };
 
@@ -174,10 +198,7 @@ export const PostEditor: React.FC<PostEditorProps> = ({
           .update(postData)
           .eq("id", id));
       } else {
-        ({ error } = await supabase.from("posts").insert({
-          ...postData,
-          created_at: new Date().toISOString(),
-        }));
+        ({ error } = await supabase.from("posts").insert(postData));
       }
 
       if (error) throw error;

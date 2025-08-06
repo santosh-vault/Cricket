@@ -65,13 +65,13 @@ export const Header: React.FC = () => {
 
       <header className="bg-gradient-to-r from-blue-800 to-blue-950 shadow-md sticky top-0 z-50 font-sans">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-20">
+          <div className="flex justify-between items-center h-24">
             {/* Logo */}
             <Link to="/" className="flex items-center">
               <img
                 src="/cricket fantom-01.png"
                 alt="Cricket Logo"
-                className="h-32 w-32 object-contain py-6"
+                className="h-40 w-40 object-contain py-6"
               />
             </Link>
 

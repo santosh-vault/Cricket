@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Lock, Mail, Eye, EyeOff, Ticket } from 'lucide-react'; // Changed back to Ticket as it's the component name from lucide-react
-import { useAuth } from '../../hooks/useAuth';
-import { SEOHead } from '../../components/seo/SEOHead';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Lock, Mail, Eye, EyeOff, Ticket } from "lucide-react"; // Changed back to Ticket as it's the component name from lucide-react
+import { useAuth } from "../../hooks/useAuth";
+import { SEOHead } from "../../components/seo/SEOHead";
 
 export const AdminLogin: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const { signIn, user, isAdmin, loading: authLoading } = useAuth();
   const navigate = useNavigate();
@@ -22,13 +22,13 @@ export const AdminLogin: React.FC = () => {
     );
   }
   if (user && isAdmin) {
-    navigate('/admin', { replace: true });
+    navigate("/admin", { replace: true });
     return null;
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
     setLoading(true);
 
     try {
@@ -37,10 +37,10 @@ export const AdminLogin: React.FC = () => {
         setError(error.message);
       } else {
         // Redirect to admin dashboard after successful login
-        navigate('/admin', { replace: true });
+        navigate("/admin", { replace: true });
       }
     } catch (error) {
-      setError('An unexpected error occurred. Please try again.');
+      setError("An unexpected error occurred. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -69,14 +69,30 @@ export const AdminLogin: React.FC = () => {
           <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
             {error && (
               <div className="bg-red-50 border border-red-300 text-red-700 px-5 py-3 rounded-lg text-sm font-medium shadow-md flex items-center">
-                <svg className="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <svg
+                  className="h-5 w-5 mr-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  ></path>
+                </svg>
                 {error}
               </div>
             )}
 
             <div className="space-y-5">
               <div>
-                <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-semibold text-gray-700 mb-2"
+                >
                   Email Address
                 </label>
                 <div className="relative">
@@ -96,7 +112,10 @@ export const AdminLogin: React.FC = () => {
               </div>
 
               <div>
-                <label htmlFor="password" className="block text-sm font-semibold text-gray-700 mb-2">
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-semibold text-gray-700 mb-2"
+                >
                   Password
                 </label>
                 <div className="relative">
@@ -104,7 +123,7 @@ export const AdminLogin: React.FC = () => {
                   <input
                     id="password"
                     name="password"
-                    type={showPassword ? 'text' : 'password'}
+                    type={showPassword ? "text" : "password"}
                     autoComplete="current-password"
                     required
                     value={password}
@@ -117,7 +136,11 @@ export const AdminLogin: React.FC = () => {
                     className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none transition-colors duration-200"
                     onClick={() => setShowPassword(!showPassword)}
                   >
-                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                    {showPassword ? (
+                      <EyeOff className="h-5 w-5" />
+                    ) : (
+                      <Eye className="h-5 w-5" />
+                    )}
                   </button>
                 </div>
               </div>
@@ -132,7 +155,7 @@ export const AdminLogin: React.FC = () => {
                 {loading ? (
                   <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
                 ) : (
-                  'Sign In'
+                  "Sign In"
                 )}
               </button>
             </div>
@@ -140,8 +163,13 @@ export const AdminLogin: React.FC = () => {
 
           <div className="text-center mt-6">
             <p className="text-sm text-gray-600">
-              Don't have admin access?{' '}
-              <a href="#" className="font-semibold text-blue-700 hover:text-blue-900 transition-colors duration-200 underline">Contact the system administrator</a>
+              Don't have admin access?{" "}
+              <a
+                href="#"
+                className="font-semibold text-blue-700 hover:text-blue-900 transition-colors duration-200 underline"
+              >
+                Contact the system administrator
+              </a>
             </p>
           </div>
         </div>
